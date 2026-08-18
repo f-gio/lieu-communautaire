@@ -61,6 +61,12 @@ const overlay=document.createElement('div'); overlay.id='loginOverlay'; overlay.
 <button id="signupBtn" type="button" style="width:100%;margin-top:10px;background:transparent;border:0;color:#365d55;cursor:pointer;text-decoration:underline">Pas encore de compte ? Créer un compte</button>
 <p id="loginError" style="color:#a75f50;font-size:13px"></p><div id="approvalMessage" style="display:none;margin-top:14px;padding:14px;border-radius:12px;background:#f4efe6;line-height:1.5"></div></div>`; Object.assign(overlay.style,{position:'fixed',inset:'0',background:'#f4f1e9',zIndex:'9999'}); document.body.appendChild(overlay);
 const logout=document.createElement('button'); logout.textContent='Se déconnecter'; logout.className='btn secondary'; logout.style.cssText='position:fixed;right:18px;bottom:18px;z-index:20'; logout.hidden=true; document.body.appendChild(logout);
+const adminBtn=document.createElement('button');
+adminBtn.textContent='Administration';
+adminBtn.className='btn';
+adminBtn.style.cssText='display:none;position:fixed;right:170px;bottom:18px;z-index:20';
+document.body.appendChild(adminBtn);
+
 loginBtn.onclick=async()=>{loginError.textContent='';try{await signInWithEmailAndPassword(auth,loginEmail.value.trim(),loginPassword.value)}catch(e){loginError.textContent='Connexion impossible. Vérifiez votre e-mail et votre mot de passe.'}};
 signupBtn.onclick=async()=>{loginError.textContent='';const email=loginEmail.value.trim(), password=loginPassword.value;if(!email){loginError.textContent='Saisissez votre e-mail.';return}if(password.length<6){loginError.textContent='Le mot de passe doit contenir au moins 6 caractères.';return}try{const cred=await createUserWithEmailAndPassword(auth,email,password);await setDoc(doc(db,'users',cred.user.uid),{email:cred.user.email,status:'pending',createdAt:serverTimestamp()})}catch(e){if(e.code==='auth/email-already-in-use') loginError.textContent='Un compte existe déjà avec cet e-mail.';else if(e.code==='auth/invalid-email') loginError.textContent='Adresse e-mail invalide.';else if(e.code==='auth/weak-password') loginError.textContent='Choisissez un mot de passe plus sécurisé.';else loginError.textContent='Impossible de créer le compte pour le moment.'}};
 logout.onclick=()=>signOut(auth);
