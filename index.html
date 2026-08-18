@@ -27,10 +27,22 @@ button,input,select,textarea{font:inherit}.app{display:grid;grid-template-column
 <section id="principles" class="section"><h1>Charte & valeurs</h1><p class="intro">Une base à discuter et modifier collectivement.</p><div class="grid"><div class="card full"><h2>Principes fondateurs</h2><p><b>1. Liberté & autonomie.</b> Chaque membre conserve son espace privé, ses choix et son rythme de vie.</p><p><b>2. Entraide proportionnée.</b> Nous contribuons selon nos possibilités, sans transformer la solidarité en obligation permanente.</p><p><b>3. Habitat adaptable.</b> Les logements, circulations et services anticipent la perte éventuelle de mobilité ou d'autonomie.</p><p><b>4. Décisions partagées.</b> Les décisions structurantes sont transparentes, documentées et recherchent le consentement du groupe.</p><p><b>5. Prévention des conflits.</b> Désaccords et tensions sont traités tôt, avec un processus de médiation défini à l'avance.</p><p><b>6. Ouverture.</b> La communauté reste connectée au quartier, aux familles, aux professionnels et aux générations plus jeunes.</p></div></div></section>
 <section id="notes" class="section"><h1>Notes & décisions</h1><p class="intro">Un espace libre pour préparer les réunions et conserver les décisions importantes.</p><div class="two"><div class="card"><h2>Notes de travail</h2><textarea id="notesArea" class="note" placeholder="Idées, questions, sujets à étudier…"></textarea><button class="btn" onclick="saveNotes()">Enregistrer</button></div><div class="card"><h2>Questions structurantes</h2><div class="risk"><b>Où ?</b><br>Ville, campagne, proximité des soins, transports, climat.</div><div class="risk"><b>Avec qui ?</b><br>Taille du groupe, critères d'entrée et de sortie.</div><div class="risk"><b>Quel niveau de mutualisation ?</b><br>Repas, véhicule, jardin, aide quotidienne, services professionnels.</div><div class="risk"><b>Comment financer ?</b><br>Apports, propriété, location, fonds commun, solidarité entre revenus.</div></div></div></section>
 <div class="footer">Maison Demain — données partagées et synchronisées via Firebase.</div></main></div>
+
+<div id="adminModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;padding:24px;overflow:auto">
+  <div style="max-width:900px;margin:30px auto;background:#fffdf8;border-radius:18px;padding:24px;box-shadow:0 18px 60px rgba(0,0,0,.25)">
+    <div style="display:flex;justify-content:space-between;gap:16px;align-items:center">
+      <div><h2 style="margin:0">Administration des utilisateurs</h2><p style="margin:6px 0 0;color:#666">Valider, refuser, suspendre ou réactiver les membres.</p></div>
+      <button id="closeAdmin" class="btn">Fermer</button>
+    </div>
+    <input id="adminSearch" placeholder="Rechercher par e-mail..." style="width:100%;box-sizing:border-box;margin:18px 0;padding:11px;border:1px solid #ddd;border-radius:10px">
+    <div id="adminUsers"></div>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAxjDMddH2p_uwzex1hpGa3LXATxjqkEXs",
@@ -66,10 +78,54 @@ window.addMember=()=>{let n=memberName.value.trim();if(!n)return;data.members.pu
 window.addBudget=()=>{let l=budgetLabel.value.trim(),a=Number(budgetAmount.value);if(!l||!a)return;data.budget.push({label:l,amount:a,type:budgetType.value});budgetLabel.value='';budgetAmount.value='';save()}; window.deleteBudget=i=>{data.budget.splice(i,1);save()};
 window.saveNotes=()=>{data.notes=notesArea.value;save()};
 document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(b.dataset.page).classList.add('active')});
+
+const ADMIN_UID='CPEGyrjksdMarhLXope92fgLbiq2';
+let adminUsersCache=[];
+let adminUnsub=null;
+
+function statusLabel(s){
+  return ({pending:'En attente',approved:'Actif',suspended:'Suspendu',rejected:'Refusé'})[s]||s;
+}
+function renderAdminUsers(){
+  const term=(adminSearch.value||'').toLowerCase();
+  const rows=adminUsersCache.filter(x=>(x.email||'').toLowerCase().includes(term));
+  adminUsers.innerHTML=rows.length?'':'<p>Aucun utilisateur trouvé.</p>';
+  rows.forEach(u=>{
+    const box=document.createElement('div');
+    box.style.cssText='border:1px solid #ddd;border-radius:14px;padding:14px;margin:10px 0;display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap';
+    const left=document.createElement('div');
+    left.innerHTML=`<strong>${u.email||'Sans e-mail'}</strong><br><small>Statut : ${statusLabel(u.status)}</small>${u.id===ADMIN_UID?'<br><small>Administrateur principal</small>':''}`;
+    const actions=document.createElement('div');
+    if(u.id!==ADMIN_UID){
+      const choices=[];
+      if(u.status==='pending'){choices.push(['Accepter','approved'],['Refuser','rejected']);}
+      if(u.status==='approved'){choices.push(['Suspendre','suspended']);}
+      if(u.status==='suspended'||u.status==='rejected'){choices.push(['Réactiver','approved']);}
+      choices.forEach(([label,status])=>{
+        const b=document.createElement('button'); b.className='btn'; b.style.marginLeft='6px'; b.textContent=label;
+        b.onclick=async()=>{await updateDoc(doc(db,'users',u.id),{status,updatedAt:serverTimestamp()})};
+        actions.appendChild(b);
+      });
+    }
+    box.append(left,actions); adminUsers.appendChild(box);
+  });
+}
+adminSearch.oninput=renderAdminUsers;
+adminBtn.onclick=()=>{
+  adminModal.style.display='block';
+  if(adminUnsub) adminUnsub();
+  adminUnsub=onSnapshot(collection(db,'users'),snap=>{
+    adminUsersCache=snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderAdminUsers();
+  });
+};
+closeAdmin.onclick=()=>{adminModal.style.display='none';if(adminUnsub){adminUnsub();adminUnsub=null}};
+
 onAuthStateChanged(auth,async user=>{
 if(unsub){unsub();unsub=null}
 approvalMessage.style.display='none';
-if(!user){overlay.style.display='block';logout.hidden=true;loginBtn.style.display='';signupBtn.style.display='';loginEmail.style.display='';loginPassword.style.display='';return}
+if(!user){adminBtn.style.display='none';overlay.style.display='block';logout.hidden=true;loginBtn.style.display='';signupBtn.style.display='';loginEmail.style.display='';loginPassword.style.display='';return}
+adminBtn.style.display=user.uid===ADMIN_UID?'inline-block':'none';
 const userRef=doc(db,'users',user.uid);
 let profile=await getDoc(userRef);
 if(!profile.exists()){await setDoc(userRef,{email:user.email,status:'pending',createdAt:serverTimestamp()});profile=await getDoc(userRef)}
