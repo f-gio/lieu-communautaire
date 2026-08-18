@@ -29,8 +29,8 @@ button,input,select,textarea{font:inherit}.app{display:grid;grid-template-column
 <div class="footer">Maison Demain — données partagées et synchronisées via Firebase.</div></main></div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAxjDMddH2p_uwzex1hpGa3LXATxjqkEXs",
@@ -45,9 +45,13 @@ const defaults={tasks:[{name:'Formaliser la vision commune',owner:'Groupe fondat
 let data=structuredClone(defaults), unsub=null;
 const projectRef=doc(db,'projects','maison-demain');
 
-const overlay=document.createElement('div'); overlay.id='loginOverlay'; overlay.innerHTML=`<div style="max-width:420px;margin:12vh auto;background:#fffdf8;border:1px solid #ddd8cd;border-radius:16px;padding:28px;box-shadow:0 12px 40px #0002"><h2>Maison Demain</h2><p>Connectez-vous pour accéder aux données partagées.</p><input id="loginEmail" type="email" placeholder="E-mail" style="width:100%;margin:7px 0"><input id="loginPassword" type="password" placeholder="Mot de passe" style="width:100%;margin:7px 0"><button id="loginBtn" class="btn" style="width:100%;margin-top:8px">Se connecter</button><p id="loginError" style="color:#a75f50;font-size:13px"></p></div>`; Object.assign(overlay.style,{position:'fixed',inset:'0',background:'#f4f1e9',zIndex:'9999'}); document.body.appendChild(overlay);
+const overlay=document.createElement('div'); overlay.id='loginOverlay'; overlay.innerHTML=`<div style="max-width:420px;margin:12vh auto;background:#fffdf8;border:1px solid #ddd8cd;border-radius:16px;padding:28px;box-shadow:0 12px 40px #0002"><h2>Maison Demain</h2><p>Connectez-vous pour accéder aux données partagées.</p><input id="loginEmail" type="email" placeholder="E-mail" style="width:100%;margin:7px 0"><input id="loginPassword" type="password" placeholder="Mot de passe" style="width:100%;margin:7px 0"><button id="loginBtn" class="btn" style="width:100%;margin-top:8px">Se connecter</button>
+<button id="signupBtn" type="button" style="width:100%;margin-top:10px;background:transparent;border:0;color:#365d55;cursor:pointer;text-decoration:underline">Pas encore de compte ? Créer un compte</button>
+<p id="loginError" style="color:#a75f50;font-size:13px"></p><div id="approvalMessage" style="display:none;margin-top:14px;padding:14px;border-radius:12px;background:#f4efe6;line-height:1.5"></div></div>`; Object.assign(overlay.style,{position:'fixed',inset:'0',background:'#f4f1e9',zIndex:'9999'}); document.body.appendChild(overlay);
 const logout=document.createElement('button'); logout.textContent='Se déconnecter'; logout.className='btn secondary'; logout.style.cssText='position:fixed;right:18px;bottom:18px;z-index:20'; logout.hidden=true; document.body.appendChild(logout);
-loginBtn.onclick=async()=>{loginError.textContent='';try{await signInWithEmailAndPassword(auth,loginEmail.value.trim(),loginPassword.value)}catch(e){loginError.textContent='Connexion impossible. Vérifiez votre e-mail et votre mot de passe.'}}; logout.onclick=()=>signOut(auth);
+loginBtn.onclick=async()=>{loginError.textContent='';try{await signInWithEmailAndPassword(auth,loginEmail.value.trim(),loginPassword.value)}catch(e){loginError.textContent='Connexion impossible. Vérifiez votre e-mail et votre mot de passe.'}};
+signupBtn.onclick=async()=>{loginError.textContent='';const email=loginEmail.value.trim(), password=loginPassword.value;if(!email){loginError.textContent='Saisissez votre e-mail.';return}if(password.length<6){loginError.textContent='Le mot de passe doit contenir au moins 6 caractères.';return}try{const cred=await createUserWithEmailAndPassword(auth,email,password);await setDoc(doc(db,'users',cred.user.uid),{email:cred.user.email,status:'pending',createdAt:serverTimestamp()})}catch(e){if(e.code==='auth/email-already-in-use') loginError.textContent='Un compte existe déjà avec cet e-mail.';else if(e.code==='auth/invalid-email') loginError.textContent='Adresse e-mail invalide.';else if(e.code==='auth/weak-password') loginError.textContent='Choisissez un mot de passe plus sécurisé.';else loginError.textContent='Impossible de créer le compte pour le moment.'}};
+logout.onclick=()=>signOut(auth);
 
 async function save(){await setDoc(projectRef,{...data,updatedAt:new Date().toISOString()});}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -62,6 +66,21 @@ window.addMember=()=>{let n=memberName.value.trim();if(!n)return;data.members.pu
 window.addBudget=()=>{let l=budgetLabel.value.trim(),a=Number(budgetAmount.value);if(!l||!a)return;data.budget.push({label:l,amount:a,type:budgetType.value});budgetLabel.value='';budgetAmount.value='';save()}; window.deleteBudget=i=>{data.budget.splice(i,1);save()};
 window.saveNotes=()=>{data.notes=notesArea.value;save()};
 document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(b.dataset.page).classList.add('active')});
-onAuthStateChanged(auth,async user=>{if(unsub){unsub();unsub=null} if(!user){overlay.style.display='block';logout.hidden=true;return} overlay.style.display='none';logout.hidden=false;const snap=await getDoc(projectRef);if(!snap.exists())await setDoc(projectRef,defaults);unsub=onSnapshot(projectRef,s=>{if(s.exists()){data={...structuredClone(defaults),...s.data()};renderAll()}})});
+onAuthStateChanged(auth,async user=>{
+if(unsub){unsub();unsub=null}
+approvalMessage.style.display='none';
+if(!user){overlay.style.display='block';logout.hidden=true;loginBtn.style.display='';signupBtn.style.display='';loginEmail.style.display='';loginPassword.style.display='';return}
+const userRef=doc(db,'users',user.uid);
+let profile=await getDoc(userRef);
+if(!profile.exists()){await setDoc(userRef,{email:user.email,status:'pending',createdAt:serverTimestamp()});profile=await getDoc(userRef)}
+const status=profile.data()?.status||'pending';
+if(status!=='approved'){
+overlay.style.display='block';logout.hidden=false;loginBtn.style.display='none';signupBtn.style.display='none';loginEmail.style.display='none';loginPassword.style.display='none';approvalMessage.style.display='block';
+approvalMessage.innerHTML=status==='rejected'?'<strong>Demande refusée.</strong><br>Votre compte n’a pas été autorisé à accéder à cet espace.':'<strong>Inscription enregistrée.</strong><br>Votre demande est en attente de validation par un administrateur.';
+return}
+overlay.style.display='none';logout.hidden=false;
+const snap=await getDoc(projectRef);if(!snap.exists())await setDoc(projectRef,defaults);
+unsub=onSnapshot(projectRef,s=>{if(s.exists()){data={...structuredClone(defaults),...s.data()};renderAll()}});
+});
 </script>
 </body></html>
