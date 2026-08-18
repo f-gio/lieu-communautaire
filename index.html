@@ -128,11 +128,24 @@ if(!user){adminBtn.style.display='none';overlay.style.display='block';logout.hid
 adminBtn.style.display=user.uid===ADMIN_UID?'inline-block':'none';
 const userRef=doc(db,'users',user.uid);
 let profile=await getDoc(userRef);
-if(!profile.exists()){await setDoc(userRef,{email:user.email,status:'pending',createdAt:serverTimestamp()});profile=await getDoc(userRef)}
+if(!profile.exists()){
+  await setDoc(userRef,{
+    email:user.email,
+    status:user.uid===ADMIN_UID?'approved':'pending',
+    createdAt:serverTimestamp()
+  });
+  profile=await getDoc(userRef);
+}
 const status=profile.data()?.status||'pending';
-if(status!=='approved'){
+
+// L'administrateur principal passe toujours directement.
+if(user.uid!==ADMIN_UID && status!=='approved'){
 overlay.style.display='block';logout.hidden=false;loginBtn.style.display='none';signupBtn.style.display='none';loginEmail.style.display='none';loginPassword.style.display='none';approvalMessage.style.display='block';
-approvalMessage.innerHTML=status==='rejected'?'<strong>Demande refusée.</strong><br>Votre compte n’a pas été autorisé à accéder à cet espace.':'<strong>Inscription enregistrée.</strong><br>Votre demande est en attente de validation par un administrateur.';
+approvalMessage.innerHTML=status==='rejected'
+?'<strong>Demande refusée.</strong><br>Votre compte n’a pas été autorisé à accéder à cet espace.'
+:status==='suspended'
+?'<strong>Compte suspendu.</strong><br>Votre accès à l’espace communautaire a été temporairement suspendu.'
+:'<strong>Inscription enregistrée.</strong><br>Votre demande est en attente de validation par un administrateur.';
 return}
 overlay.style.display='none';logout.hidden=false;
 const snap=await getDoc(projectRef);if(!snap.exists())await setDoc(projectRef,defaults);
