@@ -649,12 +649,28 @@ input,select,textarea,button{max-width:100%}
 
 .resource-dialog{max-width:720px!important}.resource-form-grid{align-items:start}.resource-form-grid label{display:flex;flex-direction:column;gap:7px}.resource-form-grid input,.resource-form-grid select,.resource-form-grid textarea{width:100%!important;box-sizing:border-box}.resource-form-grid textarea{min-height:105px;resize:vertical}.resource-visual-field{display:flex;flex-direction:column;gap:8px}.field-title{font-size:13px;font-weight:650}.resource-visual-row{display:flex;align-items:flex-start;gap:16px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#faf9f5}.resource-visual-preview{width:62px;height:62px;flex:0 0 62px;border-radius:13px;background:#edf3ef;display:grid;place-items:center;font-size:27px;overflow:hidden}.resource-visual-preview img{width:100%;height:100%;object-fit:cover}.resource-visual-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}.resource-visual-controls select{width:auto!important;min-width:180px}.resource-visual-controls small{flex-basis:100%;color:var(--muted);font-size:10px}.resource-upload-btn{display:inline-flex!important;flex-direction:row!important;align-items:center;justify-content:center;padding:9px 12px;border-radius:9px;background:#ece9e1;font-size:12px;font-weight:650;cursor:pointer}.resource-upload-btn input{display:none}.calendar-actions{margin-top:4px}@media(max-width:600px){.resource-visual-row{align-items:center}.resource-visual-controls{flex:1}.resource-visual-controls select,.resource-upload-btn{width:100%!important}.resource-dialog{margin:8px auto!important}.resource-form-grid{gap:13px}}
 
+
+/* Actions : une seule case, proprement alignée */
+.taskrow{grid-template-columns:28px minmax(220px,2fr) minmax(130px,1fr) minmax(115px,.8fr) 90px 28px!important;align-items:center}
+.taskrow input[type="checkbox"]{appearance:none;-webkit-appearance:none;width:17px!important;height:17px!important;min-width:17px;margin:0!important;border:1.5px solid #9ca7a2;border-radius:4px;background:#fff;display:grid;place-content:center}
+.taskrow input[type="checkbox"]::before{content:"";width:9px;height:9px;transform:scale(0);transition:.1s;box-shadow:inset 1em 1em #31594d;clip-path:polygon(14% 44%,0 59%,40% 100%,100% 18%,84% 4%,39% 70%)}
+.taskrow input[type="checkbox"]:checked::before{transform:scale(1)}
+.taskrow .del{position:static!important}
+.notes-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap;margin-bottom:20px}
+.notes-feed{display:flex;flex-direction:column;gap:14px}.note-post{padding:20px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.note-post-head{display:flex;justify-content:space-between;gap:15px;align-items:flex-start}.note-post h2{font-size:17px;margin:0 0 5px}.note-meta{font-size:10px;color:var(--muted)}
+.note-body{white-space:pre-wrap;line-height:1.65;font-size:13px;margin:16px 0}.note-tools{display:flex;gap:7px;flex-wrap:wrap;align-items:center;border-top:1px solid var(--line);padding-top:12px}
+.react-btn{border:1px solid var(--line);background:#faf9f5;border-radius:999px;padding:6px 10px;cursor:pointer;font:inherit;font-size:12px}.react-btn.active{background:#edf3ef;border-color:#9eb8ad}
+.note-comments{margin-top:12px;display:flex;flex-direction:column;gap:8px}.note-comment{background:#f7f5ef;border-radius:9px;padding:9px 11px;font-size:11px}.note-comment b{font-size:10px}.comment-form{display:flex;gap:8px;margin-top:10px}.comment-form input{flex:1;min-width:0}
+.note-dialog{max-width:680px;margin:30px auto}.note-form label{display:flex;flex-direction:column;gap:7px;margin-bottom:15px}.note-form input,.note-form textarea{width:100%;box-sizing:border-box}.note-form textarea{min-height:180px;resize:vertical}
+@media(max-width:760px){.taskrow{grid-template-columns:24px 1fr!important;gap:7px 10px}.taskrow>span,.taskrow>.tag{grid-column:2}.taskrow>.del{grid-column:2;justify-self:end}.notes-head>button{width:100%}.comment-form{flex-direction:column}}
+
 </style>
 </head>
 <body>
 <div class="app">
 <aside class="side"><div class="brand">Maison <span>Demain</span><br><small style="position:static">Projet de vie partagée</small></div><nav class="nav" id="nav">
-<button class="active" data-page="dashboard">⌂ Vue d'ensemble</button><button data-page="roadmap">◎ Feuille de route</button><button data-page="tasks">✓ Actions</button><button data-page="calendar">▣ Calendrier</button><button data-page="polls">◉ Sondages</button><button data-page="resources">↗ Ressources</button><button data-page="community">♧ Communauté</button><button data-page="budget">€ Budget</button><button data-page="principles">♡ Charte & valeurs</button><button data-page="notes">✎ Notes & décisions</button></nav><small>Données synchronisées avec Firebase</small></aside>
+<button class="active" data-page="dashboard">⌂ Vue d'ensemble</button><button data-page="tasks">✓ Actions</button><button data-page="calendar">▣ Calendrier</button><button data-page="polls">◉ Sondages</button><button data-page="resources">↗ Ressources</button><button data-page="budget">€ Budget</button><button data-page="principles">♡ Charte & valeurs</button><button data-page="notes">✎ Notes</button></nav><small>Données synchronisées avec Firebase</small></aside>
 <main class="main">
 <section id="dashboard" class="section active"><div class="hero"><div><div class="eyebrow">Projet collectif • habitat & entraide</div><h1>Créer une communauté solidaire et harmonieuse pour se soutenir dans nos vieux jours</h1><p>Un cadre de vie épanouissant, durable, <strong>adaptable</strong> et bienveillant, façonné collectivement selon les besoins de chacun.</p></div><span class="pill">🌿 Vision 2035+</span></div>
 <div class="grid"><div class="card kpi"><div class="lab">Progression globale</div><div class="num" id="progressNum">32%</div><div class="progress"><i id="progressBar"></i></div></div><div class="card kpi"><div class="lab">Membres / foyers</div><div class="num" id="memberKpi">6</div></div><div class="card kpi"><div class="lab">Actions ouvertes</div><div class="num" id="taskKpi">4</div></div><div class="card kpi"><div class="lab">Budget estimatif</div><div class="num money" id="budgetKpi">0 €</div></div>
@@ -792,7 +808,26 @@ input,select,textarea,button{max-width:100%}
 </div>
 <div class="charter-closing"><strong>Cette charte est notre point de référence commun.</strong><span>Nos décisions, nos comportements et l'évolution du projet doivent rester cohérents avec ces principes.</span></div>
 </section>
-<section id="notes" class="section"><h1>Notes & décisions</h1><p class="intro">Un espace libre pour préparer les réunions et conserver les décisions importantes.</p><div class="two"><div class="card"><h2>Notes de travail</h2><textarea id="notesArea" class="note" placeholder="Idées, questions, sujets à étudier…"></textarea><button class="btn" onclick="saveNotes()">Enregistrer</button></div><div class="card"><h2>Questions structurantes</h2><div class="risk"><b>Où ?</b><br>Ville, campagne, proximité des soins, transports, climat.</div><div class="risk"><b>Avec qui ?</b><br>Taille du groupe, critères d'entrée et de sortie.</div><div class="risk"><b>Quel niveau de mutualisation ?</b><br>Repas, véhicule, jardin, aide quotidienne, services professionnels.</div><div class="risk"><b>Comment financer ?</b><br>Apports, propriété, location, fonds commun, solidarité entre revenus.</div></div></div></section>
+<section id="notes" class="section">
+  <div class="notes-head">
+    <div><div class="eyebrow">PARTAGE & ÉCHANGES</div><h1>Notes</h1>
+    <p class="intro">Partagez une information, une idée ou un compte rendu avec la communauté.</p></div>
+    <button id="newNoteBtn" class="btn">+ Nouvelle note</button>
+  </div>
+  <div id="notesFeed" class="notes-feed"></div>
+</section>
+
+<div id="noteModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9997;padding:20px;overflow:auto">
+ <div class="card note-dialog">
+  <div class="calendar-dialog-head"><div><div class="eyebrow">NOTE</div><h2 id="noteModalTitle">Nouvelle note</h2></div><button id="closeNoteModal" class="btn secondary">Fermer</button></div>
+  <div class="calendar-dialog-body note-form">
+   <label>Titre *<input id="noteTitle" placeholder="Donnez un titre à votre note"></label>
+   <label>Contenu *<textarea id="noteContent" placeholder="Écrivez votre note…"></textarea></label>
+   <p id="noteError" class="error"></p>
+   <div class="calendar-actions"><button id="deleteNoteBtn" class="btn secondary" style="display:none;margin-right:auto">Supprimer</button><button id="cancelNoteBtn" class="btn secondary">Annuler</button><button id="saveNoteBtn" class="btn">Publier</button></div>
+  </div>
+ </div>
+</div>
 <div class="footer">Communauté solidaire des Gens de confiance — données partagées et synchronisées via Firebase.</div></main></div>
 
 <div id="adminModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;padding:24px;overflow:auto">
@@ -858,7 +893,7 @@ function money(n){return new Intl.NumberFormat('fr-FR',{style:'currency',currenc
 function renderTasks(){taskList.innerHTML=data.tasks.map((t,i)=>`<div class="taskrow ${t.done?'done':''}"><input type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${i},this.checked)"><b class="taskname">${esc(t.name)}</b><span>${esc(t.owner)}</span><span>${t.date||'Sans date'}</span><span class="tag">${esc(t.status)}</span><button class="del" onclick="deleteTask(${i})">×</button></div>`).join('')}
 function renderMembers(){memberList.innerHTML=data.members.map((m,i)=>`<div class="member"><div class="avatar">${esc(m.name).charAt(0).toUpperCase()}</div><div><b>${esc(m.name)}</b><br><small>${esc(m.skill)}</small></div><button class="del" style="margin-left:auto" onclick="deleteMember(${i})">×</button></div>`).join('')}
 function renderBudget(){budgetList.innerHTML=data.budget.map((b,i)=>`<div class="budgetrow"><b>${esc(b.label)}</b><span>${esc(b.type)}</span><span class="money">${money(b.amount)}</span><button class="del" onclick="deleteBudget(${i})">×</button></div>`).join('');let total=data.budget.reduce((s,b)=>s+Number(b.amount),0);budgetTotal.textContent=money(total);budgetKpi.textContent=money(total)}
-function renderAll(){renderTasks();renderMembers();renderBudget();notesArea.value=data.notes||'';memberKpi.textContent=data.members.length;taskKpi.textContent=data.tasks.filter(t=>!t.done).length;let p=data.tasks.length?Math.round(data.tasks.filter(t=>t.done).length/data.tasks.length*100):0;progressNum.textContent=p+'%';progressBar.style.width=p+'%'
+function renderAll(){renderTasks();renderMembers();renderBudget();renderNotes();memberKpi.textContent=data.members.length;taskKpi.textContent=data.tasks.filter(t=>!t.done).length;let p=data.tasks.length?Math.round(data.tasks.filter(t=>t.done).length/data.tasks.length*100):0;progressNum.textContent=p+'%';progressBar.style.width=p+'%'
 renderCalendar();
 renderPolls();
 renderResources();}
@@ -866,7 +901,44 @@ window.addTask=()=>{let n=taskName.value.trim();if(!n)return;data.tasks.push({na
 window.toggleTask=(i,v)=>{data.tasks[i].done=v;save()}; window.deleteTask=i=>{data.tasks.splice(i,1);save()};
 window.addMember=()=>{let n=memberName.value.trim();if(!n)return;data.members.push({name:n,skill:memberSkill.value||'À définir'});memberName.value='';memberSkill.value='';save()}; window.deleteMember=i=>{data.members.splice(i,1);save()};
 window.addBudget=()=>{let l=budgetLabel.value.trim(),a=Number(budgetAmount.value);if(!l||!a)return;data.budget.push({label:l,amount:a,type:budgetType.value});budgetLabel.value='';budgetAmount.value='';save()}; window.deleteBudget=i=>{data.budget.splice(i,1);save()};
-window.saveNotes=()=>{data.notes=notesArea.value;save()};
+
+
+/* Notes collaboratives */
+let editingNoteId=null;
+function currentUserId(){return auth.currentUser?.uid||''}
+function currentUserEmail(){return auth.currentUser?.email||'Membre'}
+function noteAuthor(n){return n.authorEmail||'Membre'}
+function openNoteModal(id=null){
+ editingNoteId=id;const n=(data.noteItems||[]).find(x=>x.id===id);
+ if(n && n.authorUid!==currentUserId())return;
+ noteModalTitle.textContent=n?'Modifier la note':'Nouvelle note';noteTitle.value=n?.title||'';noteContent.value=n?.content||'';noteError.textContent='';
+ deleteNoteBtn.style.display=n?'inline-block':'none';saveNoteBtn.textContent=n?'Enregistrer':'Publier';noteModal.style.display='block';
+}
+function closeNote(){noteModal.style.display='none';editingNoteId=null}
+function renderNotes(){
+ if(!document.getElementById('notesFeed'))return;data.noteItems=data.noteItems||[];
+ const items=[...data.noteItems].sort((a,b)=>(b.updatedAt||b.createdAt||'').localeCompare(a.updatedAt||a.createdAt||''));
+ notesFeed.innerHTML='';
+ if(!items.length){notesFeed.innerHTML='<div class="card"><p class="intro">Aucune note pour le moment. Soyez le premier à en publier une.</p></div>';return}
+ items.forEach(n=>{
+  n.reactions=n.reactions||{};n.comments=n.comments||[];
+  const mine=n.authorUid===currentUserId(), post=document.createElement('article');post.className='note-post';
+  const head=document.createElement('div');head.className='note-post-head';
+  head.innerHTML='<div><h2>'+esc(n.title||'Sans titre')+'</h2><div class="note-meta">Par '+esc(noteAuthor(n))+(n.createdAt?' · '+new Date(n.createdAt).toLocaleString('fr-FR'):'')+'</div></div>';
+  if(mine){const edit=document.createElement('button');edit.className='btn secondary';edit.textContent='Modifier';edit.onclick=()=>openNoteModal(n.id);head.appendChild(edit)}
+  const body=document.createElement('div');body.className='note-body';body.textContent=n.content||'';
+  const tools=document.createElement('div');tools.className='note-tools';
+  ['👍','❤️','💡'].forEach(emoji=>{const users=n.reactions[emoji]||[];const b=document.createElement('button');b.className='react-btn'+(users.includes(currentUserId())?' active':'');b.textContent=emoji+(users.length?' '+users.length:'');b.onclick=async()=>{const a=n.reactions[emoji]||[];n.reactions[emoji]=a.includes(currentUserId())?a.filter(x=>x!==currentUserId()):[...a,currentUserId()];await save();renderNotes()};tools.appendChild(b)});
+  const comments=document.createElement('div');comments.className='note-comments';
+  n.comments.forEach(c=>{const d=document.createElement('div');d.className='note-comment';d.innerHTML='<b>'+esc(c.authorEmail||'Membre')+'</b><br>'+esc(c.text);comments.appendChild(d)});
+  const form=document.createElement('div');form.className='comment-form';const inp=document.createElement('input');inp.placeholder='Ajouter un commentaire…';const send=document.createElement('button');send.className='btn secondary';send.textContent='Commenter';send.onclick=async()=>{const text=inp.value.trim();if(!text)return;n.comments.push({id:crypto.randomUUID(),authorUid:currentUserId(),authorEmail:currentUserEmail(),text,createdAt:new Date().toISOString()});await save();renderNotes()};form.append(inp,send);
+  post.append(head,body,tools,comments,form);notesFeed.appendChild(post);
+ })
+}
+newNoteBtn.onclick=()=>openNoteModal();closeNoteModal.onclick=closeNote;cancelNoteBtn.onclick=closeNote;
+saveNoteBtn.onclick=async()=>{const title=noteTitle.value.trim(),content=noteContent.value.trim();if(!title||!content){noteError.textContent='Le titre et le contenu sont obligatoires.';return}data.noteItems=data.noteItems||[];const now=new Date().toISOString();if(editingNoteId){const n=data.noteItems.find(x=>x.id===editingNoteId);if(!n||n.authorUid!==currentUserId())return;n.title=title;n.content=content;n.updatedAt=now}else data.noteItems.push({id:crypto.randomUUID(),title,content,authorUid:currentUserId(),authorEmail:currentUserEmail(),createdAt:now,updatedAt:now,reactions:{},comments:[]});await save();closeNote();renderNotes()};
+deleteNoteBtn.onclick=async()=>{const n=(data.noteItems||[]).find(x=>x.id===editingNoteId);if(!n||n.authorUid!==currentUserId())return;if(confirm('Supprimer cette note ?')){data.noteItems=data.noteItems.filter(x=>x.id!==editingNoteId);await save();closeNote();renderNotes()}};
+
 document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(b.dataset.page).classList.add('active');if(b.dataset.page==='resources')renderResources()});
 
 const ADMIN_UID='CPEGyrjksdMarhLXope92fgLbiq2';
