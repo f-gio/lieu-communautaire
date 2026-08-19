@@ -1079,6 +1079,101 @@ body.auth-pending .app{visibility:hidden}
   }
 }
 
+
+/* ===== Change password ===== */
+.password-dialog{width:min(560px,100%);padding:28px!important}
+.password-form{display:grid;gap:18px;padding-top:22px}
+.password-form label{display:grid;gap:7px}
+.password-form label>span{font-size:13px;font-weight:700}
+.password-field{display:flex;align-items:stretch;gap:8px}
+.password-field input{flex:1;min-width:0}
+.password-eye{
+  border:1px solid var(--line);background:#f3f0e9;color:var(--forest);
+  border-radius:10px;padding:0 12px;cursor:pointer;font:inherit;font-size:12px
+}
+.password-success{color:#2f6755;font-size:12px;margin:0}
+#changePasswordMenuBtn{
+  width:100%;text-align:left;border:0;background:transparent;color:inherit;
+  padding:10px 14px;cursor:pointer;font:inherit
+}
+#changePasswordMenuBtn:hover{background:#f1eee6}
+@media(max-width:600px){
+ .password-dialog{padding:20px!important}
+ .password-field{display:grid;grid-template-columns:1fr auto}
+}
+
+
+/* ===== Account UX final fix ===== */
+.sidebar{
+  display:flex!important;
+  align-items:center!important;
+}
+#nav{flex:1!important}
+#accountMenu{
+  position:relative!important;
+  top:auto!important; right:auto!important; left:auto!important;
+  margin-left:auto!important;
+  transform:none!important;
+  flex:0 0 auto!important;
+  align-self:center!important;
+}
+#accountMenuBtn{
+  min-height:38px!important;
+  padding:5px 10px!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:8px!important;
+}
+#accountDropdown{
+  position:absolute!important;
+  top:calc(100% + 8px)!important;
+  right:0!important;
+  left:auto!important;
+  min-width:220px!important;
+  z-index:10030!important;
+}
+#accountDropdown .account-action,
+#changePasswordMenuBtn{
+  display:block!important;
+  width:100%!important;
+  text-align:left!important;
+}
+#accountDropdown .logout-action{
+  margin-top:8px!important;
+  padding-top:13px!important;
+  border-top:1px solid #ded8cc!important;
+}
+
+/* Immutable account fields */
+#profileEmail,
+.profile-form input:disabled,
+.profile-form input[readonly]{
+  background:#e7e5df!important;
+  border-color:#cbc8bf!important;
+  color:#777b76!important;
+  -webkit-text-fill-color:#777b76!important;
+  cursor:not-allowed!important;
+  opacity:1!important;
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.015)!important;
+}
+.profile-form label:has(#profileEmail)::after{
+  content:"Non modifiable";
+  display:inline-block;
+  width:max-content;
+  margin-top:5px;
+  padding:3px 7px;
+  border-radius:999px;
+  background:#e7e5df;
+  color:#777b76;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.02em;
+}
+@media(max-width:900px){
+ #accountMenu{margin-left:auto!important}
+ #accountDropdown{right:0!important;left:auto!important}
+}
+
 </style>
 </head>
 <body class="auth-pending">
@@ -1366,7 +1461,8 @@ body.auth-pending .app{visibility:hidden}
 <div id="adminModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;padding:24px;overflow:auto">
   <div style="max-width:900px;margin:30px auto;background:#fffdf8;border-radius:18px;padding:24px;box-shadow:0 18px 60px rgba(0,0,0,.25)">
     <div style="display:flex;justify-content:space-between;gap:16px;align-items:center">
-      <div><h2 style="margin:0">Administration des utilisateurs</h2><p style="margin:6px 0 0;color:#666">Valider, refuser, suspendre ou réactiver les membres.</p></div>
+      <div><button id="changePasswordMenuBtn" type="button" class="account-menu-item">Changer le mot de passe</button>
+<h2 style="margin:0">Administration des utilisateurs</h2><p style="margin:6px 0 0;color:#666">Valider, refuser, suspendre ou réactiver les membres.</p></div>
       <button id="closeAdmin" class="btn">Fermer</button>
     </div>
     <input id="adminSearch" placeholder="Rechercher par e-mail..." style="width:100%;box-sizing:border-box;margin:18px 0;padding:11px;border:1px solid #ddd;border-radius:10px">
@@ -1376,7 +1472,7 @@ body.auth-pending .app{visibility:hidden}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updatePassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -1885,5 +1981,139 @@ renderCharterValues();
   setTimeout(normalizeAccountUI, 500);
 })();
 
+
+/* Change password */
+(function(){
+  function initPasswordChange(){
+    const menuBtn=document.getElementById('changePasswordMenuBtn');
+    const modal=document.getElementById('changePasswordModal');
+    const form=document.getElementById('changePasswordForm');
+    if(!menuBtn || !modal || !form) return;
+
+    const close=()=>{
+      modal.style.display='none';
+      form.reset();
+      changePasswordError.textContent='';
+      changePasswordSuccess.textContent='';
+    };
+    menuBtn.addEventListener('click',()=>{
+      const accountMenu=document.getElementById('accountMenu') || document.querySelector('.account-menu,.profile-dropdown');
+      if(accountMenu) accountMenu.style.display='none';
+      changePasswordError.textContent='';
+      changePasswordSuccess.textContent='';
+      modal.style.display='grid';
+      setTimeout(()=>newAccountPassword.focus(),50);
+    });
+    closePasswordModal.addEventListener('click',close);
+    cancelPasswordModal.addEventListener('click',close);
+    modal.addEventListener('click',e=>{if(e.target===modal) close();});
+
+    document.querySelectorAll('.password-eye').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const input=document.getElementById(btn.dataset.target);
+        const show=input.type==='password';
+        input.type=show?'text':'password';
+        btn.textContent=show?'Masquer':'Afficher';
+      });
+    });
+
+    form.addEventListener('submit',async e=>{
+      e.preventDefault();
+      changePasswordError.textContent='';
+      changePasswordSuccess.textContent='';
+      const p1=newAccountPassword.value;
+      const p2=confirmAccountPassword.value;
+      if(p1.length<6){
+        changePasswordError.textContent='Le mot de passe doit contenir au moins 6 caractères.';
+        return;
+      }
+      if(p1!==p2){
+        changePasswordError.textContent='Les deux mots de passe ne correspondent pas.';
+        return;
+      }
+      if(!auth.currentUser){
+        changePasswordError.textContent='Votre session a expiré. Reconnectez-vous puis réessayez.';
+        return;
+      }
+      savePasswordBtn.disabled=true;
+      savePasswordBtn.textContent='Modification…';
+      try{
+        await updatePassword(auth.currentUser,p1);
+        changePasswordSuccess.textContent='Votre mot de passe a bien été modifié.';
+        newAccountPassword.value='';
+        confirmAccountPassword.value='';
+        setTimeout(close,1200);
+      }catch(err){
+        if(err && err.code==='auth/requires-recent-login'){
+          changePasswordError.textContent='Pour des raisons de sécurité, reconnectez-vous puis modifiez votre mot de passe.';
+        }else if(err && err.code==='auth/weak-password'){
+          changePasswordError.textContent='Ce mot de passe est trop faible.';
+        }else{
+          changePasswordError.textContent="Impossible de modifier le mot de passe pour le moment.";
+        }
+      }finally{
+        savePasswordBtn.disabled=false;
+        savePasswordBtn.textContent='Modifier le mot de passe';
+      }
+    });
+  }
+  document.addEventListener('DOMContentLoaded',initPasswordChange);
+})();
+
+
+/* Final account menu ordering: settings first, logout last */
+(function(){
+  function reorderAccountMenu(){
+    const dd=document.getElementById('accountDropdown');
+    if(!dd) return;
+    const settings=[...dd.querySelectorAll('button')].find(b=>b.textContent.trim()==='Paramètres du compte');
+    const password=document.getElementById('changePasswordMenuBtn') ||
+      [...dd.querySelectorAll('button')].find(b=>b.textContent.trim()==='Changer le mot de passe');
+    const admin=[...dd.querySelectorAll('button')].find(b=>b.textContent.trim()==='Administration');
+    const logout=[...dd.querySelectorAll('button')].find(b=>b.textContent.trim()==='Se déconnecter');
+    [settings,password,admin,logout].forEach(el=>{if(el) dd.appendChild(el)});
+    if(logout) logout.classList.add('logout-action');
+  }
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(reorderAccountMenu,0));
+  setTimeout(reorderAccountMenu,300);
+  setTimeout(reorderAccountMenu,1000);
+})();
+
 </script>
+
+<div id="changePasswordModal" class="modal-shell" style="display:none">
+  <div class="card password-dialog" role="dialog" aria-modal="true" aria-labelledby="changePasswordTitle">
+    <div class="modal-head">
+      <div>
+        <div class="eyebrow">SÉCURITÉ DU COMPTE</div>
+        <h2 id="changePasswordTitle">Changer le mot de passe</h2>
+        <p>Choisissez un nouveau mot de passe pour votre compte.</p>
+      </div>
+      <button id="closePasswordModal" type="button" class="btn secondary">Fermer</button>
+    </div>
+    <form id="changePasswordForm" class="password-form">
+      <label>
+        <span>Nouveau mot de passe *</span>
+        <div class="password-field">
+          <input id="newAccountPassword" type="password" autocomplete="new-password" minlength="6" required placeholder="Minimum 6 caractères">
+          <button type="button" class="password-eye" data-target="newAccountPassword" aria-label="Afficher le mot de passe">Afficher</button>
+        </div>
+      </label>
+      <label>
+        <span>Confirmer le nouveau mot de passe *</span>
+        <div class="password-field">
+          <input id="confirmAccountPassword" type="password" autocomplete="new-password" minlength="6" required placeholder="Saisissez-le à nouveau">
+          <button type="button" class="password-eye" data-target="confirmAccountPassword" aria-label="Afficher le mot de passe">Afficher</button>
+        </div>
+      </label>
+      <p id="changePasswordError" class="error" aria-live="polite"></p>
+      <p id="changePasswordSuccess" class="password-success" aria-live="polite"></p>
+      <div class="modal-actions">
+        <button id="cancelPasswordModal" type="button" class="btn secondary">Annuler</button>
+        <button id="savePasswordBtn" type="submit" class="btn">Modifier le mot de passe</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 </body></html>
