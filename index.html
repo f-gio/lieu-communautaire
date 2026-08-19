@@ -1492,6 +1492,69 @@ body.auth-pending::after{
   display:none!important;
 }
 
+
+/* ===== Account settings V5 — consistent breathing room ===== */
+#profileModal{
+  padding:36px!important;
+}
+#profileModal .profile-dialog{
+  width:min(900px,calc(100vw - 72px))!important;
+}
+
+/* Header: clear horizontal + vertical margins */
+#profileModal .modal-head{
+  padding:34px 38px 30px!important;
+  min-height:108px!important;
+  box-sizing:border-box!important;
+}
+#profileModal .modal-head h2{
+  margin:0!important;
+  font-size:26px!important;
+}
+
+/* Left navigation */
+#profileModal .account-settings-nav{
+  padding:30px 22px!important;
+}
+#profileModal .account-settings-tab{
+  padding:13px 16px!important;
+  min-height:46px!important;
+}
+
+/* Main panel: same visual rhythm as header/sidebar */
+#profileModal .account-settings-content{
+  padding:34px 42px 42px!important;
+}
+#profileModal .account-settings-panel::before{
+  margin:0 0 30px!important;
+}
+
+/* Profile content */
+#profileModal .profile-photo-row{
+  padding:0 0 30px!important;
+  margin:0 0 2px!important;
+  gap:26px!important;
+}
+#profileModal .profile-form{
+  gap:26px!important;
+}
+
+/* Footer */
+#profileModal .profile-actions{
+  padding:20px 38px 24px!important;
+  min-height:84px!important;
+}
+
+/* Mobile keeps comfortable but smaller margins */
+@media(max-width:720px){
+  #profileModal{padding:14px!important}
+  #profileModal .profile-dialog{width:calc(100vw - 28px)!important}
+  #profileModal .modal-head{padding:24px 22px 20px!important;min-height:auto!important}
+  #profileModal .account-settings-nav{padding:12px 16px!important}
+  #profileModal .account-settings-content{padding:26px 22px 32px!important}
+  #profileModal .profile-actions{padding:16px 22px 20px!important}
+}
+
 </style>
 </head>
 <body class="auth-pending">
