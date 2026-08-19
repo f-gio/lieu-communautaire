@@ -892,6 +892,89 @@ input,select,textarea{border-color:#d9d2c5!important;background:#fffefa!importan
  .home-manifesto{text-align:center;font-size:14px}
 }
 
+
+/* ===== Correctifs cohérence UI ===== */
+:root{--section-eyebrow-size:11px;--section-head-gap:22px}
+body{padding-bottom:92px!important}
+.main{padding-bottom:96px!important}
+.section>.intro,.section .charter-head>p,.section .notes-head .intro{margin-top:8px!important;margin-bottom:var(--section-head-gap)!important}
+.section>.eyebrow,.section .eyebrow,.vision-kicker,.foundation-badge{
+ font-size:var(--section-eyebrow-size)!important;line-height:1.2!important;letter-spacing:.16em!important;text-transform:uppercase!important;font-weight:800!important;
+}
+.charter-head{margin-bottom:22px!important}
+.charter-head h1{margin:8px 0 0!important}
+.charter-head>p{color:var(--muted)!important}
+.values-title{margin-top:32px!important;margin-bottom:16px!important}
+.values-title h2{margin:0 0 6px!important}.values-title p{margin:0;color:var(--muted)}
+.values-title-row{display:flex!important;justify-content:space-between!important;align-items:flex-end!important;gap:20px!important}
+.charter-values{display:grid!important;grid-template-columns:1fr!important;gap:16px!important}
+.charter-value{margin:0!important;min-height:0!important;padding:25px 28px!important}
+.charter-value.foundation{padding-top:27px!important;padding-bottom:27px!important}
+.charter-value .value-copy p{line-height:1.6!important}
+.charter-closing{margin-top:24px!important}
+
+/* Bottom account actions: reserved flow area, never overlap page content */
+#accountActions{position:relative!important;z-index:15!important;display:flex!important;justify-content:flex-end!important;gap:10px!important;max-width:1380px!important;margin:22px auto 0!important;padding:0 24px 18px!important;pointer-events:none}
+#accountActions button{position:static!important;right:auto!important;bottom:auto!important;pointer-events:auto!important;margin:0!important}
+
+/* Modal */
+.modal-shell{position:fixed;inset:0;background:rgba(25,40,34,.48);z-index:9998;padding:24px;overflow:auto;display:grid;place-items:center}
+.value-dialog{width:min(620px,100%);padding:28px!important;box-shadow:0 24px 70px rgba(24,44,36,.22)!important}
+.modal-head{display:flex;justify-content:space-between;gap:22px;align-items:flex-start;padding-bottom:20px;border-bottom:1px solid var(--line)}
+.modal-head h2{font-size:24px;margin:7px 0 5px}.modal-head p{margin:0;color:var(--muted);font-size:13px}
+.value-form{display:grid;gap:17px;padding-top:22px}.value-form label{display:grid;gap:7px}.value-form label>span{font-size:13px;font-weight:700}
+.value-form input,.value-form textarea,.value-form select{width:100%;min-width:0}.value-form textarea{min-height:112px;resize:vertical}
+.modal-actions{display:flex;justify-content:flex-end;gap:9px;padding-top:6px}
+.error{color:#a75f50;font-size:12px;margin:0}
+
+/* Shared section-heading rhythm */
+.section>h1,.section>div:first-child h1{line-height:1.12!important}
+.section h1{margin-top:7px!important}
+@media(max-width:700px){
+ body{padding-bottom:24px!important}.main{padding-bottom:40px!important}
+ .values-title-row{align-items:stretch!important;flex-direction:column!important}
+ .values-title-row .btn{align-self:flex-start}
+ .charter-values{gap:12px!important}.charter-value{padding:20px!important}
+ #accountActions{padding:0 16px 16px!important;flex-wrap:wrap}
+ .modal-shell{padding:12px}.value-dialog{padding:20px!important}.modal-head{gap:10px}
+}
+
+
+/* Dashboard — indicateurs compacts sous le hero */
+#dashboard .home-kpis{
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  gap:12px!important;
+  margin:18px 0 34px!important;
+  position:relative!important;
+  z-index:2!important;
+}
+#dashboard .home-kpis .kpi{
+  min-height:0!important;
+  padding:15px 16px!important;
+  border-radius:14px!important;
+  box-shadow:none!important;
+  display:flex!important;
+  align-items:center!important;
+  gap:12px!important;
+}
+#dashboard .home-kpis .kpi-icon{
+  width:34px!important;height:34px!important;min-width:34px!important;
+  display:grid!important;place-items:center!important;
+  font-size:15px!important;
+}
+#dashboard .home-kpis .kpi>div:last-child{min-width:0!important;width:100%!important}
+#dashboard .home-kpis .lab{font-size:11px!important;line-height:1.25!important;margin-bottom:3px!important}
+#dashboard .home-kpis .num{font-size:22px!important;line-height:1.05!important}
+#dashboard .home-kpis .progress{height:5px!important;margin-top:7px!important}
+@media(max-width:900px){
+ #dashboard .home-kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+}
+@media(max-width:520px){
+ #dashboard .home-kpis{grid-template-columns:1fr!important;gap:8px!important;margin-top:14px!important}
+ #dashboard .home-kpis .kpi{padding:12px 14px!important}
+}
+
 </style>
 </head>
 <body>
@@ -923,7 +1006,6 @@ input,select,textarea{border-color:#d9d2c5!important;background:#fffefa!importan
       <p>Un lieu de vie solidaire et inclusif, où chacun peut vivre dignement, préserver son autonomie et construire l’avenir ensemble.</p>
       <div class="hero-actions">
         <button class="btn hero-primary" data-go="principles">Découvrir notre vision</button>
-        <button class="btn secondary hero-secondary" data-go="calendar">Voir le calendrier</button>
       </div>
     </div>
     <div class="hero-illustration" aria-hidden="true">
@@ -1115,8 +1197,8 @@ input,select,textarea{border-color:#d9d2c5!important;background:#fffefa!importan
 <section id="principles" class="section">
 <div class="charter-head"><div class="eyebrow">Notre cadre commun</div><h1>Charte & valeurs</h1><p>Les principes qui nous rassemblent et guident notre manière de vivre, décider et avancer ensemble.</p></div>
 <div class="card vision-card"><div class="vision-kicker">Notre vision</div><h2>Construire ensemble un lieu où bien vivre et bien vieillir</h2><p>Créer une communauté solidaire et harmonieuse pour se soutenir dans nos vieux jours, où chacun contribue à façonner un cadre de vie épanouissant, durable, adaptable et bienveillant. Ici, nous apprenons à gérer nos conflits avec respect, à partager nos espaces et nos rêves, et à cultiver des liens forts pour que ce projet soit une source de joie et de sérénité pour tous.</p></div>
-<div class="values-title"><h2>Nos valeurs fondatrices</h2><p>Quatre repères pour orienter nos comportements, nos choix et nos décisions collectives.</p></div>
-<div class="charter-values">
+<div class="values-title values-title-row"><div><h2>Nos valeurs fondatrices</h2><p>Des repères pour orienter nos comportements, nos choix et nos décisions collectives.</p></div><button id="addValueBtn" class="btn" style="display:none">+ Ajouter une valeur</button></div>
+<div class="charter-values" id="charterValues">
 <div class="card charter-value foundation"><div class="value-top"><div class="value-icon">♡</div><div class="value-number">00</div></div><div class="value-copy"><span class="foundation-badge">VALEUR SOCLE</span><h3>Respect & bienveillance</h3><p>Écouter et prendre en compte chacun et chacune dans ses différences.</p><p class="foundation-note">Cette valeur est le fondement de toutes les autres. Elle prévaut sur toute autre considération lorsqu'il s'agit de prendre une décision ou de résoudre une situation.</p></div></div>
 <div class="card charter-value"><div class="value-top"><div class="value-icon">◇</div><div class="value-number">01</div></div><div class="value-copy"><h3>Intégrité & responsabilité</h3><p>Honnêteté intellectuelle et émotionnelle, franchise, fiabilité dans nos engagements.</p></div></div>
 <div class="card charter-value"><div class="value-top"><div class="value-icon">◎</div><div class="value-number">02</div></div><div class="value-copy"><h3>Solidarité & entraide</h3><p>Solidarité humaine, émotionnelle et financière.</p></div></div>
@@ -1124,6 +1206,21 @@ input,select,textarea{border-color:#d9d2c5!important;background:#fffefa!importan
 </div>
 <div class="charter-closing"><strong>Cette charte est notre point de référence commun.</strong><span>Nos décisions, nos comportements et l'évolution du projet doivent rester cohérents avec ces principes.</span></div>
 </section>
+<div id="valueModal" class="modal-shell" style="display:none">
+  <div class="card value-dialog">
+    <div class="modal-head">
+      <div><div class="eyebrow">VALEUR FONDATRICE</div><h2>Ajouter une valeur</h2><p>Ajoutez un nouveau principe à la charte commune.</p></div>
+      <button id="closeValueModal" class="btn secondary">Fermer</button>
+    </div>
+    <div class="value-form">
+      <label><span>Titre *</span><input id="valueTitle" maxlength="80" placeholder="Ex. Liberté & autonomie"></label>
+      <label><span>Description *</span><textarea id="valueDescription" maxlength="400" placeholder="Décrivez simplement ce que cette valeur signifie pour la communauté."></textarea></label>
+      <label><span>Symbole</span><select id="valueIcon"><option value="♡">♡ Cœur</option><option value="◇">◇ Losange</option><option value="◎">◎ Cercle</option><option value="☀">☀ Soleil</option><option value="♧">♧ Nature</option><option value="∞">∞ Lien</option></select></label>
+      <p id="valueError" class="error"></p>
+      <div class="modal-actions"><button id="cancelValueModal" class="btn secondary">Annuler</button><button id="saveValueBtn" class="btn">Ajouter la valeur</button></div>
+    </div>
+  </div>
+</div>
 <section id="notes" class="section">
   <div class="notes-head">
     <div><div class="eyebrow">PARTAGE & ÉCHANGES</div><h1>Notes</h1>
@@ -1173,17 +1270,25 @@ const firebaseConfig = {
 const app=initializeApp(firebaseConfig), auth=getAuth(app), db=getFirestore(app);
 const defaults={tasks:[{name:'Formaliser la vision commune',owner:'Groupe fondateur',date:'',status:'En cours',done:false},{name:'Identifier les besoins à 10–20 ans',owner:'Tous',date:'',status:'À faire',done:false},{name:'Comparer 3 modèles juridiques',owner:'À définir',date:'',status:'À faire',done:false},{name:'Définir les critères du lieu',owner:'Tous',date:'',status:'À faire',done:false}],members:[{name:'Foyer 1',skill:'Coordination'},{name:'Foyer 2',skill:'Finance'},{name:'Foyer 3',skill:'Jardin / écologie'},{name:'Foyer 4',skill:'Santé / bien-être'},{name:'Foyer 5',skill:'Bricolage'},{name:'Foyer 6',skill:'Vie collective'}],budget:[],notes:''};
 let data=structuredClone(defaults), unsub=null;
+const baseCharterValues=[
+ {title:'Respect & bienveillance',description:'Écouter et prendre en compte chacun et chacune dans ses différences.',icon:'♡',foundation:true},
+ {title:'Intégrité & responsabilité',description:'Honnêteté intellectuelle et émotionnelle, franchise, fiabilité dans nos engagements.',icon:'◇'},
+ {title:'Solidarité & entraide',description:'Solidarité humaine, émotionnelle et financière.',icon:'◎'},
+ {title:'Qualité de vie',description:'Confort physiologique et mental.',icon:'☀'}
+];
+
 const projectRef=doc(db,'projects','maison-demain');
 
 const overlay=document.createElement('div'); overlay.id='loginOverlay'; overlay.innerHTML=`<div style="max-width:420px;margin:12vh auto;background:#fffdf8;border:1px solid #ddd8cd;border-radius:16px;padding:28px;box-shadow:0 12px 40px #0002"><h2>Communauté solidaire des Gens de confiance</h2><p></p><input id="loginEmail" type="email" placeholder="E-mail" style="width:100%;margin:7px 0"><input id="loginPassword" type="password" placeholder="Mot de passe" style="width:100%;margin:7px 0"><button id="loginBtn" class="btn" style="width:100%;margin-top:8px">Se connecter</button>
 <button id="signupBtn" type="button" style="width:100%;margin-top:10px;background:transparent;border:0;color:#365d55;cursor:pointer;text-decoration:underline">Créer un compte</button>
 <p id="loginError" style="color:#a75f50;font-size:13px"></p><div id="approvalMessage" style="display:none;margin-top:14px;padding:14px;border-radius:12px;background:#f4efe6;line-height:1.5"></div></div>`; Object.assign(overlay.style,{position:'fixed',inset:'0',background:'#f4f1e9',zIndex:'9999'}); document.body.appendChild(overlay);
-const logout=document.createElement('button'); logout.textContent='Se déconnecter'; logout.className='btn secondary'; logout.style.cssText='position:fixed;right:18px;bottom:18px;z-index:20'; logout.hidden=true; document.body.appendChild(logout);
+const accountActions=document.createElement('div'); accountActions.id='accountActions'; document.body.appendChild(accountActions);
+const logout=document.createElement('button'); logout.textContent='Se déconnecter'; logout.className='btn secondary'; logout.hidden=true; accountActions.appendChild(logout);
 const adminBtn=document.createElement('button');
 adminBtn.textContent='Administration';
 adminBtn.className='btn';
-adminBtn.style.cssText='display:none;position:fixed;right:170px;bottom:18px;z-index:20';
-document.body.appendChild(adminBtn);
+adminBtn.style.display='none';
+accountActions.appendChild(adminBtn);
 
 loginBtn.onclick=async()=>{
 loginError.textContent='';approvalMessage.style.display='none';
@@ -1209,7 +1314,7 @@ function money(n){return new Intl.NumberFormat('fr-FR',{style:'currency',currenc
 function renderTasks(){taskList.innerHTML=data.tasks.map((t,i)=>`<div class="taskrow ${t.done?'done':''}"><input type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${i},this.checked)"><b class="taskname">${esc(t.name)}</b><span>${esc(t.owner)}</span><span>${t.date||'Sans date'}</span><span class="tag">${esc(t.status)}</span><button class="del" onclick="deleteTask(${i})">×</button></div>`).join('')}
 function renderMembers(){memberList.innerHTML=data.members.map((m,i)=>`<div class="member"><div class="avatar">${esc(m.name).charAt(0).toUpperCase()}</div><div><b>${esc(m.name)}</b><br><small>${esc(m.skill)}</small></div><button class="del" style="margin-left:auto" onclick="deleteMember(${i})">×</button></div>`).join('')}
 function renderBudget(){budgetList.innerHTML=data.budget.map((b,i)=>`<div class="budgetrow"><b>${esc(b.label)}</b><span>${esc(b.type)}</span><span class="money">${money(b.amount)}</span><button class="del" onclick="deleteBudget(${i})">×</button></div>`).join('');let total=data.budget.reduce((s,b)=>s+Number(b.amount),0);budgetTotal.textContent=money(total);budgetKpi.textContent=money(total)}
-function renderAll(){renderTasks();renderMembers();renderBudget();renderNotes();memberKpi.textContent=data.members.length;taskKpi.textContent=data.tasks.filter(t=>!t.done).length;let p=data.tasks.length?Math.round(data.tasks.filter(t=>t.done).length/data.tasks.length*100):0;progressNum.textContent=p+'%';progressBar.style.width=p+'%'
+function renderAll(){renderCharterValues();renderTasks();renderMembers();renderBudget();renderNotes();memberKpi.textContent=data.members.length;taskKpi.textContent=data.tasks.filter(t=>!t.done).length;let p=data.tasks.length?Math.round(data.tasks.filter(t=>t.done).length/data.tasks.length*100):0;progressNum.textContent=p+'%';progressBar.style.width=p+'%'
 renderCalendar();
 renderPolls();
 renderResources();}
@@ -1555,5 +1660,32 @@ document.querySelectorAll('[data-go]').forEach(btn=>{
     if(navBtn) navBtn.click();
   });
 });
+
+function renderCharterValues(){
+  const extras=Array.isArray(data.charterValues)?data.charterValues:[];
+  const vals=[...baseCharterValues,...extras];
+  if(!window.charterValues) return;
+  charterValues.innerHTML=vals.map((v,i)=>`<div class="card charter-value ${v.foundation?'foundation':''}">
+    <div class="value-top"><div class="value-icon">${esc(v.icon||'◇')}</div><div class="value-number">${String(i).padStart(2,'0')}</div></div>
+    <div class="value-copy">${v.foundation?'<span class="foundation-badge">VALEUR SOCLE</span>':''}<h3>${esc(v.title)}</h3><p>${esc(v.description)}</p>${v.foundation?`<p class="foundation-note">Cette valeur est le fondement de toutes les autres. Elle prévaut sur toute autre considération lorsqu'il s'agit de prendre une décision ou de résoudre une situation.</p>`:''}</div>
+  </div>`).join('');
+}
+if(window.addValueBtn){
+ addValueBtn.onclick=()=>{valueTitle.value='';valueDescription.value='';valueIcon.value='♡';valueError.textContent='';valueModal.style.display='grid'};
+ closeValueModal.onclick=cancelValueModal.onclick=()=>valueModal.style.display='none';
+ valueModal.addEventListener('click',e=>{if(e.target===valueModal)valueModal.style.display='none'});
+ saveValueBtn.onclick=async()=>{
+   const title=valueTitle.value.trim(),description=valueDescription.value.trim();
+   if(!title||!description){valueError.textContent='Le titre et la description sont obligatoires.';return}
+   saveValueBtn.disabled=true;saveValueBtn.textContent='Enregistrement…';
+   try{
+     data.charterValues=Array.isArray(data.charterValues)?data.charterValues:[];
+     data.charterValues.push({title,description,icon:valueIcon.value});
+     await save(); renderCharterValues(); valueModal.style.display='none';
+   }catch(e){valueError.textContent="Impossible d'enregistrer la valeur pour le moment."}
+   finally{saveValueBtn.disabled=false;saveValueBtn.textContent='Ajouter la valeur'}
+ };
+}
+renderCharterValues();
 </script>
 </body></html>
