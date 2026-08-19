@@ -1477,6 +1477,21 @@ body.auth-pending::after{
  #profileModal .account-setting-action{width:100%!important}
 }
 
+
+/* ===== Account settings header & photo delete visibility ===== */
+#profileModal .modal-head{
+  padding:30px 34px 26px!important;
+  min-height:auto!important;
+  align-items:center!important;
+}
+#profileModal .modal-head h2{
+  margin:0!important;
+  line-height:1.2!important;
+}
+#removeProfilePhoto[hidden]{
+  display:none!important;
+}
+
 </style>
 </head>
 <body class="auth-pending">
@@ -1751,7 +1766,7 @@ body.auth-pending::after{
 
 <div id="profileModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10000;padding:18px;overflow:auto">
  <div class="profile-dialog" style="width:min(880px,calc(100vw - 48px));max-width:880px;margin:32px auto;padding:0;border-radius:20px;overflow:hidden;">
-  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><div><div class="eyebrow">COMPTE</div><h2 style="margin:3px 0 0">Paramètres du compte <small style="font-size:10px;font-weight:600;color:#8b928d;vertical-align:middle">v3</small></h2></div><button id="closeProfileModal" class="btn secondary modal-close-x" type="button" aria-label="Fermer" title="Fermer">×</button></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><div><h2 style="margin:3px 0 0">Paramètres du compte</h2></div><button id="closeProfileModal" class="btn secondary modal-close-x" type="button" aria-label="Fermer" title="Fermer">×</button></div>
   
   <div class="account-settings-layout" style="display:grid;grid-template-columns:200px minmax(0,1fr);min-height:410px;margin:0;border:0;">
    <nav class="account-settings-nav" style="padding:28px 16px;background:#f5f3ed;border-right:1px solid #ddd8cd;gap:8px;" aria-label="Catégories des paramètres">
@@ -1762,7 +1777,7 @@ body.auth-pending::after{
     <section class="account-settings-panel active" data-account-content="profile">
 
 <div class="profile-form">
-   <div class="profile-photo-row"><div id="profilePreview" class="profile-preview">C</div><div><label class="btn secondary" style="display:inline-block;cursor:pointer">Choisir une photo<input id="profilePhotoInput" type="file" accept="image/*" style="display:none"></label><button id="removeProfilePhoto" class="btn secondary" type="button" style="margin-left:5px">Supprimer</button><div class="profile-help" style="margin-top:7px">La photo est redimensionnée et compressée automatiquement à 5 Ko maximum.</div></div></div>
+   <div class="profile-photo-row"><div id="profilePreview" class="profile-preview">C</div><div><label class="btn secondary" style="display:inline-block;cursor:pointer">Choisir une photo<input id="profilePhotoInput" type="file" accept="image/*" style="display:none"></label><button id="removeProfilePhoto" class="btn secondary" hidden type="button" style="margin-left:5px">Supprimer</button><div class="profile-help" style="margin-top:7px">La photo est redimensionnée et compressée automatiquement à 5 Ko maximum.</div></div></div>
    <label>Nom affiché<input id="profileDisplayName" maxlength="60" placeholder="Votre nom"></label>
    <label>E-mail<input id="profileEmail" type="email" disabled></label>
    
@@ -2572,6 +2587,40 @@ renderCharterValues();
  }
  document.addEventListener('DOMContentLoaded',initPasswordFlow);
  setTimeout(initPasswordFlow,300);
+})();
+
+
+/* Show "Supprimer" only when a real profile photo exists */
+(function(){
+  function syncProfilePhotoDeleteButton(){
+    const btn=document.getElementById('removeProfilePhoto');
+    const preview=document.getElementById('profilePreview');
+    if(!btn || !preview) return;
+
+    const hasImg=!!preview.querySelector('img') ||
+      (preview.style.backgroundImage && preview.style.backgroundImage!=='none' && preview.style.backgroundImage!=='');
+    btn.hidden=!hasImg;
+  }
+
+  document.addEventListener('DOMContentLoaded',()=>{
+    syncProfilePhotoDeleteButton();
+
+    const preview=document.getElementById('profilePreview');
+    if(preview){
+      new MutationObserver(syncProfilePhotoDeleteButton).observe(preview,{
+        childList:true,subtree:true,attributes:true,attributeFilter:['style','src']
+      });
+    }
+
+    const input=document.getElementById('profilePhotoInput');
+    if(input) input.addEventListener('change',()=>setTimeout(syncProfilePhotoDeleteButton,50));
+
+    const remove=document.getElementById('removeProfilePhoto');
+    if(remove) remove.addEventListener('click',()=>setTimeout(syncProfilePhotoDeleteButton,50));
+  });
+
+  setTimeout(syncProfilePhotoDeleteButton,400);
+  setTimeout(syncProfilePhotoDeleteButton,1000);
 })();
 
 </script>
