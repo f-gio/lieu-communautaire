@@ -1204,11 +1204,74 @@ body.auth-pending .app{visibility:hidden}
  .account-setting-action{width:100%}
 }
 
+
+/* ===== Account settings with category sidebar ===== */
+.brand{cursor:pointer}
+.brand:focus-visible{outline:2px solid rgba(255,255,255,.8);outline-offset:5px;border-radius:8px}
+
+.modal-close-x{
+  display:flex!important;align-items:center!important;justify-content:center!important;
+  width:38px!important;height:38px!important;min-width:38px!important;
+  padding:0!important;margin:0!important;line-height:1!important;
+}
+.modal-close-x span{
+  display:block!important;
+  font-size:27px!important;line-height:32px!important;
+  height:34px!important;transform:translateY(-1px)!important;
+}
+
+.account-settings-dialog{width:min(760px,100%)!important;padding:0!important;overflow:hidden}
+.account-settings-head{
+ display:flex;justify-content:space-between;align-items:center;gap:18px;
+ padding:24px 26px 20px;border-bottom:1px solid var(--line)
+}
+.account-settings-layout{display:grid;grid-template-columns:175px minmax(0,1fr);min-height:330px}
+.account-settings-nav{
+ padding:18px 12px;background:#f2f0e9;border-right:1px solid var(--line);
+ display:flex;flex-direction:column;gap:5px
+}
+.account-settings-tab{
+ border:0;background:transparent;text-align:left;padding:11px 12px;border-radius:9px;
+ color:var(--forest);font:inherit;font-size:13px;font-weight:650;cursor:pointer
+}
+.account-settings-tab:hover{background:#e8e9e1}
+.account-settings-tab.active{background:#dfe7dc;color:#23483d}
+.account-settings-content{padding:24px 28px}
+.account-settings-panel{display:none}
+.account-settings-panel.active{display:block}
+.account-panel-title{margin-bottom:22px}
+.account-panel-title h3{font-size:20px;margin:0 0 5px;color:var(--forest)}
+.account-panel-title p{margin:0;color:var(--muted);font-size:13px}
+.immutable-field{position:relative}
+.readonly-badge{
+ display:inline-block;margin-left:7px;padding:2px 7px;border-radius:999px;
+ background:#e2e0da;color:#70746f;font-size:9px;font-weight:800;vertical-align:middle
+}
+.security-setting-card{
+ display:flex;justify-content:space-between;align-items:center;gap:24px;
+ padding:18px;border:1px solid var(--line);border-radius:12px;background:#fffdf9
+}
+.account-settings-actions{
+ border-top:1px solid var(--line);padding:16px 26px!important;margin:0!important;
+ background:#fffdf9
+}
+@media(max-width:620px){
+ .account-settings-layout{grid-template-columns:1fr}
+ .account-settings-nav{
+  border-right:0;border-bottom:1px solid var(--line);
+  flex-direction:row;padding:10px 14px;overflow-x:auto
+ }
+ .account-settings-tab{white-space:nowrap}
+ .account-settings-content{padding:20px}
+ .security-setting-card{align-items:flex-start;flex-direction:column}
+ .security-setting-card .btn{width:100%}
+}
+
 </style>
 </head>
 <body class="auth-pending">
 <div class="app">
-<aside class="side"><div class="brand">
+<aside class="side"><div class="brand" id="homeBrand" role="button" tabindex="0" aria-label="Retour à l’accueil">
 <svg class="brandmark" viewBox="0 0 64 64" aria-hidden="true">
   <path d="M8 38V27l12-10 12 10v11M27 38V23l11-9 11 9v15M43 38V28l8-7 7 7v10" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
   <path d="M13 42c9 7 29 7 39 0M10 17C16 8 25 4 32 4c10 0 19 5 24 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
@@ -1477,671 +1540,38 @@ body.auth-pending .app{visibility:hidden}
 
 
 <div id="profileModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10000;padding:18px;overflow:auto">
- <div class="profile-dialog">
-  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><div><div class="eyebrow">COMPTE</div><h2 style="margin:3px 0 0">Paramètres du compte</h2></div><button id="closeProfileModal" class="btn secondary modal-close-x" type="button" aria-label="Fermer" title="Fermer">×</button></div>
-  <div class="profile-form">
-   <div class="profile-photo-row"><div id="profilePreview" class="profile-preview">C</div><div><label class="btn secondary" style="display:inline-block;cursor:pointer">Choisir une photo<input id="profilePhotoInput" type="file" accept="image/*" style="display:none"></label><button id="removeProfilePhoto" class="btn secondary" type="button" style="margin-left:5px">Supprimer</button><div class="profile-help" style="margin-top:7px">La photo est redimensionnée et compressée automatiquement à 5 Ko maximum.</div></div></div>
-   <label>Nom affiché<input id="profileDisplayName" maxlength="60" placeholder="Votre nom"></label>
-   <label>E-mail<input id="profileEmail" type="email" disabled></label>
-   
-   <div class="profile-section-divider"></div>
-   <div class="profile-section">
-    <div class="profile-section-title">Sécurité</div>
-    <div class="profile-section-row">
-      <div>
-        <strong>Mot de passe</strong>
-        <div class="profile-help">Modifiez le mot de passe utilisé pour vous connecter.</div>
-      </div>
-      <button id="openPasswordFromProfile" class="btn secondary account-setting-action" type="button">Changer le mot de passe</button>
-    </div>
-   </div>
-
-   <p id="profileError" class="error" style="color:#a75f50"></p>
-   <div class="profile-actions"><button id="cancelProfile" class="btn secondary" type="button">Annuler</button><button id="saveProfile" class="btn" type="button">Enregistrer</button></div>
+ <div class="profile-dialog account-settings-dialog">
+  <div class="account-settings-head">
+   <div><div class="eyebrow">COMPTE</div><h2 style="margin:3px 0 0">Paramètres du compte</h2></div>
+   <button id="closeProfileModal" class="modal-close-x" type="button" aria-label="Fermer" title="Fermer"><span aria-hidden="true">×</span></button>
   </div>
+  <div class="account-settings-layout">
+   <nav class="account-settings-nav" aria-label="Catégories des paramètres">
+    <button type="button" class="account-settings-tab active" data-account-panel="profile">Profil</button>
+    <button type="button" class="account-settings-tab" data-account-panel="security">Sécurité</button>
+   </nav>
+   <div class="account-settings-content">
+    <section class="account-settings-panel active" data-account-content="profile">
+     <div class="account-panel-title"><h3>Profil</h3><p>Gérez les informations visibles de votre compte.</p></div>
+     <div class="profile-form">
+      <div class="profile-photo-row"><div id="profilePreview" class="profile-preview">C</div><div><label class="btn secondary" style="display:inline-block;cursor:pointer">Choisir une photo<input id="profilePhotoInput" type="file" accept="image/*" style="display:none"></label><button id="removeProfilePhoto" class="btn secondary" type="button" style="margin-left:5px">Supprimer</button><div class="profile-help" style="margin-top:7px">La photo est redimensionnée et compressée automatiquement à 5 Ko maximum.</div></div></div>
+      <label>Nom affiché<input id="profileDisplayName" maxlength="60" placeholder="Votre nom"></label>
+      <label class="immutable-field">E-mail <span class="readonly-badge">Non modifiable</span><input id="profileEmail" type="email" disabled></label>
+      <p id="profileError" class="error" style="color:#a75f50"></p>
+     </div>
+    </section>
+    <section class="account-settings-panel" data-account-content="security">
+     <div class="account-panel-title"><h3>Sécurité</h3><p>Gérez les éléments liés à la sécurité de votre compte.</p></div>
+     <div class="security-setting-card">
+      <div><strong>Mot de passe</strong><div class="profile-help">Modifiez le mot de passe utilisé pour vous connecter.</div></div>
+      <button id="openPasswordFromProfile" class="btn secondary account-setting-action" type="button">Changer le mot de passe</button>
+     </div>
+    </section>
+   </div>
+  </div>
+  <div class="profile-actions account-settings-actions"><button id="cancelProfile" class="btn secondary" type="button">Annuler</button><button id="saveProfile" class="btn" type="button">Enregistrer</button></div>
  </div>
 </div>
-<div id="adminModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;padding:24px;overflow:auto">
-  <div style="max-width:900px;margin:30px auto;background:#fffdf8;border-radius:18px;padding:24px;box-shadow:0 18px 60px rgba(0,0,0,.25)">
-    <div style="display:flex;justify-content:space-between;gap:16px;align-items:center">
-      <div><h2 style="margin:0">Administration des utilisateurs</h2><p style="margin:6px 0 0;color:#666">Valider, refuser, suspendre ou réactiver les membres.</p></div>
-      <button id="closeAdmin" class="btn modal-close-x" aria-label="Fermer" title="Fermer">×</button>
-    </div>
-    <input id="adminSearch" placeholder="Rechercher par e-mail..." style="width:100%;box-sizing:border-box;margin:18px 0;padding:11px;border:1px solid #ddd;border-radius:10px">
-    <div id="adminUsers"></div>
-  </div>
-</div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updatePassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAxjDMddH2p_uwzex1hpGa3LXATxjqkEXs",
-  authDomain: "lieu-communautaire.firebaseapp.com",
-  projectId: "lieu-communautaire",
-  storageBucket: "lieu-communautaire.firebasestorage.app",
-  messagingSenderId: "770451809596",
-  appId: "1:770451809596:web:0a0cedd9bbcdf70729ea39"
-};
-const app=initializeApp(firebaseConfig), auth=getAuth(app), db=getFirestore(app);
-const defaults={tasks:[{name:'Formaliser la vision commune',owner:'Groupe fondateur',date:'',status:'En cours',done:false},{name:'Identifier les besoins à 10–20 ans',owner:'Tous',date:'',status:'À faire',done:false},{name:'Comparer 3 modèles juridiques',owner:'À définir',date:'',status:'À faire',done:false},{name:'Définir les critères du lieu',owner:'Tous',date:'',status:'À faire',done:false}],members:[{name:'Foyer 1',skill:'Coordination'},{name:'Foyer 2',skill:'Finance'},{name:'Foyer 3',skill:'Jardin / écologie'},{name:'Foyer 4',skill:'Santé / bien-être'},{name:'Foyer 5',skill:'Bricolage'},{name:'Foyer 6',skill:'Vie collective'}],budget:[],notes:''};
-let data=structuredClone(defaults), unsub=null;
-const baseCharterValues=[
- {title:'Respect & bienveillance',description:'Écouter et prendre en compte chacun et chacune dans ses différences.',icon:'♡',foundation:true},
- {title:'Intégrité & responsabilité',description:'Honnêteté intellectuelle et émotionnelle, franchise, fiabilité dans nos engagements.',icon:'◇'},
- {title:'Solidarité & entraide',description:'Solidarité humaine, émotionnelle et financière.',icon:'◎'},
- {title:'Qualité de vie',description:'Confort physiologique et mental.',icon:'☀'}
-];
-
-const projectRef=doc(db,'projects','maison-demain');
-
-const overlay=document.createElement('div'); overlay.id='loginOverlay'; overlay.innerHTML=`<div style="max-width:420px;margin:12vh auto;background:#fffdf8;border:1px solid #ddd8cd;border-radius:16px;padding:28px;box-shadow:0 12px 40px #0002"><h2>Communauté solidaire des Gens de confiance</h2><p></p><input id="loginEmail" type="email" placeholder="E-mail" style="width:100%;margin:7px 0"><input id="loginPassword" type="password" placeholder="Mot de passe" style="width:100%;margin:7px 0"><button id="loginBtn" class="btn" style="width:100%;margin-top:8px">Se connecter</button>
-<button id="signupBtn" type="button" style="width:100%;margin-top:10px;background:transparent;border:0;color:#365d55;cursor:pointer;text-decoration:underline">Créer un compte</button>
-<p id="loginError" style="color:#a75f50;font-size:13px"></p><div id="approvalMessage" style="display:none;margin-top:14px;padding:14px;border-radius:12px;background:#f4efe6;line-height:1.5"></div></div>`; Object.assign(overlay.style,{position:'fixed',inset:'0',background:'#f4f1e9',zIndex:'9999'}); document.body.appendChild(overlay);
-const accountActions=document.getElementById('accountDropdown');
-const accountMenu=document.getElementById('accountMenu');
-const accountMenuBtn=document.getElementById('accountMenuBtn');
-const logout=document.createElement('button'); logout.textContent='Se déconnecter'; logout.className='account-action logout-action'; logout.hidden=true; if(accountMenu) accountMenu.style.display='none'; accountActions.appendChild(logout);
-
-const accountAvatar=document.getElementById('accountAvatar');
-const accountLabel=document.getElementById('accountLabel');
-const profileModal=document.getElementById('profileModal');
-const profilePreview=document.getElementById('profilePreview');
-const profileDisplayName=document.getElementById('profileDisplayName');
-const profileEmail=document.getElementById('profileEmail');
-const profilePhotoInput=document.getElementById('profilePhotoInput');
-const profileError=document.getElementById('profileError');
-let currentProfilePhoto='';
-const settingsBtn=document.createElement('button');settingsBtn.textContent='Paramètres du compte';settingsBtn.className='account-action';accountActions.appendChild(settingsBtn);
-function initials(name,email){const v=(name||email||'Compte').trim();return v.split(/\s+/).slice(0,2).map(x=>x[0]?.toUpperCase()||'').join('')||'C'}
-function avatarHTML(photo,name,email){return photo?`<img src="${photo}" alt="Photo de profil">`:initials(name,email)}
-function updateAccountUI(profile,user){const name=profile?.displayName||'';const photo=profile?.photo||'';accountAvatar.innerHTML=avatarHTML(photo,name,user?.email);accountLabel.textContent=name||'Compte';}
-function openProfile(profile,user){currentProfilePhoto=profile?.photo||'';profileDisplayName.value=profile?.displayName||'';profileEmail.value=user?.email||'';profilePreview.innerHTML=avatarHTML(currentProfilePhoto,profileDisplayName.value,user?.email);profileError.textContent='';profileModal.style.display='block';accountDropdown.hidden=true;accountMenuBtn.setAttribute('aria-expanded','false')}
-function closeProfile(){profileModal.style.display='none'}
-async function compressProfileImage(file,maxBytes=5*1024){const img=await new Promise((res,rej)=>{const i=new Image();i.onload=()=>res(i);i.onerror=rej;i.src=URL.createObjectURL(file)});let size=160,quality=.72;for(let round=0;round<18;round++){const scale=Math.min(1,size/Math.max(img.width,img.height));const w=Math.max(1,Math.round(img.width*scale)),h=Math.max(1,Math.round(img.height*scale));const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);const data=c.toDataURL('image/jpeg',quality);const bytes=Math.ceil((data.length-data.indexOf(',')-1)*3/4);if(bytes<=maxBytes){URL.revokeObjectURL(img.src);return data}if(quality>.28)quality-=.08;else size=Math.max(48,Math.round(size*.82))}URL.revokeObjectURL(img.src);throw new Error('compression')}
-settingsBtn.onclick=async()=>{const u=auth.currentUser;if(!u)return;const snap=await getDoc(doc(db,'users',u.uid));openProfile(snap.data()||{},u)};
-closeProfileModal.onclick=cancelProfile.onclick=closeProfile;
-profileModal.addEventListener('click',e=>{if(e.target===profileModal)closeProfile()});
-profilePhotoInput.onchange=async()=>{const f=profilePhotoInput.files?.[0];if(!f)return;profileError.textContent='Compression de la photo…';try{currentProfilePhoto=await compressProfileImage(f);profilePreview.innerHTML=avatarHTML(currentProfilePhoto,profileDisplayName.value,auth.currentUser?.email);profileError.textContent=''}catch{profileError.textContent='Cette photo ne peut pas être compressée sous 5 Ko.'}finally{profilePhotoInput.value=''}};
-removeProfilePhoto.onclick=()=>{currentProfilePhoto='';profilePreview.innerHTML=initials(profileDisplayName.value,auth.currentUser?.email)};
-profileDisplayName.oninput=()=>{if(!currentProfilePhoto)profilePreview.innerHTML=initials(profileDisplayName.value,auth.currentUser?.email)};
-saveProfile.onclick=async()=>{const u=auth.currentUser;if(!u)return;saveProfile.disabled=true;profileError.textContent='';try{const payload={displayName:profileDisplayName.value.trim(),photo:currentProfilePhoto,updatedAt:serverTimestamp()};await setDoc(doc(db,'users',u.uid),payload,{merge:true});updateAccountUI(payload,u);closeProfile()}catch(e){profileError.textContent='Impossible d’enregistrer les paramètres du compte.'}finally{saveProfile.disabled=false}};
-const adminBtn=document.createElement('button');
-adminBtn.textContent='Administration';
-adminBtn.className='account-action';
-adminBtn.style.display='none';
-accountActions.appendChild(adminBtn);
-accountMenuBtn.onclick=(e)=>{e.stopPropagation();const open=accountDropdown.hidden;accountDropdown.hidden=!open;accountMenuBtn.setAttribute('aria-expanded',String(open));};
-document.addEventListener('click',(e)=>{if(accountMenu && !accountMenu.contains(e.target)){accountDropdown.hidden=true;accountMenuBtn.setAttribute('aria-expanded','false');}});
-
-loginBtn.onclick=async()=>{
-loginError.textContent='';approvalMessage.style.display='none';
-const email=loginEmail.value.trim(),password=loginPassword.value;
-if(!email||!password){loginError.textContent='Veuillez saisir votre e-mail et votre mot de passe.';return}
-const originalText=loginBtn.textContent;loginBtn.disabled=true;loginBtn.innerHTML='<span class="login-spinner"></span>Connexion en cours…';
-try{await signInWithEmailAndPassword(auth,email,password)}
-catch(e){
-if(e.code==='auth/invalid-email')loginError.textContent='E-mail ou mot de passe incorrect.';
-else if(e.code==='auth/too-many-requests')loginError.textContent='Trop de tentatives. Veuillez patienter quelques minutes avant de réessayer.';
-else if(e.code==='auth/network-request-failed')loginError.textContent='Impossible de se connecter au réseau. Vérifiez votre connexion Internet.';
-else loginError.textContent='E-mail ou mot de passe incorrect.';
-}
-finally{loginBtn.disabled=false;loginBtn.textContent=originalText}
-};
-loginPassword.addEventListener('keydown',e=>{if(e.key==='Enter'&&!loginBtn.disabled)loginBtn.click()});
-signupBtn.onclick=async()=>{loginError.textContent='';const email=loginEmail.value.trim(), password=loginPassword.value;if(!email){loginError.textContent='Saisissez votre e-mail.';return}if(password.length<6){loginError.textContent='Le mot de passe doit contenir au moins 6 caractères.';return}try{const cred=await createUserWithEmailAndPassword(auth,email,password);await setDoc(doc(db,'users',cred.user.uid),{email:cred.user.email,status:'pending',createdAt:serverTimestamp()})}catch(e){if(e.code==='auth/email-already-in-use') loginError.textContent='Un compte existe déjà avec cet e-mail.';else if(e.code==='auth/invalid-email') loginError.textContent='Adresse e-mail invalide.';else if(e.code==='auth/weak-password') loginError.textContent='Choisissez un mot de passe plus sécurisé.';else loginError.textContent='Impossible de créer le compte pour le moment.'}};
-logout.onclick=()=>signOut(auth);
-
-async function save(){await setDoc(projectRef,{...data,updatedAt:new Date().toISOString()});}
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function money(n){return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n)}
-function renderTasks(){taskList.innerHTML=data.tasks.map((t,i)=>`<div class="taskrow ${t.done?'done':''}"><input type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${i},this.checked)"><b class="taskname">${esc(t.name)}</b><span>${esc(t.owner)}</span><span>${t.date||'Sans date'}</span><span class="tag">${esc(t.status)}</span><button class="del" onclick="deleteTask(${i})">×</button></div>`).join('')}
-function renderMembers(){memberList.innerHTML=data.members.map((m,i)=>`<div class="member"><div class="avatar">${esc(m.name).charAt(0).toUpperCase()}</div><div><b>${esc(m.name)}</b><br><small>${esc(m.skill)}</small></div><button class="del" style="margin-left:auto" onclick="deleteMember(${i})">×</button></div>`).join('')}
-function renderBudget(){budgetList.innerHTML=data.budget.map((b,i)=>`<div class="budgetrow"><b>${esc(b.label)}</b><span>${esc(b.type)}</span><span class="money">${money(b.amount)}</span><button class="del" onclick="deleteBudget(${i})">×</button></div>`).join('');let total=data.budget.reduce((s,b)=>s+Number(b.amount),0);budgetTotal.textContent=money(total);budgetKpi.textContent=money(total)}
-function renderAll(){renderCharterValues();renderTasks();renderMembers();renderBudget();renderNotes();memberKpi.textContent=data.members.length;taskKpi.textContent=data.tasks.filter(t=>!t.done).length;let p=data.tasks.length?Math.round(data.tasks.filter(t=>t.done).length/data.tasks.length*100):0;progressNum.textContent=p+'%';progressBar.style.width=p+'%'
-renderCalendar();
-renderPolls();
-renderResources();}
-window.addTask=()=>{let n=taskName.value.trim();if(!n)return;data.tasks.push({name:n,owner:taskOwner.value||'À définir',date:taskDate.value,status:taskStatus.value,done:false});taskName.value='';save()};
-window.toggleTask=(i,v)=>{data.tasks[i].done=v;save()}; window.deleteTask=i=>{data.tasks.splice(i,1);save()};
-window.addMember=()=>{let n=memberName.value.trim();if(!n)return;data.members.push({name:n,skill:memberSkill.value||'À définir'});memberName.value='';memberSkill.value='';save()}; window.deleteMember=i=>{data.members.splice(i,1);save()};
-window.addBudget=()=>{let l=budgetLabel.value.trim(),a=Number(budgetAmount.value);if(!l||!a)return;data.budget.push({label:l,amount:a,type:budgetType.value});budgetLabel.value='';budgetAmount.value='';save()}; window.deleteBudget=i=>{data.budget.splice(i,1);save()};
-
-
-/* Notes collaboratives */
-let editingNoteId=null;
-function currentUserId(){return auth.currentUser?.uid||''}
-function currentUserEmail(){return auth.currentUser?.email||'Membre'}
-function noteAuthor(n){return n.authorEmail||'Membre'}
-function openNoteModal(id=null){
- editingNoteId=id;const n=(data.noteItems||[]).find(x=>x.id===id);
- if(n && n.authorUid!==currentUserId())return;
- noteModalTitle.textContent=n?'Modifier la note':'Nouvelle note';noteTitle.value=n?.title||'';noteContent.value=n?.content||'';noteError.textContent='';
- deleteNoteBtn.style.display=n?'inline-block':'none';saveNoteBtn.textContent=n?'Enregistrer':'Publier';noteModal.style.display='block';
-}
-function closeNote(){noteModal.style.display='none';editingNoteId=null}
-function renderNotes(){
- if(!document.getElementById('notesFeed'))return;data.noteItems=data.noteItems||[];
- const items=[...data.noteItems].sort((a,b)=>(b.updatedAt||b.createdAt||'').localeCompare(a.updatedAt||a.createdAt||''));
- notesFeed.innerHTML='';
- if(!items.length){notesFeed.innerHTML='<div class="card"><p class="intro">Aucune note pour le moment. Soyez le premier à en publier une.</p></div>';return}
- items.forEach(n=>{
-  n.reactions=n.reactions||{};n.comments=n.comments||[];
-  const mine=n.authorUid===currentUserId(), post=document.createElement('article');post.className='note-post';
-  const head=document.createElement('div');head.className='note-post-head';
-  head.innerHTML='<div><h2>'+esc(n.title||'Sans titre')+'</h2><div class="note-meta">Par '+esc(noteAuthor(n))+(n.createdAt?' · '+new Date(n.createdAt).toLocaleString('fr-FR'):'')+'</div></div>';
-  if(mine){const edit=document.createElement('button');edit.className='btn secondary';edit.textContent='Modifier';edit.onclick=()=>openNoteModal(n.id);head.appendChild(edit)}
-  const body=document.createElement('div');body.className='note-body';body.textContent=n.content||'';
-  const tools=document.createElement('div');tools.className='note-tools';
-  ['👍','❤️','💡'].forEach(emoji=>{const users=n.reactions[emoji]||[];const b=document.createElement('button');b.className='react-btn'+(users.includes(currentUserId())?' active':'');b.textContent=emoji+(users.length?' '+users.length:'');b.onclick=async()=>{const a=n.reactions[emoji]||[];n.reactions[emoji]=a.includes(currentUserId())?a.filter(x=>x!==currentUserId()):[...a,currentUserId()];await save();renderNotes()};tools.appendChild(b)});
-  const comments=document.createElement('div');comments.className='note-comments';
-  n.comments.forEach(c=>{const d=document.createElement('div');d.className='note-comment';d.innerHTML='<b>'+esc(c.authorEmail||'Membre')+'</b><br>'+esc(c.text);comments.appendChild(d)});
-  const form=document.createElement('div');form.className='comment-form';const inp=document.createElement('input');inp.placeholder='Ajouter un commentaire…';const send=document.createElement('button');send.className='btn secondary';send.textContent='Commenter';send.onclick=async()=>{const text=inp.value.trim();if(!text)return;n.comments.push({id:crypto.randomUUID(),authorUid:currentUserId(),authorEmail:currentUserEmail(),text,createdAt:new Date().toISOString()});await save();renderNotes()};form.append(inp,send);
-  post.append(head,body,tools,comments,form);notesFeed.appendChild(post);
- })
-}
-newNoteBtn.onclick=()=>openNoteModal();closeNoteModal.onclick=closeNote;cancelNoteBtn.onclick=closeNote;
-saveNoteBtn.onclick=async()=>{const title=noteTitle.value.trim(),content=noteContent.value.trim();if(!title||!content){noteError.textContent='Le titre et le contenu sont obligatoires.';return}data.noteItems=data.noteItems||[];const now=new Date().toISOString();if(editingNoteId){const n=data.noteItems.find(x=>x.id===editingNoteId);if(!n||n.authorUid!==currentUserId())return;n.title=title;n.content=content;n.updatedAt=now}else data.noteItems.push({id:crypto.randomUUID(),title,content,authorUid:currentUserId(),authorEmail:currentUserEmail(),createdAt:now,updatedAt:now,reactions:{},comments:[]});await save();closeNote();renderNotes()};
-deleteNoteBtn.onclick=async()=>{const n=(data.noteItems||[]).find(x=>x.id===editingNoteId);if(!n||n.authorUid!==currentUserId())return;if(confirm('Supprimer cette note ?')){data.noteItems=data.noteItems.filter(x=>x.id!==editingNoteId);await save();closeNote();renderNotes()}};
-
-document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(b.dataset.page).classList.add('active');if(b.dataset.page==='resources')renderResources()});
-
-const ADMIN_UID='CPEGyrjksdMarhLXope92fgLbiq2';
-let adminUsersCache=[];
-let adminUnsub=null;
-
-function statusLabel(s){
-  return ({pending:'En attente',approved:'Actif',suspended:'Suspendu',rejected:'Refusé'})[s]||s;
-}
-function renderAdminUsers(){
-  const term=(adminSearch.value||'').toLowerCase();
-  const rows=adminUsersCache.filter(x=>(x.email||'').toLowerCase().includes(term));
-  adminUsers.innerHTML=rows.length?'':'<p>Aucun utilisateur trouvé.</p>';
-  rows.forEach(u=>{
-    const box=document.createElement('div');
-    box.style.cssText='border:1px solid #ddd;border-radius:14px;padding:14px;margin:10px 0;display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap';
-    const left=document.createElement('div');
-    left.innerHTML=`<strong>${u.email||'Sans e-mail'}</strong><br><small>Statut : ${statusLabel(u.status)}</small>${u.id===ADMIN_UID?'<br><small>Administrateur principal</small>':''}`;
-    const actions=document.createElement('div');
-    if(u.id!==ADMIN_UID){
-      const choices=[];
-      if(u.status==='pending'){choices.push(['Accepter','approved'],['Refuser','rejected']);}
-      if(u.status==='approved'){choices.push(['Suspendre','suspended']);}
-      if(u.status==='suspended'||u.status==='rejected'){choices.push(['Réactiver','approved']);}
-      choices.forEach(([label,status])=>{
-        const b=document.createElement('button'); b.className='btn'; b.style.marginLeft='6px'; b.textContent=label;
-        b.onclick=async()=>{await updateDoc(doc(db,'users',u.id),{status,updatedAt:serverTimestamp()})};
-        actions.appendChild(b);
-      });
-    }
-    box.append(left,actions); adminUsers.appendChild(box);
-  });
-}
-adminSearch.oninput=renderAdminUsers;
-adminBtn.onclick=()=>{
-  adminModal.style.display='block';
-  if(adminUnsub) adminUnsub();
-  adminUnsub=onSnapshot(collection(db,'users'),snap=>{
-    adminUsersCache=snap.docs.map(d=>({id:d.id,...d.data()}));
-    renderAdminUsers();
-  });
-};
-closeAdmin.onclick=()=>{adminModal.style.display='none';if(adminUnsub){adminUnsub();adminUnsub=null}};
-
-
-
-let calendarCursor=new Date(); calendarCursor.setDate(1);
-let editingCalendarId=null;
-let editingPollId=null;
-
-function calISO(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function renderCalendar(){
-  if(!document.getElementById('calendarGrid')) return;
-  const month=calendarCursor.getMonth(), year=calendarCursor.getFullYear();
-  calMonthLabel.textContent=new Intl.DateTimeFormat('fr-FR',{month:'long',year:'numeric'}).format(calendarCursor);
-  calendarGrid.innerHTML='';
-  ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].forEach(x=>{const e=document.createElement('div');e.className='calendar-weekday';e.textContent=x;calendarGrid.appendChild(e)});
-  const first=new Date(year,month,1), offset=(first.getDay()+6)%7, start=new Date(year,month,1-offset), today=calISO(new Date());
-  for(let i=0;i<42;i++){
-    const d=new Date(start);d.setDate(start.getDate()+i);const iso=calISO(d);
-    const cell=document.createElement('div');cell.className='calendar-day'+(d.getMonth()!==month?' outside':'')+(iso===today?' today':'');
-    cell.innerHTML='<span class="day-number">'+d.getDate()+'</span>';
-    (data.calendarEvents||[]).filter(e=>e.date===iso).sort((a,b)=>(a.time||'').localeCompare(b.time||'')).forEach(ev=>{
-      const x=document.createElement('div');x.className='calendar-event '+(ev.type==='action'?'action':'');x.title='Cliquer pour modifier · '+ev.title;x.textContent=(ev.time?ev.time+' ':'')+ev.title;
-      x.onclick=(event)=>{event.stopPropagation();openCalendarModal(iso,ev.id)};cell.appendChild(x);
-    });
-    cell.onclick=()=>openCalendarModal(iso);calendarGrid.appendChild(cell);
-  }
-  renderUpcoming();
-}
-function renderUpcoming(){
-  const now=calISO(new Date()), list=(data.calendarEvents||[]).filter(e=>e.date>=now).sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||''))).slice(0,8);
-  calendarUpcoming.innerHTML=list.length?'':'<p class="intro">Aucun événement à venir.</p>';
-  list.forEach(ev=>{
-    const row=document.createElement('div');row.className='calendar-upcoming-item';
-    const left=document.createElement('div');left.innerHTML='<strong>'+ev.title+'</strong><br><small>'+new Date(ev.date+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'long'})+(ev.time?' · '+ev.time:'')+' · '+(ev.type==='action'?'Action':'Réunion')+(ev.owner?' · '+ev.owner:'')+'</small>';
-    const edit=document.createElement('button');edit.className='btn secondary';edit.textContent='Modifier';edit.onclick=()=>openCalendarModal(ev.date,ev.id);
-    row.append(left,edit);calendarUpcoming.appendChild(row);
-  });
-}
-function openCalendarModal(date,id=null){
-  editingCalendarId=id;calError.textContent='';
-  const ev=id?(data.calendarEvents||[]).find(x=>x.id===id):null;
-  calendarModalTitle.textContent=ev?'Modifier '+(ev.type==='action'?'l’action':'la réunion'):'Ajouter au calendrier';
-  calendarModalSubtitle.textContent=ev?'Mettez à jour les informations ou supprimez cet élément.':'Planifiez une réunion ou une action.';
-  calDate.value=ev?.date||date||calISO(new Date());calTitle.value=ev?.title||'';calTime.value=ev?.time||'';calOwner.value=ev?.owner||'';calDescription.value=ev?.description||'';calType.value=ev?.type||'meeting';
-  deleteCalendarEvent.style.display=ev?'inline-block':'none';calendarModal.style.display='block';
-}
-function closeCal(){calendarModal.style.display='none';editingCalendarId=null}
-addCalendarEvent.onclick=()=>openCalendarModal();closeCalendarModal.onclick=closeCal;cancelCalendarEvent.onclick=closeCal;
-calPrev.onclick=()=>{calendarCursor.setMonth(calendarCursor.getMonth()-1);renderCalendar()};calNext.onclick=()=>{calendarCursor.setMonth(calendarCursor.getMonth()+1);renderCalendar()};calToday.onclick=()=>{calendarCursor=new Date();calendarCursor.setDate(1);renderCalendar()};
-saveCalendarEvent.onclick=async()=>{
-  if(!calDate.value||!calTitle.value.trim()){calError.textContent='La date et le titre sont obligatoires.';return}
-  const ev={id:editingCalendarId||crypto.randomUUID(),type:calType.value,date:calDate.value,time:calTime.value,title:calTitle.value.trim(),owner:calOwner.value.trim(),description:calDescription.value.trim()};
-  data.calendarEvents=data.calendarEvents||[];
-  if(editingCalendarId){const i=data.calendarEvents.findIndex(x=>x.id===editingCalendarId);if(i>=0)data.calendarEvents[i]=ev}else data.calendarEvents.push(ev);
-  await save();closeCal();renderCalendar();
-};
-deleteCalendarEvent.onclick=async()=>{if(editingCalendarId&&confirm('Supprimer définitivement cet élément ?')){data.calendarEvents=(data.calendarEvents||[]).filter(x=>x.id!==editingCalendarId);await save();closeCal();renderCalendar()}};
-
-/* Ressources */
-let editingResourceId=null, resourceFilter='Toutes', pendingResourceImage='';
-function resourceIcon(c){return ({Documents:'▤',Collaboration:'◎',Organisation:'◇',Contacts:'◉',Autre:'↗'})[c]||'↗'}
-function safeUrl(v){try{const u=new URL(v);return ['http:','https:'].includes(u.protocol)?u.href:'#'}catch{return '#'}}
-function openResourceModal(id=null){
- if(!isAdmin())return;editingResourceId=id;const r=(data.resources||[]).find(x=>x.id===id);
- resourceModalTitle.textContent=r?'Modifier la ressource':'Ajouter une ressource';resourceName.value=r?.name||'';resourceCategory.value=r?.category||'Documents';resourceUrl.value=r?.url||'';resourceDescription.value=r?.description||'';resourceIcon.value=r?.icon||'auto';pendingResourceImage=r?.image||'';updateResourceVisual();resourceError.textContent='';deleteResourceBtn.style.display=r?'inline-block':'none';resourceModal.style.display='block';
-}
-function closeResource(){resourceModal.style.display='none';editingResourceId=null}
-function renderResources(){
- if(!document.getElementById('resourceList'))return;data.resources=data.resources||[];addResourceBtn.style.display=isAdmin()?'inline-block':'none';
- const cats=['Toutes',...new Set(data.resources.map(r=>r.category||'Autre'))];if(!cats.includes(resourceFilter))resourceFilter='Toutes';resourceFilters.innerHTML='';
- cats.forEach(c=>{const b=document.createElement('button');b.className='resource-filter'+(resourceFilter===c?' active':'');b.textContent=c;b.onclick=()=>{resourceFilter=c;renderResources()};resourceFilters.appendChild(b)});
- const list=resourceFilter==='Toutes'?data.resources:data.resources.filter(r=>(r.category||'Autre')===resourceFilter);resourceList.innerHTML='';
- if(!list.length){resourceList.innerHTML='<div class="card" style="grid-column:1/-1"><p class="intro">Aucune ressource pour le moment.</p></div>';return}
- list.forEach(r=>{const card=document.createElement('article');card.className='resource-card';card.innerHTML='<div class="resource-card-head"><div><div class="resource-category">'+esc(r.category||'Autre')+'</div><h2>'+esc(r.name)+'</h2></div><div class="resource-icon">'+(r.image?'<img src="'+r.image+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:11px">':esc(r.icon&&r.icon!=='auto'?r.icon:resourceIconForCategory(r.category)))+'</div></div><p>'+esc(r.description||'Accéder à cette ressource de la communauté.')+'</p><div class="resource-actions"></div>';
- const a=document.createElement('a');a.className='btn';a.target='_blank';a.rel='noopener noreferrer';a.href=safeUrl(r.url);a.textContent='Ouvrir ↗';card.querySelector('.resource-actions').appendChild(a);
- if(isAdmin()){const e=document.createElement('button');e.className='btn secondary';e.textContent='Modifier';e.onclick=()=>openResourceModal(r.id);card.querySelector('.resource-actions').appendChild(e)}resourceList.appendChild(card)})
-}
-function updateResourceVisual(){
- const icon=resourceIcon.value==='auto'?resourceIconForCategory(resourceCategory.value):resourceIcon.value;
- resourceVisualPreview.innerHTML=pendingResourceImage?'<img src="'+pendingResourceImage+'" alt="Aperçu">':esc(icon);
- removeResourceImage.style.display=pendingResourceImage?'inline-block':'none';
-}
-function resourceIconForCategory(c){return ({Documents:'📁',Collaboration:'🧩',Organisation:'📌',Contacts:'👥',Autre:'🔗'})[c]||'🔗'}
-async function compressResourceImage(file,maxBytes=5120){
- const img=await new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=no;i.src=URL.createObjectURL(file)});
- let maxDim=160,quality=.72,best='';
- for(let pass=0;pass<14;pass++){
-  const scale=Math.min(1,maxDim/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*scale));c.height=Math.max(1,Math.round(img.height*scale));c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-  best=c.toDataURL('image/webp',quality);
-  const bytes=Math.ceil((best.length-best.indexOf(',')-1)*3/4);
-  if(bytes<=maxBytes)return best;
-  if(quality>.28)quality-=.08;else maxDim=Math.round(maxDim*.82);
- }
- throw new Error('Image impossible à compresser sous 5 Ko');
-}
-resourceIcon.onchange=()=>{if(!pendingResourceImage)updateResourceVisual()};resourceCategory.onchange=()=>{if(resourceIcon.value==='auto'&&!pendingResourceImage)updateResourceVisual()};
-resourceImage.onchange=async()=>{const f=resourceImage.files?.[0];if(!f)return;resourceError.textContent='Compression de l’image…';try{pendingResourceImage=await compressResourceImage(f);resourceError.textContent='';updateResourceVisual()}catch(e){resourceError.textContent='Cette image ne peut pas être compressée sous 5 Ko.'}finally{resourceImage.value=''}};
-removeResourceImage.onclick=()=>{pendingResourceImage='';updateResourceVisual()};
-
-addResourceBtn.onclick=()=>openResourceModal();closeResourceModal.onclick=closeResource;cancelResourceBtn.onclick=closeResource;
-saveResourceBtn.onclick=async()=>{if(!isAdmin())return;const name=resourceName.value.trim(),url=resourceUrl.value.trim();if(!name||!url){resourceError.textContent='Le nom et le lien sont obligatoires.';return}if(safeUrl(url)==='#'){resourceError.textContent='Saisissez un lien valide commençant par https://';return}data.resources=data.resources||[];const r={id:editingResourceId||crypto.randomUUID(),name,category:resourceCategory.value,url,description:resourceDescription.value.trim(),icon:resourceIcon.value,image:pendingResourceImage};const i=data.resources.findIndex(x=>x.id===r.id);if(i>=0)data.resources[i]=r;else data.resources.push(r);await save();closeResource();renderResources()};
-deleteResourceBtn.onclick=async()=>{if(!isAdmin()||!editingResourceId)return;if(confirm('Supprimer cette ressource ?')){data.resources=(data.resources||[]).filter(x=>x.id!==editingResourceId);await save();closeResource();renderResources()}};
-
-
-/* Sondages */
-function isAdmin(){return auth.currentUser?.uid===ADMIN_UID;}
-function addPollOptionField(value=''){
- const row=document.createElement('div');row.className='poll-option-edit';
- const inp=document.createElement('input');inp.placeholder='Réponse proposée';inp.value=value;
- const del=document.createElement('button');del.className='btn secondary';del.textContent='×';del.type='button';del.onclick=()=>row.remove();
- row.append(inp,del);pollOptionsEditor.appendChild(row);
-}
-function openPollModal(id=null){
- if(!isAdmin()) return;
- editingPollId=id;pollError.textContent='';pollOptionsEditor.innerHTML='';
- const p=id?(data.polls||[]).find(x=>x.id===id):null;
- pollModalTitle.textContent=p?'Modifier le sondage':'Créer un sondage';pollQuestion.value=p?.question||'';pollDescription.value=p?.description||'';pollDeadline.value=p?.deadline||'';pollMultiple.checked=!!p?.multiple;
- (p?.options||['','']).forEach(o=>addPollOptionField(typeof o==='string'?o:o.label));
- deletePollBtn.style.display=p?'inline-block':'none';pollModal.style.display='block';
-}
-function closePoll(){pollModal.style.display='none';editingPollId=null}
-function renderPolls(){
- if(!document.getElementById('pollList'))return;
- addPollBtn.style.display=isAdmin()?'inline-block':'none';
- data.polls=data.polls||[];
- pollList.innerHTML=data.polls.length?'':'<div class="card"><p class="intro">Aucun sondage pour le moment.</p></div>';
-
- data.polls.forEach(p=>{
-  p.votes=p.votes||{};
-  const uid=auth.currentUser?.uid||null;
-  const multiple=!!p.multiple;
-  const rawVote=uid ? p.votes[uid] : undefined;
-  const myVotes=rawVote===undefined ? [] : (Array.isArray(rawVote)?rawVote.map(Number):[Number(rawVote)]);
-  const counts=(p.options||[]).map((_,i)=>Object.values(p.votes).filter(v=>{
-    const arr=Array.isArray(v)?v.map(Number):[Number(v)];
-    return arr.includes(i);
-  }).length);
-  const totalVoters=Object.keys(p.votes).length;
-  const isClosed=p.deadline && p.deadline < calISO(new Date());
-
-  const card=document.createElement('div');card.className='card poll-card';
-  const deadline=p.deadline?' · Clôture '+new Date(p.deadline+'T12:00:00').toLocaleDateString('fr-FR'):'';
-  card.innerHTML=
-    '<h2 style="margin:0">'+p.question+'</h2>'+
-    '<div class="poll-meta"><span class="poll-status">'+(isClosed?'Clôturé':(multiple?'Choix multiples':'Choix unique'))+'</span><span>'+totalVoters+' participant'+(totalVoters>1?'s':'')+deadline+'</span></div>'+
-    (p.description?'<p>'+p.description+'</p>':'')+
-    (multiple?'<p class="admin-only-note">Vous pouvez sélectionner plusieurs réponses.</p>':'')+
-    '<div class="poll-options"></div>'+
-    '<div class="poll-vote-footer"><span class="poll-vote-message"></span><button class="btn poll-submit" '+(isClosed?'disabled':'')+'>Enregistrer mon vote</button></div>'+
-    '<div class="poll-actions"></div>';
-
-  const opts=card.querySelector('.poll-options');
-  (p.options||[]).forEach((o,i)=>{
-    const selected=myVotes.includes(i);
-    const pct=totalVoters?Math.round(counts[i]*100/totalVoters):0;
-    const row=document.createElement('label');row.className='poll-choice'+(selected?' selected':'');
-    row.innerHTML=
-      '<span class="poll-choice-main"><input type="'+(multiple?'checkbox':'radio')+'" name="poll-'+p.id+'" value="'+i+'" '+(selected?'checked':'')+' '+(isClosed?'disabled':'')+'><span class="poll-choice-label">'+o.label+'</span></span>'+
-      '<div class="poll-bar"><div class="poll-fill" style="width:'+Math.min(pct,100)+'%"></div></div>'+
-      '<span class="poll-vote-count">'+counts[i]+' vote'+(counts[i]>1?'s':'')+'</span>';
-    opts.appendChild(row);
-  });
-
-  const msg=card.querySelector('.poll-vote-message');
-  if(isClosed) msg.textContent='Ce sondage est clôturé.';
-  else if(myVotes.length) msg.textContent='Votre vote est enregistré. Vous pouvez modifier votre sélection à tout moment.';
-  else msg.textContent=multiple?'Sélectionnez une ou plusieurs réponses.':'Sélectionnez une réponse.';
-
-  const submit=card.querySelector('.poll-submit');
-  submit.onclick=async()=>{
-    if(!uid){msg.textContent='Vous devez être connecté pour voter.';return}
-    const checked=[...card.querySelectorAll('.poll-options input:checked')];
-    if(!checked.length){msg.textContent='Sélectionnez au moins une réponse.';return}
-    const selected=checked.map(x=>Number(x.value));
-    submit.disabled=true;submit.textContent='Enregistrement…';
-    try{
-      // Important: save() persists the complete project document in Firestore.
-      // This also fixes modification of an existing vote.
-      p.votes[uid]=multiple?selected:selected[0];
-      await save();
-      msg.textContent='Votre vote est enregistré.';
-      renderPolls();
-    }catch(e){
-      console.error(e);
-      msg.textContent="Impossible d'enregistrer votre vote.";
-      submit.disabled=false;
-      submit.textContent='Enregistrer mon vote';
-    }
-  };
-
-  opts.onchange=()=>{
-    [...opts.querySelectorAll('.poll-choice')].forEach(x=>x.classList.toggle('selected',!!x.querySelector('input:checked')));
-    submit.textContent='Enregistrer mon vote';
-  };
-
-  const actions=card.querySelector('.poll-actions');
-  if(isAdmin()){
-    const edit=document.createElement('button');edit.className='btn secondary';edit.textContent='Modifier le sondage';edit.onclick=()=>openPollModal(p.id);
-    actions.appendChild(edit);
-  } else actions.style.display='none';
-
-  pollList.appendChild(card);
- });
-}
-addPollBtn.onclick=()=>openPollModal();closePollModal.onclick=closePoll;cancelPollBtn.onclick=closePoll;addPollOption.onclick=()=>addPollOptionField();
-savePollBtn.onclick=async()=>{
- if(!isAdmin()){pollError.textContent='Action réservée à un administrateur.';return}
- const labels=[...pollOptionsEditor.querySelectorAll('input')].map(x=>x.value.trim()).filter(Boolean);
- if(!pollQuestion.value.trim()||labels.length<2){pollError.textContent='Saisissez une question et au moins deux réponses.';return}
- data.polls=data.polls||[];const old=editingPollId?data.polls.find(x=>x.id===editingPollId):null;
- const options=labels.map(label=>{const prev=old?.options?.find(o=>o.label===label);return {label,votes:prev?.votes||0}});
- const p={id:editingPollId||crypto.randomUUID(),question:pollQuestion.value.trim(),description:pollDescription.value.trim(),deadline:pollDeadline.value,multiple:pollMultiple.checked,options,votes:old?.votes||{}};
- if(editingPollId){const i=data.polls.findIndex(x=>x.id===editingPollId);if(i>=0)data.polls[i]=p}else data.polls.push(p);
- await save();closePoll();renderPolls();
-};
-deletePollBtn.onclick=async()=>{if(!isAdmin())return;if(editingPollId&&confirm('Supprimer définitivement ce sondage ?')){data.polls=(data.polls||[]).filter(x=>x.id!==editingPollId);await save();closePoll();renderPolls()}};
-onAuthStateChanged(auth,async user=>{
-document.body.classList.remove('auth-pending');
-if(unsub){unsub();unsub=null}
-approvalMessage.style.display='none';
-if(!user){adminBtn.style.display='none';overlay.style.display='block';logout.hidden=true; if(accountMenu) accountMenu.style.display='none';loginBtn.style.display='';signupBtn.style.display='';loginEmail.style.display='';loginPassword.style.display='';return}
-adminBtn.style.display=user.uid===ADMIN_UID?'inline-block':'none';
-const userRef=doc(db,'users',user.uid);
-let profile=await getDoc(userRef);
-if(!profile.exists()){
-  await setDoc(userRef,{
-    email:user.email,
-    status:user.uid===ADMIN_UID?'approved':'pending',
-    createdAt:serverTimestamp()
-  });
-  profile=await getDoc(userRef);
-}
-const status=profile.data()?.status||'pending';
-updateAccountUI(profile.data()||{},user);
-
-// L'administrateur principal passe toujours directement.
-if(user.uid!==ADMIN_UID && status!=='approved'){
-overlay.style.display='block';logout.hidden=false; if(accountMenu) accountMenu.style.display='block';loginBtn.style.display='none';signupBtn.style.display='none';loginEmail.style.display='none';loginPassword.style.display='none';approvalMessage.style.display='block';
-approvalMessage.innerHTML=status==='rejected'
-?'<strong>Demande refusée.</strong><br>Votre compte n’a pas été autorisé à accéder à cet espace.'
-:status==='suspended'
-?'<strong>Compte suspendu.</strong><br>Votre accès à l’espace communautaire a été temporairement suspendu.'
-:'<strong>Inscription enregistrée.</strong><br>Votre demande est en attente de validation par un administrateur.';
-return}
-overlay.style.display='none';logout.hidden=false; if(accountMenu) accountMenu.style.display='block';
-if(document.getElementById('addPollBtn')) addPollBtn.style.display=user.uid===ADMIN_UID?'inline-block':'none';
-// Affichage explicite des contrôles Ressources dès que l'identité admin est connue.
-if(document.getElementById('addResourceBtn')) addResourceBtn.style.display=user.uid===ADMIN_UID?'inline-block':'none';
-renderResources();
-const snap=await getDoc(projectRef);if(!snap.exists())await setDoc(projectRef,defaults);
-unsub=onSnapshot(projectRef,s=>{if(s.exists()){data={...structuredClone(defaults),...s.data()};renderAll()}});
-});
-
-document.querySelectorAll('[data-go]').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    const target=btn.dataset.go;
-    const navBtn=document.querySelector(`#nav button[data-page="${target}"]`);
-    if(navBtn) navBtn.click();
-  });
-});
-
-function renderCharterValues(){
-  const extras=Array.isArray(data.charterValues)?data.charterValues:[];
-  const vals=[...baseCharterValues,...extras];
-  if(!window.charterValues) return;
-  charterValues.innerHTML=vals.map((v,i)=>`<div class="card charter-value ${v.foundation?'foundation':''}">
-    <div class="value-top"><div class="value-icon">${esc(v.icon||'◇')}</div><div class="value-number">${String(i).padStart(2,'0')}</div></div>
-    <div class="value-copy">${v.foundation?'<span class="foundation-badge">VALEUR SOCLE</span>':''}<h3>${esc(v.title)}</h3><p>${esc(v.description)}</p>${v.foundation?`<p class="foundation-note">Cette valeur est le fondement de toutes les autres. Elle prévaut sur toute autre considération lorsqu'il s'agit de prendre une décision ou de résoudre une situation.</p>`:''}</div>
-  </div>`).join('');
-}
-if(window.addValueBtn){
- addValueBtn.onclick=()=>{valueTitle.value='';valueDescription.value='';valueIcon.value='♡';valueError.textContent='';valueModal.style.display='grid'};
- closeValueModal.onclick=cancelValueModal.onclick=()=>valueModal.style.display='none';
- valueModal.addEventListener('click',e=>{if(e.target===valueModal)valueModal.style.display='none'});
- saveValueBtn.onclick=async()=>{
-   const title=valueTitle.value.trim(),description=valueDescription.value.trim();
-   if(!title||!description){valueError.textContent='Le titre et la description sont obligatoires.';return}
-   saveValueBtn.disabled=true;saveValueBtn.textContent='Enregistrement…';
-   try{
-     data.charterValues=Array.isArray(data.charterValues)?data.charterValues:[];
-     data.charterValues.push({title,description,icon:valueIcon.value});
-     await save(); renderCharterValues(); valueModal.style.display='none';
-   }catch(e){valueError.textContent="Impossible d'enregistrer la valeur pour le moment."}
-   finally{saveValueBtn.disabled=false;saveValueBtn.textContent='Ajouter la valeur'}
- };
-}
-renderCharterValues();
-
-/* Account dropdown positioning/read-only visual normalization */
-(function(){
-  function normalizeAccountUI(){
-    const menu =
-      document.getElementById('accountMenu') ||
-      document.querySelector('.account-menu') ||
-      document.querySelector('.profile-dropdown');
-
-    const trigger =
-      document.getElementById('accountBtn') ||
-      document.getElementById('accountTrigger') ||
-      document.querySelector('.account-trigger') ||
-      document.querySelector('.profile-trigger');
-
-    if(menu && trigger){
-      let wrap = trigger.parentElement;
-      if(wrap){
-        wrap.style.position = 'relative';
-        if(menu.parentElement !== wrap){
-          // Only move when menu is a direct body/header child and doing so is safe.
-          try { wrap.appendChild(menu); } catch(e) {}
-        }
-        menu.style.position = 'absolute';
-        menu.style.top = 'calc(100% + 8px)';
-        menu.style.right = '0';
-        menu.style.left = 'auto';
-        menu.style.transform = 'none';
-        menu.style.margin = '0';
-      }
-    }
-
-    // Any immutable account field (email/UID) is visually greyed.
-    document.querySelectorAll(
-      '#accountSettingsModal input[readonly], #accountSettingsModal input:disabled,' +
-      '.account-settings input[readonly], .account-settings input:disabled,' +
-      '.profile-settings input[readonly], .profile-settings input:disabled'
-    ).forEach(el => {
-      el.setAttribute('aria-readonly', 'true');
-      el.title = el.title || 'Ce champ ne peut pas être modifié.';
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', normalizeAccountUI);
-  setTimeout(normalizeAccountUI, 0);
-  setTimeout(normalizeAccountUI, 500);
-})();
-
-
-/* Change password */
-(function(){
-  function initPasswordChange(){
-    const menuBtn=document.getElementById('changePasswordMenuBtn');
-    const modal=document.getElementById('changePasswordModal');
-    const form=document.getElementById('changePasswordForm');
-    if(!menuBtn || !modal || !form) return;
-
-    const close=()=>{
-      modal.style.display='none';
-      form.reset();
-      changePasswordError.textContent='';
-      changePasswordSuccess.textContent='';
-    };
-    menuBtn.addEventListener('click',()=>{
-      const accountMenu=document.getElementById('accountMenu') || document.querySelector('.account-menu,.profile-dropdown');
-      if(accountMenu) accountMenu.style.display='none';
-      changePasswordError.textContent='';
-      changePasswordSuccess.textContent='';
-      modal.style.display='grid';
-      setTimeout(()=>newAccountPassword.focus(),50);
-    });
-    closePasswordModal.addEventListener('click',close);
-    cancelPasswordModal.addEventListener('click',close);
-    modal.addEventListener('click',e=>{if(e.target===modal) close();});
-
-    document.querySelectorAll('.password-eye').forEach(btn=>{
-      btn.addEventListener('click',()=>{
-        const input=document.getElementById(btn.dataset.target);
-        const show=input.type==='password';
-        input.type=show?'text':'password';
-        btn.textContent=show?'Masquer':'Afficher';
-      });
-    });
-
-    form.addEventListener('submit',async e=>{
-      e.preventDefault();
-      changePasswordError.textContent='';
-      changePasswordSuccess.textContent='';
-      const p1=newAccountPassword.value;
-      const p2=confirmAccountPassword.value;
-      if(p1.length<6){
-        changePasswordError.textContent='Le mot de passe doit contenir au moins 6 caractères.';
-        return;
-      }
-      if(p1!==p2){
-        changePasswordError.textContent='Les deux mots de passe ne correspondent pas.';
-        return;
-      }
-      if(!auth.currentUser){
-        changePasswordError.textContent='Votre session a expiré. Reconnectez-vous puis réessayez.';
-        return;
-      }
-      savePasswordBtn.disabled=true;
-      savePasswordBtn.textContent='Modification…';
-      try{
-        await updatePassword(auth.currentUser,p1);
-        changePasswordSuccess.textContent='Votre mot de passe a bien été modifié.';
-        newAccountPassword.value='';
-        confirmAccountPassword.value='';
-        setTimeout(close,1200);
-      }catch(err){
-        if(err && err.code==='auth/requires-recent-login'){
-          changePasswordError.textContent='Pour des raisons de sécurité, reconnectez-vous puis modifiez votre mot de passe.';
-        }else if(err && err.code==='auth/weak-password'){
-          changePasswordError.textContent='Ce mot de passe est trop faible.';
-        }else{
-          changePasswordError.textContent="Impossible de modifier le mot de passe pour le moment.";
-        }
-      }finally{
-        savePasswordBtn.disabled=false;
-        savePasswordBtn.textContent='Modifier le mot de passe';
-      }
-    });
-  }
-  document.addEventListener('DOMContentLoaded',initPasswordChange);
-})();
-
-
-/* Final account menu ordering: settings first, logout last */
-(function(){
-  function reorderAccountMenu(){
-    const dd=document.getElementById('accountDropdown');
-    if(!dd) return;
-    const settings=[...dd.querySelectorAll('button')].find(b=>b.textContent.trim()==='Paramètres du compte');
-    const password=document.getElementById('changePasswordMenuBtn') ||
-      [...dd.querySelectorAll('button')].find(b=>b.textContent.trim()==='Changer le mot de passe');
-    const admin=[...dd.querySelectorAll('button')].find(b=>b.textContent.trim()==='Administration');
-    const logout=[...dd.querySelectorAll('button')].find(b=>b.textContent.trim()==='Se déconnecter');
-    [settings,password,admin,logout].forEach(el=>{if(el) dd.appendChild(el)});
-    if(logout) logout.classList.add('logout-action');
-  }
-  document.addEventListener('DOMContentLoaded',()=>setTimeout(reorderAccountMenu,0));
-  setTimeout(reorderAccountMenu,300);
-  setTimeout(reorderAccountMenu,1000);
-})();
-
-
-/* Password change now belongs to Account Settings */
-(function(){
-  function bindPasswordInsideProfile(){
-    const btn=document.getElementById('openPasswordFromProfile');
-    const profile=document.getElementById('profileModal');
-    const password=document.getElementById('changePasswordModal');
-    if(!btn || !password || btn.dataset.bound==='1') return;
-    btn.dataset.bound='1';
-    btn.addEventListener('click',()=>{
-      if(profile) profile.style.display='none';
-      password.style.display='grid';
-      const input=document.getElementById('newAccountPassword');
-      if(input) setTimeout(()=>input.focus(),50);
-    });
-  }
-  document.addEventListener('DOMContentLoaded',bindPasswordInsideProfile);
-  setTimeout(bindPasswordInsideProfile,300);
-})();
-
-</script>
 
 <div id="changePasswordModal" class="modal-shell" style="display:none">
   <div class="card password-dialog" role="dialog" aria-modal="true" aria-labelledby="changePasswordTitle">
