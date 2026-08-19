@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAAuCAYAAAB9CdqYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAATASURBVGhD7ZnNaxtHGIefuIfassGCXVMfWluHRquc1OTSVJHRoW4bCLJFoS30YAR2cujBhdrQGFoaerGhMi0u5FIbVNNTTpLVf0BY6NY0OkVrcpCTS0l2nbXpoZDW6UE7y3qsj9WHS2X0XMTOjGb3N+8777wzc+HlP3+95BwzIBecN/oCe52+wF7nwllGUdMyKJYKmJaJefgMvVIGQPGrAKh+FWV0jGBAQxkdQwtoUg+d03WBQlRVmHFCTHAyZLcxq7+HzzAsA9MywBYejyWIhKOuHjujqwKLpQLp7Ca0+LFiUPb2y+iVMopfJRKOEo8l5KYt0zWB69tr6JUyWiBEcmbBsVyrmJZBLp+lWNpFC4RYmrstN2mJjgWalkF6ZxO9UiYeS3Rl1AFy+Qy5fAbFr7I8d7vtAetIoGkZrGwso/hVkjM3ux4kTMsgtb0G0Hb/HS0T6Z1NZ4TbeTn2vK2H6BsgvfOTXO2JtgWKOZecudmW+5iWwfr2GunsJisby04klREiTcsgnd2Sq5vSlsBcPlMVN7twynKNLCIQrq1XykTCU44r6hVdbgq2yOTsAsXSLrl8Rq5uiGeB6eyW8wG5fAYtEDqxBMgWqYde0Z36pbkVkrPzrC6mwHbDegIi4ShaIESxVODR4z1y+Uxdq7vxFGTS2S2KpV2wR3M+cYs3J4JOvV7RWd9eBSASnqJY2q0Z/dyRUQ4awoqmZdSNxo8e7/H9L9/x4u8XYL8rOTsvNzvBK3e++eqOXChz994GydkFPvngU4qlAr+Xf8M36OON8QlHnOJX+ezjz5m++h4AD/T7PNDvO+3Wt9colgpogRBf3/oWVZq3vkEfl7Ur+AZ95PIZiqUCl7UrPPnjCb/mswwNDpP6eZWLE0F7cKrWnH77/RP9yDS1oJgvS3MraAHNWYj1/YdEwtGmFnE/exlxJEsLNxwYGODiRNBZ+MXAri6mGga5pnPQsPNGgeJXicdmbaHVubi6mDoVbNwh3rSMaobjQRxAPJZAC4QccW9plzk+PubpwVOnjepXoMb3yTQVKDra238IrswF4PXXJhqmUopfRZu8BIBeKTcMPm7EEgSgBUL4BkdQ/CrPjw6cPkS0lgdWpqnAqsUSTvQS4f36tRtMX23s/27isYTj7vUQkVgsH8L1ggHNCTymZfDlD19QLBWIhKfkLk7RVCB2iAa4e+9HsMP7h+9+5GmnIHB/YL31zp3Tut05Eo46u4t4LMHzowOO/jz05PKeBIr5NOIbAZfbtkrQdtd6GPZcrbVECCLhKEOvDjGujMtVNfEkEFvk9Ws35OL/HMWv4hsaxjc0LFfVxLPAXqUvsNfpC3SjjI7JRV1FHCPWe25WXoumuagb0zIwLLNp9uBGpFsir2z0f9N1zFjr2V2O63y1ES0JlMnlM0TCUU8v6oRO3tOSi8rs7ZdJba/V3aR2ikjtqruLrFztiY4saNoHtmJro01e4p1wtK4LekH06T4Ejns8QK5FRwIFpuuwFtcuQtw5iNROnl/Y2x2xUxGiRNtunG53RaDAtAz0/TJ7Ff3EZYsXFL/q3F+0O99q0VWBMiJqQvWiRZThsuZZ3SoJzlTg/4GOomgv0BfY6/QF9jp9gb3OuRf4L04Ke/SL+gcAAAAAAElFTkSuQmCC">
-  <link rel="shortcut icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADgAAAAuCAYAAAB9CdqYAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAATASURBVGhD7ZnNaxtHGIefuIfassGCXVMfWluHRquc1OTSVJHRoW4bCLJFoS30YAR2cujBhdrQGFoaerGhMi0u5FIbVNNTTpLVf0BY6NY0OkVrcpCTS0l2nbXpoZDW6UE7y3qsj9WHS2X0XMTOjGb3N+8777wzc+HlP3+95BwzIBecN/oCe52+wF7nwllGUdMyKJYKmJaJefgMvVIGQPGrAKh+FWV0jGBAQxkdQwtoUg+d03WBQlRVmHFCTHAyZLcxq7+HzzAsA9MywBYejyWIhKOuHjujqwKLpQLp7Ca0+LFiUPb2y+iVMopfJRKOEo8l5KYt0zWB69tr6JUyWiBEcmbBsVyrmJZBLp+lWNpFC4RYmrstN2mJjgWalkF6ZxO9UiYeS3Rl1AFy+Qy5fAbFr7I8d7vtAetIoGkZrGwso/hVkjM3ux4kTMsgtb0G0Hb/HS0T6Z1NZ4TbeTn2vK2H6BsgvfOTXO2JtgWKOZecudmW+5iWwfr2GunsJisby04klREiTcsgnd2Sq5vSlsBcPlMVN7twynKNLCIQrq1XykTCU44r6hVdbgq2yOTsAsXSLrl8Rq5uiGeB6eyW8wG5fAYtEDqxBMgWqYde0Z36pbkVkrPzrC6mwHbDegIi4ShaIESxVODR4z1y+Uxdq7vxFGTS2S2KpV2wR3M+cYs3J4JOvV7RWd9eBSASnqJY2q0Z/dyRUQ4awoqmZdSNxo8e7/H9L9/x4u8XYL8rOTsvNzvBK3e++eqOXChz994GydkFPvngU4qlAr+Xf8M36OON8QlHnOJX+ezjz5m++h4AD/T7PNDvO+3Wt9colgpogRBf3/oWVZq3vkEfl7Ur+AZ95PIZiqUCl7UrPPnjCb/mswwNDpP6eZWLE0F7cKrWnH77/RP9yDS1oJgvS3MraAHNWYj1/YdEwtGmFnE/exlxJEsLNxwYGODiRNBZ+MXAri6mGga5pnPQsPNGgeJXicdmbaHVubi6mDoVbNwh3rSMaobjQRxAPJZAC4QccW9plzk+PubpwVOnjepXoMb3yTQVKDra238IrswF4PXXJhqmUopfRZu8BIBeKTcMPm7EEgSgBUL4BkdQ/CrPjw6cPkS0lgdWpqnAqsUSTvQS4f36tRtMX23s/27isYTj7vUQkVgsH8L1ggHNCTymZfDlD19QLBWIhKfkLk7RVCB2iAa4e+9HsMP7h+9+5GmnIHB/YL31zp3Tut05Eo46u4t4LMHzowOO/jz05PKeBIr5NOIbAZfbtkrQdtd6GPZcrbVECCLhKEOvDjGujMtVNfEkEFvk9Ws35OL/HMWv4hsaxjc0LFfVxLPAXqUvsNfpC3SjjI7JRV1FHCPWe25WXoumuagb0zIwLLNp9uBGpFsir2z0f9N1zFjr2V2O63y1ES0JlMnlM0TCUU8v6oRO3tOSi8rs7ZdJba/V3aR2ikjtqruLrFztiY4saNoHtmJro01e4p1wtK4LekH06T4Ejns8QK5FRwIFpuuwFtcuQtw5iNROnl/Y2x2xUxGiRNtunG53RaDAtAz0/TJ7Ff3EZYsXFL/q3F+0O99q0VWBMiJqQvWiRZThsuZZ3SoJzlTg/4GOomgv0BfY6/QF9jp9gb3OuRf4L04Ke/SL+gcAAAAAAElFTkSuQmCC">
+  <link rel="icon" type="image/png" sizes="64x64" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACsAAAArCAYAAADhXXHAAAAJ/0lEQVR42u2Ye3BVVxXGf3ufc+4r95LcNAkkBBJDYigU6gNL0dZptRUp2nZQKrUUq2Jb1I7O6OiMHR9TxxGdKrbaWlH7kBZb+rLYF2ot1SLWtiLQmiKQhgDhkQBJyH2es/fyj3MT0iZhguM/nWHP3Jk755y9z3e+vda31reViPBWGZq30DgN9jTYtxpYFwBbOAVJEERAOW5pusUEeay1FP0ifuDjOg5KKbR2cB0Xz42A1oAD4iPWAAql1DgpjaoTYMcLUyxKOygdwS8O0DfQR/u+nfyz7WUGsgN0HzvMkd4ekokUnusRj0ZJlZUzZVIDk6rqmDltJtWVE1FOHPARE6DU+DdXici4mLXWoN0EYgtsaXuJjS8+wyu7t1FVUUPTlGa0UjTUNlJbXUdvfy9Fv0gmN0BP72G6urs42HMAQZh39nmc/+4LqauqJRJJYfwMjuOOi9lxgQ1MgOuV0X10Pxs2Pc4f/vYUs5pnM62hlQvf80HS5ZOGf9YoqSDs6niFXft28a+2lznQ08VZLbNZPP9qKlJnEPgZ3JMBHi/YkNE4+w91cut9K8nkciyZfyXnzZlfwuETBEXC1RQq/IcgpfkWrTWOGwcUIGzespE1j9/JhGQ513/iyzTWNSMmX5r/P4I1NsBxE7yw9TnWPvkbGuuaWHTRYhomt2JNHmsNjnbGTJTwQyPYoMhgVdeOg9JR2vfu4Hd/XseeA69z3ce/yPTGGSgtqNEEqgQWEUFMXt78C4oDIiLS2bVLVty0VH710K2SzYfX/OKA2CAno80bmu9nRETkcE+niBgR8cUGObFBToyfDdfxc7J63Sq59jtXys6O7SIi4XvfvJ4IIjKSWRHBisVx43Tu38WqNStpnjqdFVd8Ae3GMH4ex4uUMlmNJmyIFbQb4e9bn2f9xoepTtewfNH1pJKViCmilApZdyL4geH2B37E4SOH+Nqnv0l56gysyaG1M4LZN3KuFMpxcdw4vf3d3PfEXZRPSHPVwmVoN4o1BRwvwb93bQt1Vo1MJADtxnnwqXv5yZqVTCir4NXd2/nRPSvZs383yomEz2gHa3w8L8LVC69BKcXdj60mk+tDuwkYhQg9yCY6wtFjPaxZ/2sK+Qxtu7fT1tHG4ouXUFE+EbEBhUKBux/9GbfcdzPfW/2tcMESA+EaHr4fcNcjt7H26Xv42MVX8tVlX+OHX16FsZafr7uFP21+EnQElEZphTV5KtN1XHrB5ezoaOOlVzbzlxc38Pq+3SMAh2FAIPlchtseuIX2fbtQSjFj2iw+uWApFeVVgOLg4f2suvcHdB89zAVzPshft2xkYtUkvrL066QrKkFF2dv1H+5e/2s6D+zh4xct4eL3fhhdkqT+48dYde8POdDdxeUXfowPnLuAiOdhgiJau+RzA9z+4K20vd5GPBKjqb6FFVfcQCxeBrjD1ACRg4f38O07buS7n/8+Pce6+cXDt9NY18SVC64CgZV3fQ/EsuKKL9HaNJvnXnyax559GK01yz76GRRw69ofU5FKc93iG2humBnG3mCoaE02c5xNW//KmsfvYnrjDD516XL+8vKzRL0YPb3d7Ny7g2Uf+Qxl8SSrH76Nr1z9daqr6hmkuATWyNa2l7jn8Tv51rU3UVFeSdehLtY+eTfWGg4fO0QykWTpwuU0N7Qg1qB0lOMDPdyx7qfsPbSXfDFPa8N0rv7IZ6mpqsMEOZzhSVLKCZTmb1s2cv/T91EoFvCNT9SLYq3hm9d+l/raZvr6u7npFzey9JJreOfMuYAzPMGEXCFHPp8lV8gBDjVnTKQiVcHmbZuYVt/CN5bfRHPDmdjARwHW5Egl0yxfdD3xWAJEqKqoIpFIgVj0aEohFnBJpyqJeBGsMZzZOIPm+hb6Bvr584t/wlqfeDSKH/gjEnioxk2b0kQqWc72nf8iGinj9vtv5kBPF/Nmn8eiixYTiZS9oY4rpRARIl6EmnQNuXyWzds20dHVzueXfJXK8kqUmBNhACjt8o+tG1n9yM9JxlNUlFdSla4mFokx15nHhk1P4WhNIlYGAi1Tm0tVbzhYsVSfUcf8eQt48vnfs3XHFvYe2sfnFl1HQ10TZfEEYosjGg5VKq/9A/00TZ7GpRdcznfuuJFn/v4ESxZcg7U2FHOlQGs2PL+eB//4AHNnzWPOmedw52O/pHJCJefPuRgwvH1qK+ufe5RsPsuKxTcQi6UQ66N0dDhYASznnn0+R/uPsG7DWhaefxlzZr0fCEAMjOGCBxn2XJemqTN5R+u76ek9glgfrTVi7eCTPPfyRhpqG7lq4WfJ5voo+gWSiRSV5dUgPh963yXs3Psftu/YwlnNs3DdaNgzvNkpiFgS8SSXXbCIOTPO4XimHyuWICiMCXQ44MAEYeVzXDR61OrmKIeqdDWJeIpsLovWGmMNIkI+n8HzyqiqqKJiQmUYs8jYtkYkQGtNeaoCY8N40+NsjpVSaKXDXgMZy2Pg+0VEBK11ie/QMYQ7BI7SoNTQ/THBDm5pYPzxW45THIPARr8HcuqGUZ0S2OEATgbm/2MY3/DicCsLxcKJFrIEYqyRL+aHnvf94rCkenN/bDDGDK1rjMGWYvZED2yxY8x3h3EJIjiOy9SJDfRlegHBcT1AsIEZJY5CWWqsbSRdnkbEUJWuJh4pdU1vSEzL7JazqamcBAiJWIL3zDyHKbWN4W5oDQgNdY1Ya4m40ZJFGsswKoU1AcezA0S8KPF4ir7+HhKxBF4kiQmyYeyoUrYrECsYE+B6Uazx6c8cJxlP4kaiI3peYwyOl8CaHCYI8KJlgGYg00OyLA0SYK0lCAI810PpUhCf1NYojQl8HC/Bsy88wWsdbVx07odpaTirRGiBIAiGFGBwW7XWYYkUG7JaStjBbbYSMuV6ZQBkcwM89Ic19PT2cNUly5hYVY+1xZEKdLJzA7Gm5O0C3jZ5Gq+9/m9u++0q5sycy1kt76C1oZV4vHzQ+4INEAlj0lo/1FTtoAYTzonCkLsytHe+SsfBTjb9cyOdB/cw/72XoLSLICjUiap3aucGAtqlWMix5bWXeOaFZ2jft5PJNfW0Nk5nWn0LjZPfRnkqTSyWGPnt4lMs5Ok82EExKNJ5cA/bdmylo6sdQXjX9Dl86LzLaKidAriIyY1+6DFeKy4ISjuARyZ7jNfaX6Wt/VU6ujrwgwK9x3spiyVxXRfHcfDcCEop/KCIMQF+EHC0/wipRArPi1BbVcfcWfOorZ5Mfc1klBMfKqljKs6pHHIMViXtRMLzKlsgm8+SzWfo7NpDX6afQrHAQK6ffDHP8YF+KiakiXpRErEyWhunE4+VEYtESCZSQzGL+FgTjFqt/meww0GH+adBOcNqig1DppRAYm1JilSpyXeHGUqDmGBQLxnjWOMkYE+fz54GexrsabBvKbD/BRLUFltsC8JgAAAAAElFTkSuQmCC">
   <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Tiny Houses — Lieu communautaire</title>
@@ -1605,6 +1604,44 @@ body.auth-pending::after{
   #profileModal .modal-head h2{font-size:23px!important}
 }
 
+
+/* ===== V9 exact fix: Account settings header ===== */
+#profileModal .account-profile-header{
+  box-sizing:border-box!important;
+  width:100%!important;
+  min-height:112px!important;
+  margin:0!important;
+  padding:34px 38px 28px 38px!important;
+  display:flex!important;
+  align-items:flex-start!important;
+  justify-content:space-between!important;
+  gap:24px!important;
+  border-bottom:1px solid var(--line)!important;
+  background:#fffdf9!important;
+}
+#profileModal .account-profile-header > div{
+  margin:0!important;
+  padding:0!important;
+}
+#profileModal .account-profile-header h2{
+  margin:0!important;
+  padding:0!important;
+  font-size:26px!important;
+  line-height:1.2!important;
+  font-weight:750!important;
+}
+#profileModal .account-profile-header .modal-close-x{
+  position:static!important;
+  margin:-3px 0 0 0!important;
+}
+@media(max-width:720px){
+  #profileModal .account-profile-header{
+    min-height:88px!important;
+    padding:26px 22px 22px!important;
+  }
+  #profileModal .account-profile-header h2{font-size:23px!important}
+}
+
 </style>
 </head>
 <body class="auth-pending">
@@ -1879,7 +1916,7 @@ body.auth-pending::after{
 
 <div id="profileModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10000;padding:18px;overflow:auto">
  <div class="profile-dialog" style="width:min(880px,calc(100vw - 48px));max-width:880px;margin:32px auto;padding:0;border-radius:20px;overflow:hidden;">
-  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><div><h2 style="margin:3px 0 0">Paramètres du compte</h2></div><button id="closeProfileModal" class="btn secondary modal-close-x" type="button" aria-label="Fermer" title="Fermer">×</button></div>
+  <div class="modal-head account-profile-header"><div><h2>Paramètres du compte</h2></div><button id="closeProfileModal" class="btn secondary modal-close-x" type="button" aria-label="Fermer" title="Fermer">×</button></div>
   
   <div class="account-settings-layout" style="display:grid;grid-template-columns:200px minmax(0,1fr);min-height:410px;margin:0;border:0;">
    <nav class="account-settings-nav" style="padding:28px 16px;background:#f5f3ed;border-right:1px solid #ddd8cd;gap:8px;" aria-label="Catégories des paramètres">
