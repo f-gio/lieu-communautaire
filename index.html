@@ -527,6 +527,107 @@ input,select,textarea,button{max-width:100%}
  .poll-vote-footer .btn{width:100%}
 }
 
+
+/* Toggle Oui / Non — création de sondage */
+.poll-multiple-setting{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:24px;
+  min-width:0;
+  padding:4px 0;
+}
+.poll-multiple-text{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  min-width:0;
+}
+.poll-multiple-text strong{
+  font-size:13px;
+  line-height:1.25;
+  color:var(--text);
+}
+.poll-multiple-text span{
+  font-size:11px;
+  line-height:1.35;
+  color:var(--muted);
+}
+.yesno-toggle{
+  flex:0 0 auto;
+  display:block!important;
+  cursor:pointer;
+  margin:0!important;
+}
+.yesno-toggle input{
+  position:absolute!important;
+  opacity:0!important;
+  pointer-events:none;
+  width:1px!important;
+  height:1px!important;
+}
+.yesno-track{
+  position:relative;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  align-items:center;
+  width:116px;
+  height:40px;
+  padding:3px;
+  border:1px solid #d6d8d3;
+  border-radius:999px;
+  background:#ecebe6;
+  overflow:hidden;
+  user-select:none;
+}
+.yesno-track .toggle-no,
+.yesno-track .toggle-yes{
+  position:relative;
+  z-index:2;
+  text-align:center;
+  font-size:12px;
+  font-weight:700;
+  transition:color .18s ease;
+}
+.toggle-no{color:#fff}
+.toggle-yes{color:#66716c}
+.toggle-knob{
+  position:absolute;
+  z-index:1;
+  left:3px;
+  top:3px;
+  width:54px;
+  height:32px;
+  border-radius:999px;
+  background:#38564b;
+  transition:transform .2s ease;
+}
+.yesno-toggle input:checked + .yesno-track .toggle-knob{
+  transform:translateX(54px);
+}
+.yesno-toggle input:checked + .yesno-track .toggle-no{
+  color:#66716c;
+}
+.yesno-toggle input:checked + .yesno-track .toggle-yes{
+  color:#fff;
+}
+.yesno-toggle input:focus-visible + .yesno-track{
+  outline:2px solid #78998b;
+  outline-offset:2px;
+}
+@media(max-width:520px){
+  .poll-multiple-setting{
+    gap:14px;
+  }
+  .poll-multiple-text strong{font-size:12px}
+  .poll-multiple-text span{font-size:10px}
+  .yesno-track{width:108px;height:38px}
+  .toggle-knob{width:50px;height:30px}
+  .yesno-toggle input:checked + .yesno-track .toggle-knob{
+    transform:translateX(50px);
+  }
+}
+
 </style>
 </head>
 <body>
@@ -611,9 +712,20 @@ input,select,textarea,button{max-width:100%}
    <div class="calendar-form-grid">
     <label class="full">Question *<input id="pollQuestion" placeholder="Ex. Quelle date retenons-nous ?"></label>
     <label class="full">Description<textarea id="pollDescription" placeholder="Contexte ou précision facultative..."></textarea></label>
-    <label>Date de clôture<input id="pollDeadline" type="date"></label><label style="justify-content:flex-end"><span style="display:flex;align-items:center;gap:9px;font-weight:650">
-<input id="pollMultiple" type="checkbox" style="width:auto!important"> Autoriser plusieurs réponses
-</span></label>
+    <label>Date de clôture<input id="pollDeadline" type="date"></label><div class="poll-multiple-setting">
+  <div class="poll-multiple-text">
+    <strong>Choix multiples</strong>
+    <span>Autoriser plusieurs réponses</span>
+  </div>
+  <label class="yesno-toggle" for="pollMultiple">
+    <input id="pollMultiple" type="checkbox">
+    <span class="yesno-track">
+      <span class="toggle-no">Non</span>
+      <span class="toggle-yes">Oui</span>
+      <span class="toggle-knob"></span>
+    </span>
+  </label>
+</div>
    </div>
    <div style="margin-top:20px"><label style="font-size:13px;font-weight:700">Réponses proposées *</label><div id="pollOptionsEditor" class="poll-options-editor" style="margin-top:8px"></div><button id="addPollOption" class="btn secondary" style="margin-top:10px">+ Ajouter une réponse</button></div>
    <p id="pollError" style="color:#a75f50;font-size:13px"></p>
@@ -852,7 +964,7 @@ function renderPolls(){
     (p.description?'<p>'+p.description+'</p>':'')+
     (multiple?'<p class="admin-only-note">Vous pouvez sélectionner plusieurs réponses.</p>':'')+
     '<div class="poll-options"></div>'+
-    '<div class="poll-vote-footer"><span class="poll-vote-message"></span><button class="btn poll-submit" '+(isClosed?'disabled':'')+'>'+(myVotes.length?'Modifier mon vote':'Voter')+'</button></div>'+
+    '<div class="poll-vote-footer"><span class="poll-vote-message"></span><button class="btn poll-submit" '+(isClosed?'disabled':'')+'>Enregistrer mon vote</button></div>'+
     '<div class="poll-actions"></div>';
 
   const opts=card.querySelector('.poll-options');
@@ -869,7 +981,7 @@ function renderPolls(){
 
   const msg=card.querySelector('.poll-vote-message');
   if(isClosed) msg.textContent='Ce sondage est clôturé.';
-  else if(myVotes.length) msg.textContent='Votre vote est enregistré. Modifiez votre sélection puis enregistrez à nouveau.';
+  else if(myVotes.length) msg.textContent='Votre vote est enregistré. Vous pouvez modifier votre sélection à tout moment.';
   else msg.textContent=multiple?'Sélectionnez une ou plusieurs réponses.':'Sélectionnez une réponse.';
 
   const submit=card.querySelector('.poll-submit');
@@ -884,19 +996,19 @@ function renderPolls(){
       // This also fixes modification of an existing vote.
       p.votes[uid]=multiple?selected:selected[0];
       await save();
-      msg.textContent='Votre vote a bien été enregistré.';
+      msg.textContent='Votre vote est enregistré.';
       renderPolls();
     }catch(e){
       console.error(e);
       msg.textContent="Impossible d'enregistrer votre vote.";
       submit.disabled=false;
-      submit.textContent=myVotes.length?'Enregistrer mon nouveau vote':'Voter';
+      submit.textContent='Enregistrer mon vote';
     }
   };
 
   opts.onchange=()=>{
     [...opts.querySelectorAll('.poll-choice')].forEach(x=>x.classList.toggle('selected',!!x.querySelector('input:checked')));
-    submit.textContent=myVotes.length?'Enregistrer mon nouveau vote':'Voter';
+    submit.textContent='Enregistrer mon vote';
   };
 
   const actions=card.querySelector('.poll-actions');
