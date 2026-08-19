@@ -12,12 +12,102 @@ button,input,select,textarea{font:inherit}.app{display:grid;grid-template-column
 .login-spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.45);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:-3px;margin-right:8px}@keyframes spin{to{transform:rotate(360deg)}}#loginBtn:disabled{opacity:.72;cursor:wait}
 /* Charte & valeurs */
 .charter-head{margin-bottom:22px}.charter-head .eyebrow{margin-bottom:8px}.charter-head h1{font-size:34px;margin:0 0 8px}.charter-head p{color:var(--muted);margin:0}.vision-card{position:relative;overflow:hidden;padding:28px 30px;background:linear-gradient(135deg,#fffdf8 0%,#f2f5ef 100%);border-left:5px solid var(--sage)}.vision-card:after{content:'♡';position:absolute;right:28px;top:15px;font-size:72px;color:#dfe9df;font-weight:300}.vision-kicker{font-size:12px;text-transform:uppercase;letter-spacing:.14em;color:var(--terr);font-weight:800;margin-bottom:10px}.vision-card h2{font-size:25px;margin-bottom:12px}.vision-card p{font-size:16px;line-height:1.75;max-width:1000px;margin:0;color:#43544d}.values-title{margin:34px 0 15px}.values-title h2{font-size:22px;margin:0 0 5px}.values-title p{margin:0;color:var(--muted)}.charter-values{display:grid;grid-template-columns:1fr 1fr;gap:16px}.charter-value{position:relative;min-height:230px;padding:24px 24px 22px}.charter-value.foundation{border:2px solid var(--sage);background:linear-gradient(145deg,#fffdf8,#f0f5ef)}.value-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:20px}.value-icon{width:44px;height:44px;border-radius:50%;background:var(--sage2);display:grid;place-items:center;font-size:21px}.value-number{font-size:12px;font-weight:800;letter-spacing:.12em;color:var(--terr)}.charter-value h3{font-size:20px;margin:0 0 10px}.charter-value>p{color:#53645d;line-height:1.65;margin:0}.foundation-badge{display:inline-block;margin-bottom:9px;padding:5px 9px;border-radius:999px;background:#38564b;color:#fff;font-size:10px;font-weight:800;letter-spacing:.08em}.foundation-note{margin-top:18px!important;padding-top:16px;border-top:1px solid #cfdccf;color:#31483f!important;font-size:13px;font-weight:650}.charter-closing{margin-top:22px;padding:20px 24px;text-align:center;background:#263d35;color:#eef5f1;border-radius:15px}.charter-closing strong{display:block;font-size:16px;margin-bottom:4px}.charter-closing span{font-size:13px;color:#cbdad3}@media(max-width:760px){.charter-values{grid-template-columns:1fr}.vision-card{padding:23px 20px}.vision-card:after{display:none}.charter-head h1{font-size:28px}}
+
+.calendar-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:18px 0}
+.calendar-nav{display:flex;align-items:center;gap:8px}.calendar-nav h2{min-width:190px;text-align:center;margin:0;font-size:20px}
+.calendar-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:#d9dfda;border:1px solid #d9dfda;border-radius:14px;overflow:hidden}
+.calendar-weekday{background:#edf2ee;padding:10px 6px;text-align:center;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:#607169}
+.calendar-day{background:#fffdf8;min-height:112px;padding:8px;cursor:pointer;position:relative}.calendar-day:hover{background:#f5f7f2}.calendar-day.outside{background:#f5f3ee;color:#aaa}.calendar-day.today .day-number{background:#38564b;color:#fff}
+.day-number{display:inline-grid;place-items:center;width:27px;height:27px;border-radius:50%;font-size:12px;font-weight:800}
+.calendar-event{margin-top:5px;padding:5px 7px;border-radius:7px;background:#e7efe8;font-size:11px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-left:3px solid #567666}.calendar-event.action{background:#f4e9df;border-left-color:#a76d50}
+.calendar-legend{display:flex;gap:16px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:12px}.legend-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;background:#567666}.legend-dot.action{background:#a76d50}
+.calendar-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.calendar-form-grid .full{grid-column:1/-1}
+.calendar-upcoming{margin-top:22px}.calendar-upcoming-item{display:flex;justify-content:space-between;gap:14px;align-items:center;padding:12px 0;border-bottom:1px solid #e5e7e3}.calendar-upcoming-item:last-child{border-bottom:0}
+@media(max-width:760px){.calendar-day{min-height:78px;padding:5px}.calendar-weekday{font-size:9px}.calendar-event{font-size:9px;padding:3px}.calendar-form-grid{grid-template-columns:1fr}.calendar-form-grid .full{grid-column:auto}}
+
+/* Charte — version éditoriale aérée */
+#principles .values-title{margin:42px 0 18px}
+#principles .charter-values{display:block;border-top:1px solid #d9dfda}
+#principles .charter-value,
+#principles .charter-value.foundation{
+  display:grid;
+  grid-template-columns:90px minmax(0,1fr);
+  gap:26px;
+  min-height:0;
+  padding:30px 4px;
+  margin:0;
+  border:0;
+  border-bottom:1px solid #d9dfda;
+  border-radius:0;
+  background:transparent;
+  box-shadow:none;
+}
+#principles .charter-value .value-top{
+  display:block;
+  margin:0;
+}
+#principles .charter-value .value-icon{display:none}
+#principles .charter-value .value-number{
+  display:block;
+  font-size:38px;
+  line-height:1;
+  font-weight:500;
+  letter-spacing:-.04em;
+  color:#8da097;
+}
+#principles .charter-value.foundation .value-number{color:#38564b}
+#principles .charter-value h3{
+  font-size:22px;
+  margin:0 0 10px;
+  color:#263d35;
+}
+#principles .charter-value>p{
+  max-width:820px;
+  font-size:15px;
+  line-height:1.75;
+  color:#53645d;
+}
+#principles .foundation-badge{
+  display:inline-block;
+  margin:0 0 10px;
+  padding:0;
+  border-radius:0;
+  background:transparent;
+  color:#8a5c48;
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.12em;
+}
+#principles .foundation-note{
+  margin-top:13px!important;
+  padding:0!important;
+  border:0!important;
+  font-size:13px!important;
+  font-weight:650;
+  color:#31483f!important;
+}
+#principles .charter-closing{
+  margin-top:36px;
+  padding:24px 0 4px;
+  text-align:left;
+  background:transparent;
+  color:#263d35;
+  border-radius:0;
+  border-top:0;
+}
+#principles .charter-closing strong{font-size:17px}
+#principles .charter-closing span{color:#6c7b74}
+@media(max-width:650px){
+  #principles .charter-value,
+  #principles .charter-value.foundation{grid-template-columns:55px 1fr;gap:14px;padding:24px 0}
+  #principles .charter-value .value-number{font-size:30px}
+}
 </style>
 </head>
 <body>
 <div class="app">
 <aside class="side"><div class="brand">Maison <span>Demain</span><br><small style="position:static">Projet de vie partagée</small></div><nav class="nav" id="nav">
-<button class="active" data-page="dashboard">⌂ Vue d'ensemble</button><button data-page="roadmap">◎ Feuille de route</button><button data-page="tasks">✓ Actions</button><button data-page="community">♧ Communauté</button><button data-page="budget">€ Budget</button><button data-page="principles">♡ Charte & valeurs</button><button data-page="notes">✎ Notes & décisions</button></nav><small>Données synchronisées avec Firebase</small></aside>
+<button class="active" data-page="dashboard">⌂ Vue d'ensemble</button><button data-page="roadmap">◎ Feuille de route</button><button data-page="tasks">✓ Actions</button><button data-page="calendar">▣ Calendrier</button><button data-page="community">♧ Communauté</button><button data-page="budget">€ Budget</button><button data-page="principles">♡ Charte & valeurs</button><button data-page="notes">✎ Notes & décisions</button></nav><small>Données synchronisées avec Firebase</small></aside>
 <main class="main">
 <section id="dashboard" class="section active"><div class="hero"><div><div class="eyebrow">Projet collectif • habitat & entraide</div><h1>Créer une communauté solidaire et harmonieuse pour se soutenir dans nos vieux jours</h1><p>Un cadre de vie épanouissant, durable, <strong>adaptable</strong> et bienveillant, façonné collectivement selon les besoins de chacun.</p></div><span class="pill">🌿 Vision 2035+</span></div>
 <div class="grid"><div class="card kpi"><div class="lab">Progression globale</div><div class="num" id="progressNum">32%</div><div class="progress"><i id="progressBar"></i></div></div><div class="card kpi"><div class="lab">Membres / foyers</div><div class="num" id="memberKpi">6</div></div><div class="card kpi"><div class="lab">Actions ouvertes</div><div class="num" id="taskKpi">4</div></div><div class="card kpi"><div class="lab">Budget estimatif</div><div class="num money" id="budgetKpi">0 €</div></div>
@@ -27,15 +117,62 @@ button,input,select,textarea{font:inherit}.app{display:grid;grid-template-column
 <section id="tasks" class="section"><h1>Actions</h1><p class="intro">Suivez les prochaines étapes, les responsables et les échéances.</p><div class="card"><div class="toolbar"><input id="taskName" placeholder="Nouvelle action"><input id="taskOwner" placeholder="Responsable"><input id="taskDate" type="date"><select id="taskStatus"><option>À faire</option><option>En cours</option><option>Bloqué</option></select><button class="btn" onclick="addTask()">Ajouter</button></div><div id="taskList"></div></div></section>
 <section id="community" class="section"><h1>Communauté</h1><p class="intro">Cartographiez le groupe fondateur et les compétences disponibles.</p><div class="card"><div class="toolbar"><input id="memberName" placeholder="Nom / foyer"><input id="memberSkill" placeholder="Compétence / contribution"><button class="btn" onclick="addMember()">Ajouter</button></div><div id="memberList"></div></div></section>
 <section id="budget" class="section"><h1>Budget</h1><p class="intro">Première estimation des postes nécessaires au projet.</p><div class="card"><div class="toolbar"><input id="budgetLabel" placeholder="Poste (étude, terrain…)"><input id="budgetAmount" type="number" placeholder="Montant €"><select id="budgetType"><option>Investissement</option><option>Fonctionnement</option><option>Réserve solidaire</option></select><button class="btn" onclick="addBudget()">Ajouter</button></div><div id="budgetList"></div><hr style="border:0;border-top:1px solid #e7e1d7;margin:18px 0"><b>Total : <span id="budgetTotal">0 €</span></b></div></section>
+
+<section id="calendar" class="section">
+  <div class="charter-head">
+    <div class="eyebrow">Organisation collective</div>
+    <h1>Calendrier</h1>
+    <p>Planifiez les réunions, rendez-vous et actions importantes de la communauté.</p>
+  </div>
+
+  <div class="card">
+    <div class="calendar-toolbar">
+      <button id="addCalendarEvent" class="btn">+ Ajouter</button>
+      <div class="calendar-nav">
+        <button id="calPrev" class="btn secondary">‹</button>
+        <h2 id="calMonthLabel"></h2>
+        <button id="calNext" class="btn secondary">›</button>
+      </div>
+      <button id="calToday" class="btn secondary">Aujourd'hui</button>
+    </div>
+    <div class="calendar-grid" id="calendarGrid"></div>
+    <div class="calendar-legend"><span><i class="legend-dot"></i>Réunion</span><span><i class="legend-dot action"></i>Action</span></div>
+  </div>
+
+  <div class="card calendar-upcoming">
+    <h2>À venir</h2>
+    <div id="calendarUpcoming"></div>
+  </div>
+</section>
+
+<div id="calendarModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9998;padding:24px;overflow:auto">
+  <div class="card" style="max-width:600px;margin:50px auto;padding:24px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+      <h2 style="margin:0">Ajouter au calendrier</h2>
+      <button id="closeCalendarModal" class="btn secondary">Fermer</button>
+    </div>
+    <div class="calendar-form-grid" style="margin-top:18px">
+      <label>Type *<select id="calType"><option value="meeting">Réunion</option><option value="action">Action</option></select></label>
+      <label>Date *<input id="calDate" type="date"></label>
+      <label>Heure<input id="calTime" type="time"></label>
+      <label>Responsable<input id="calOwner" placeholder="Nom"></label>
+      <label class="full">Titre *<input id="calTitle" placeholder="Ex. Réunion mensuelle"></label>
+      <label class="full">Description<textarea id="calDescription" rows="3" placeholder="Informations utiles..."></textarea></label>
+    </div>
+    <p id="calError" style="color:#a75f50;font-size:13px"></p>
+    <button id="saveCalendarEvent" class="btn" style="margin-top:8px">Enregistrer</button>
+  </div>
+</div>
+
 <section id="principles" class="section">
 <div class="charter-head"><div class="eyebrow">Notre cadre commun</div><h1>Charte & valeurs</h1><p>Les principes qui nous rassemblent et guident notre manière de vivre, décider et avancer ensemble.</p></div>
 <div class="card vision-card"><div class="vision-kicker">Notre vision</div><h2>Construire ensemble un lieu où bien vivre et bien vieillir</h2><p>Créer une communauté solidaire et harmonieuse pour se soutenir dans nos vieux jours, où chacun contribue à façonner un cadre de vie épanouissant, durable, adaptable et bienveillant. Ici, nous apprenons à gérer nos conflits avec respect, à partager nos espaces et nos rêves, et à cultiver des liens forts pour que ce projet soit une source de joie et de sérénité pour tous.</p></div>
 <div class="values-title"><h2>Nos valeurs fondatrices</h2><p>Quatre repères pour orienter nos comportements, nos choix et nos décisions collectives.</p></div>
 <div class="charter-values">
-<div class="card charter-value foundation"><div class="value-top"><div class="value-icon">♡</div><div class="value-number">00</div></div><span class="foundation-badge">VALEUR SOCLE</span><h3>Respect & bienveillance</h3><p>Écouter et prendre en compte chacun et chacune dans ses différences.</p><p class="foundation-note">Cette valeur est le fondement de toutes les autres. Elle prévaut sur toute autre considération lorsqu'il s'agit de prendre une décision ou de résoudre une situation.</p></div>
-<div class="card charter-value"><div class="value-top"><div class="value-icon">◇</div><div class="value-number">01</div></div><h3>Intégrité & responsabilité</h3><p>Honnêteté intellectuelle et émotionnelle, franchise, fiabilité dans nos engagements.</p></div>
-<div class="card charter-value"><div class="value-top"><div class="value-icon">◎</div><div class="value-number">02</div></div><h3>Solidarité & entraide</h3><p>Solidarité humaine, émotionnelle et financière.</p></div>
-<div class="card charter-value"><div class="value-top"><div class="value-icon">☀</div><div class="value-number">03</div></div><h3>Qualité de vie</h3><p>Confort physiologique et mental.</p></div>
+<div class="card charter-value foundation"><div class="value-top"><div class="value-icon">♡</div><div class="value-number">00</div></div><div class="value-copy"><span class="foundation-badge">VALEUR SOCLE</span><h3>Respect & bienveillance</h3><p>Écouter et prendre en compte chacun et chacune dans ses différences.</p><p class="foundation-note">Cette valeur est le fondement de toutes les autres. Elle prévaut sur toute autre considération lorsqu'il s'agit de prendre une décision ou de résoudre une situation.</p></div></div>
+<div class="card charter-value"><div class="value-top"><div class="value-icon">◇</div><div class="value-number">01</div></div><div class="value-copy"><h3>Intégrité & responsabilité</h3><p>Honnêteté intellectuelle et émotionnelle, franchise, fiabilité dans nos engagements.</p></div></div>
+<div class="card charter-value"><div class="value-top"><div class="value-icon">◎</div><div class="value-number">02</div></div><div class="value-copy"><h3>Solidarité & entraide</h3><p>Solidarité humaine, émotionnelle et financière.</p></div></div>
+<div class="card charter-value"><div class="value-top"><div class="value-icon">☀</div><div class="value-number">03</div></div><div class="value-copy"><h3>Qualité de vie</h3><p>Confort physiologique et mental.</p></div></div>
 </div>
 <div class="charter-closing"><strong>Cette charte est notre point de référence commun.</strong><span>Nos décisions, nos comportements et l'évolution du projet doivent rester cohérents avec ces principes.</span></div>
 </section>
@@ -105,7 +242,8 @@ function money(n){return new Intl.NumberFormat('fr-FR',{style:'currency',currenc
 function renderTasks(){taskList.innerHTML=data.tasks.map((t,i)=>`<div class="taskrow ${t.done?'done':''}"><input type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${i},this.checked)"><b class="taskname">${esc(t.name)}</b><span>${esc(t.owner)}</span><span>${t.date||'Sans date'}</span><span class="tag">${esc(t.status)}</span><button class="del" onclick="deleteTask(${i})">×</button></div>`).join('')}
 function renderMembers(){memberList.innerHTML=data.members.map((m,i)=>`<div class="member"><div class="avatar">${esc(m.name).charAt(0).toUpperCase()}</div><div><b>${esc(m.name)}</b><br><small>${esc(m.skill)}</small></div><button class="del" style="margin-left:auto" onclick="deleteMember(${i})">×</button></div>`).join('')}
 function renderBudget(){budgetList.innerHTML=data.budget.map((b,i)=>`<div class="budgetrow"><b>${esc(b.label)}</b><span>${esc(b.type)}</span><span class="money">${money(b.amount)}</span><button class="del" onclick="deleteBudget(${i})">×</button></div>`).join('');let total=data.budget.reduce((s,b)=>s+Number(b.amount),0);budgetTotal.textContent=money(total);budgetKpi.textContent=money(total)}
-function renderAll(){renderTasks();renderMembers();renderBudget();notesArea.value=data.notes||'';memberKpi.textContent=data.members.length;taskKpi.textContent=data.tasks.filter(t=>!t.done).length;let p=data.tasks.length?Math.round(data.tasks.filter(t=>t.done).length/data.tasks.length*100):0;progressNum.textContent=p+'%';progressBar.style.width=p+'%'}
+function renderAll(){renderTasks();renderMembers();renderBudget();notesArea.value=data.notes||'';memberKpi.textContent=data.members.length;taskKpi.textContent=data.tasks.filter(t=>!t.done).length;let p=data.tasks.length?Math.round(data.tasks.filter(t=>t.done).length/data.tasks.length*100):0;progressNum.textContent=p+'%';progressBar.style.width=p+'%'
+renderCalendar();}
 window.addTask=()=>{let n=taskName.value.trim();if(!n)return;data.tasks.push({name:n,owner:taskOwner.value||'À définir',date:taskDate.value,status:taskStatus.value,done:false});taskName.value='';save()};
 window.toggleTask=(i,v)=>{data.tasks[i].done=v;save()}; window.deleteTask=i=>{data.tasks.splice(i,1);save()};
 window.addMember=()=>{let n=memberName.value.trim();if(!n)return;data.members.push({name:n,skill:memberSkill.value||'À définir'});memberName.value='';memberSkill.value='';save()}; window.deleteMember=i=>{data.members.splice(i,1);save()};
@@ -154,6 +292,56 @@ adminBtn.onclick=()=>{
   });
 };
 closeAdmin.onclick=()=>{adminModal.style.display='none';if(adminUnsub){adminUnsub();adminUnsub=null}};
+
+
+let calendarCursor=new Date(); calendarCursor.setDate(1);
+
+function calISO(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function renderCalendar(){
+  if(!document.getElementById('calendarGrid')) return;
+  const month=calendarCursor.getMonth(), year=calendarCursor.getFullYear();
+  calMonthLabel.textContent=new Intl.DateTimeFormat('fr-FR',{month:'long',year:'numeric'}).format(calendarCursor);
+  calendarGrid.innerHTML='';
+  ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].forEach(x=>{const e=document.createElement('div');e.className='calendar-weekday';e.textContent=x;calendarGrid.appendChild(e)});
+  const first=new Date(year,month,1), offset=(first.getDay()+6)%7;
+  const start=new Date(year,month,1-offset);
+  const today=calISO(new Date());
+  for(let i=0;i<42;i++){
+    const d=new Date(start);d.setDate(start.getDate()+i);const iso=calISO(d);
+    const cell=document.createElement('div');cell.className='calendar-day'+(d.getMonth()!==month?' outside':'')+(iso===today?' today':'');
+    cell.innerHTML='<span class="day-number">'+d.getDate()+'</span>';
+    (data.calendarEvents||[]).filter(e=>e.date===iso).sort((a,b)=>(a.time||'').localeCompare(b.time||'')).forEach(ev=>{
+      const x=document.createElement('div');x.className='calendar-event '+(ev.type==='action'?'action':'');x.title=ev.title;x.textContent=(ev.time?ev.time+' ':'')+ev.title;cell.appendChild(x);
+    });
+    cell.onclick=()=>openCalendarModal(iso);calendarGrid.appendChild(cell);
+  }
+  renderUpcoming();
+}
+function renderUpcoming(){
+  const now=calISO(new Date());
+  const list=(data.calendarEvents||[]).filter(e=>e.date>=now).sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||''))).slice(0,8);
+  calendarUpcoming.innerHTML=list.length?'':'<p class="intro">Aucun événement à venir.</p>';
+  list.forEach(ev=>{
+    const row=document.createElement('div');row.className='calendar-upcoming-item';
+    const left=document.createElement('div');left.innerHTML='<strong>'+ev.title+'</strong><br><small>'+new Date(ev.date+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'long'})+(ev.time?' · '+ev.time:'')+' · '+(ev.type==='action'?'Action':'Réunion')+(ev.owner?' · '+ev.owner:'')+'</small>';
+    const del=document.createElement('button');del.className='btn secondary';del.textContent='Supprimer';del.onclick=async()=>{if(confirm('Supprimer cet élément du calendrier ?')){data.calendarEvents=(data.calendarEvents||[]).filter(x=>x.id!==ev.id);await save();renderCalendar()}};
+    row.append(left,del);calendarUpcoming.appendChild(row);
+  });
+}
+function openCalendarModal(date){
+  calError.textContent='';calDate.value=date||calISO(new Date());calTitle.value='';calTime.value='';calOwner.value='';calDescription.value='';calType.value='meeting';calendarModal.style.display='block';
+}
+addCalendarEvent.onclick=()=>openCalendarModal();
+closeCalendarModal.onclick=()=>calendarModal.style.display='none';
+calPrev.onclick=()=>{calendarCursor.setMonth(calendarCursor.getMonth()-1);renderCalendar()};
+calNext.onclick=()=>{calendarCursor.setMonth(calendarCursor.getMonth()+1);renderCalendar()};
+calToday.onclick=()=>{calendarCursor=new Date();calendarCursor.setDate(1);renderCalendar()};
+saveCalendarEvent.onclick=async()=>{
+  if(!calDate.value||!calTitle.value.trim()){calError.textContent='La date et le titre sont obligatoires.';return}
+  data.calendarEvents=data.calendarEvents||[];
+  data.calendarEvents.push({id:crypto.randomUUID(),type:calType.value,date:calDate.value,time:calTime.value,title:calTitle.value.trim(),owner:calOwner.value.trim(),description:calDescription.value.trim()});
+  await save();calendarModal.style.display='none';renderCalendar();
+};
 
 onAuthStateChanged(auth,async user=>{
 if(unsub){unsub();unsub=null}
