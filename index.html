@@ -1174,6 +1174,36 @@ body.auth-pending .app{visibility:hidden}
  #accountDropdown{right:0!important;left:auto!important}
 }
 
+
+/* ===== Modal close buttons & account settings hierarchy ===== */
+.modal-close-x{
+  width:38px!important;height:38px!important;min-width:38px!important;
+  padding:0!important;border:0!important;border-radius:50%!important;
+  background:transparent!important;color:var(--forest)!important;
+  display:grid!important;place-items:center!important;
+  font-size:27px!important;font-weight:300!important;line-height:1!important;
+  cursor:pointer!important;box-shadow:none!important;
+}
+.modal-close-x:hover{background:#efede6!important}
+.profile-form{gap:16px!important}
+.profile-section-divider{height:1px;background:var(--line);margin:3px 0 0}
+.profile-section{display:grid;gap:10px}
+.profile-section-title{
+  font-size:12px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--terracotta)
+}
+.profile-section-row{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:20px;padding:2px 0
+}
+.profile-section-row strong{font-size:13px;color:var(--forest)}
+.account-setting-action{white-space:nowrap;font-size:13px!important}
+.profile-form>label{font-size:13px;font-weight:700}
+@media(max-width:560px){
+ .profile-section-row{align-items:flex-start;flex-direction:column;gap:10px}
+ .account-setting-action{width:100%}
+}
+
 </style>
 </head>
 <body class="auth-pending">
@@ -1312,7 +1342,7 @@ body.auth-pending .app{visibility:hidden}
   <div class="card calendar-dialog">
     <div class="calendar-dialog-head">
       <div><h2 id="calendarModalTitle">Ajouter au calendrier</h2><p id="calendarModalSubtitle">Planifiez une réunion ou une action.</p></div>
-      <button id="closeCalendarModal" class="btn secondary">Fermer</button>
+      <button id="closeCalendarModal" class="btn secondary modal-close-x" aria-label="Fermer" title="Fermer">×</button>
     </div>
     <div class="calendar-dialog-body">
       <div class="calendar-form-grid">
@@ -1344,7 +1374,7 @@ body.auth-pending .app{visibility:hidden}
 
 <div id="pollModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9998;padding:20px;overflow:auto">
  <div class="card poll-dialog">
-  <div class="calendar-dialog-head"><div><h2 id="pollModalTitle">Créer un sondage</h2><p>Définissez la question et les réponses proposées.</p></div><button id="closePollModal" class="btn secondary">Fermer</button></div>
+  <div class="calendar-dialog-head"><div><h2 id="pollModalTitle">Créer un sondage</h2><p>Définissez la question et les réponses proposées.</p></div><button id="closePollModal" class="btn secondary modal-close-x" aria-label="Fermer" title="Fermer">×</button></div>
   <div class="calendar-dialog-body">
    <div class="calendar-form-grid">
     <label class="full">Question *<input id="pollQuestion" placeholder="Ex. Quelle date retenons-nous ?"></label>
@@ -1383,7 +1413,7 @@ body.auth-pending .app{visibility:hidden}
 </section>
 <div id="resourceModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9998;padding:20px;overflow:auto">
  <div class="card resource-dialog">
-  <div class="calendar-dialog-head"><div><div class="eyebrow">RESSOURCE</div><h2 id="resourceModalTitle">Ajouter une ressource</h2></div><button id="closeResourceModal" class="btn secondary">Fermer</button></div>
+  <div class="calendar-dialog-head"><div><div class="eyebrow">RESSOURCE</div><h2 id="resourceModalTitle">Ajouter une ressource</h2></div><button id="closeResourceModal" class="btn secondary modal-close-x" aria-label="Fermer" title="Fermer">×</button></div>
   <div class="calendar-dialog-body">
    <div class="resource-form-grid">
     <label>Nom *<input id="resourceName" placeholder="Ex. Google Drive"></label>
@@ -1412,7 +1442,7 @@ body.auth-pending .app{visibility:hidden}
   <div class="card value-dialog">
     <div class="modal-head">
       <div><div class="eyebrow">VALEUR FONDATRICE</div><h2>Ajouter une valeur</h2><p>Ajoutez un nouveau principe à la charte commune.</p></div>
-      <button id="closeValueModal" class="btn secondary">Fermer</button>
+      <button id="closeValueModal" class="btn secondary modal-close-x" aria-label="Fermer" title="Fermer">×</button>
     </div>
     <div class="value-form">
       <label><span>Titre *</span><input id="valueTitle" maxlength="80" placeholder="Ex. Liberté & autonomie"></label>
@@ -1434,7 +1464,7 @@ body.auth-pending .app{visibility:hidden}
 
 <div id="noteModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9997;padding:20px;overflow:auto">
  <div class="card note-dialog">
-  <div class="calendar-dialog-head"><div><div class="eyebrow">NOTE</div><h2 id="noteModalTitle">Nouvelle note</h2></div><button id="closeNoteModal" class="btn secondary">Fermer</button></div>
+  <div class="calendar-dialog-head"><div><div class="eyebrow">NOTE</div><h2 id="noteModalTitle">Nouvelle note</h2></div><button id="closeNoteModal" class="btn secondary modal-close-x" aria-label="Fermer" title="Fermer">×</button></div>
   <div class="calendar-dialog-body note-form">
    <label>Titre *<input id="noteTitle" placeholder="Donnez un titre à votre note"></label>
    <label>Contenu *<textarea id="noteContent" placeholder="Écrivez votre note…"></textarea></label>
@@ -1448,11 +1478,24 @@ body.auth-pending .app{visibility:hidden}
 
 <div id="profileModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:10000;padding:18px;overflow:auto">
  <div class="profile-dialog">
-  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><div><div class="eyebrow">COMPTE</div><h2 style="margin:3px 0 0">Paramètres du compte</h2></div><button id="closeProfileModal" class="btn secondary" type="button">Fermer</button></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;gap:12px"><div><div class="eyebrow">COMPTE</div><h2 style="margin:3px 0 0">Paramètres du compte</h2></div><button id="closeProfileModal" class="btn secondary modal-close-x" type="button" aria-label="Fermer" title="Fermer">×</button></div>
   <div class="profile-form">
    <div class="profile-photo-row"><div id="profilePreview" class="profile-preview">C</div><div><label class="btn secondary" style="display:inline-block;cursor:pointer">Choisir une photo<input id="profilePhotoInput" type="file" accept="image/*" style="display:none"></label><button id="removeProfilePhoto" class="btn secondary" type="button" style="margin-left:5px">Supprimer</button><div class="profile-help" style="margin-top:7px">La photo est redimensionnée et compressée automatiquement à 5 Ko maximum.</div></div></div>
    <label>Nom affiché<input id="profileDisplayName" maxlength="60" placeholder="Votre nom"></label>
    <label>E-mail<input id="profileEmail" type="email" disabled></label>
+   
+   <div class="profile-section-divider"></div>
+   <div class="profile-section">
+    <div class="profile-section-title">Sécurité</div>
+    <div class="profile-section-row">
+      <div>
+        <strong>Mot de passe</strong>
+        <div class="profile-help">Modifiez le mot de passe utilisé pour vous connecter.</div>
+      </div>
+      <button id="openPasswordFromProfile" class="btn secondary account-setting-action" type="button">Changer le mot de passe</button>
+    </div>
+   </div>
+
    <p id="profileError" class="error" style="color:#a75f50"></p>
    <div class="profile-actions"><button id="cancelProfile" class="btn secondary" type="button">Annuler</button><button id="saveProfile" class="btn" type="button">Enregistrer</button></div>
   </div>
@@ -1461,9 +1504,8 @@ body.auth-pending .app{visibility:hidden}
 <div id="adminModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;padding:24px;overflow:auto">
   <div style="max-width:900px;margin:30px auto;background:#fffdf8;border-radius:18px;padding:24px;box-shadow:0 18px 60px rgba(0,0,0,.25)">
     <div style="display:flex;justify-content:space-between;gap:16px;align-items:center">
-      <div><button id="changePasswordMenuBtn" type="button" class="account-menu-item">Changer le mot de passe</button>
-<h2 style="margin:0">Administration des utilisateurs</h2><p style="margin:6px 0 0;color:#666">Valider, refuser, suspendre ou réactiver les membres.</p></div>
-      <button id="closeAdmin" class="btn">Fermer</button>
+      <div><h2 style="margin:0">Administration des utilisateurs</h2><p style="margin:6px 0 0;color:#666">Valider, refuser, suspendre ou réactiver les membres.</p></div>
+      <button id="closeAdmin" class="btn modal-close-x" aria-label="Fermer" title="Fermer">×</button>
     </div>
     <input id="adminSearch" placeholder="Rechercher par e-mail..." style="width:100%;box-sizing:border-box;margin:18px 0;padding:11px;border:1px solid #ddd;border-radius:10px">
     <div id="adminUsers"></div>
@@ -2079,6 +2121,26 @@ renderCharterValues();
   setTimeout(reorderAccountMenu,1000);
 })();
 
+
+/* Password change now belongs to Account Settings */
+(function(){
+  function bindPasswordInsideProfile(){
+    const btn=document.getElementById('openPasswordFromProfile');
+    const profile=document.getElementById('profileModal');
+    const password=document.getElementById('changePasswordModal');
+    if(!btn || !password || btn.dataset.bound==='1') return;
+    btn.dataset.bound='1';
+    btn.addEventListener('click',()=>{
+      if(profile) profile.style.display='none';
+      password.style.display='grid';
+      const input=document.getElementById('newAccountPassword');
+      if(input) setTimeout(()=>input.focus(),50);
+    });
+  }
+  document.addEventListener('DOMContentLoaded',bindPasswordInsideProfile);
+  setTimeout(bindPasswordInsideProfile,300);
+})();
+
 </script>
 
 <div id="changePasswordModal" class="modal-shell" style="display:none">
@@ -2089,7 +2151,7 @@ renderCharterValues();
         <h2 id="changePasswordTitle">Changer le mot de passe</h2>
         <p>Choisissez un nouveau mot de passe pour votre compte.</p>
       </div>
-      <button id="closePasswordModal" type="button" class="btn secondary">Fermer</button>
+      <button id="closePasswordModal" type="button" class="btn secondary modal-close-x" aria-label="Fermer" title="Fermer">×</button>
     </div>
     <form id="changePasswordForm" class="password-form">
       <label>
