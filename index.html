@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Projet — Communauté solidaire & harmonieuse</title>
+<title>Tiny Houses — Lieu communautaire</title>
 <style>
 :root{--ink:#24332e;--muted:#66766f;--bg:#f4f1e9;--card:#fffdf8;--sage:#789b84;--sage2:#dfe9df;--terr:#c8795d;--gold:#d8b86a;--line:#ddd8cd;--blue:#7395a3;--shadow:0 8px 24px rgba(45,60,52,.08)}
 *{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Arial;color:var(--ink);background:var(--bg)}
@@ -796,11 +796,114 @@ body{display:block!important;min-height:100vh}
   margin-top:22px!important;
 }
 
+
+/* ===== Identité Tiny Houses — 2026 ===== */
+:root{
+ --ink:#203a31;--muted:#68766f;--bg:#f5f1e8;--card:#fffdf9;
+ --forest:#23483c;--forest2:#31594b;--sage:#879d76;--sage2:#dfe6d6;
+ --sage3:#eef2e9;--sand:#e8d8ba;--cream:#faf7f0;--terr:#bd6748;
+ --line:#ded9cd;--shadow:0 10px 30px rgba(42,59,49,.065);
+}
+body{background:var(--bg)!important;color:var(--ink)!important;font-family:Inter,"Segoe UI",Arial,sans-serif!important}
+.main{max-width:none!important;background:linear-gradient(180deg,#f8f5ee 0,#f5f1e8 380px)!important}
+.section{max-width:1380px!important}
+.card{background:rgba(255,253,249,.96)!important;border:1px solid rgba(189,181,164,.55)!important;border-radius:18px!important;box-shadow:var(--shadow)!important}
+.section h1,.section h2,.section h3{letter-spacing:-.025em;color:#18352d}
+.eyebrow{color:var(--terr)!important;font-size:11px!important;letter-spacing:.16em!important;font-weight:800!important}
+.btn{background:var(--forest)!important;border-radius:9px!important;padding:10px 15px!important}
+.btn.secondary{background:#f1ede4!important;color:var(--ink)!important;border:1px solid #ddd6c9!important}
+input,select,textarea{border-color:#d9d2c5!important;background:#fffefa!important}
+.progress{background:#ece7dd!important}.progress>i{background:var(--sage)!important}
+.tag{background:#edf0e8!important;color:#5d6e62!important}
+.dot{background:var(--terr)!important}.dot.done{background:var(--sage)!important}.dot.todo{background:#d6d0c4!important}
+
+/* Header / logo */
+.side{background:rgba(255,253,249,.97)!important;color:var(--forest)!important;border-bottom:1px solid #e7e1d6!important;box-shadow:0 4px 20px rgba(41,59,50,.045)!important;backdrop-filter:blur(12px)}
+.brand{display:flex!important;align-items:center!important;gap:10px!important;color:var(--forest)!important}
+.brandmark{width:43px;height:43px;flex:none;color:#657f58}
+.brandtext{display:flex;flex-direction:column;line-height:1!important}
+.brandtext strong{font-size:16px;letter-spacing:.13em;text-transform:uppercase;white-space:nowrap}
+.brandtext small{font-size:8px!important;letter-spacing:.17em!important;text-transform:uppercase;color:#7d897f!important;margin-top:6px!important}
+.side .nav button{color:#35473f!important;background:transparent!important;font-weight:600!important}
+.side .nav button:hover{background:#f0f2eb!important;color:var(--forest)!important}
+.side .nav button.active{background:transparent!important;color:var(--forest)!important;box-shadow:inset 0 -2px 0 #5e7654!important;border-radius:0!important}
+
+/* Homepage */
+.home-hero{min-height:410px;display:grid;grid-template-columns:.86fr 1.14fr;overflow:hidden;background:linear-gradient(115deg,#fbf8f1 0%,#f8f4eb 52%,#e6eadf 100%);border:1px solid #e3ddd1;border-radius:24px;margin-bottom:-45px;position:relative}
+.home-hero-copy{padding:62px 28px 90px 54px;position:relative;z-index:2}
+.home-hero h1{font-size:58px!important;line-height:.98!important;margin:14px 0 4px!important;letter-spacing:-.045em!important;color:var(--forest)!important}
+.home-hero h2{font-size:29px!important;font-weight:500!important;color:#637857!important;margin:0 0 22px!important}
+.home-hero p{font-size:17px;line-height:1.65;color:#4f5f58;max-width:570px;margin:0 0 25px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+.hero-primary,.hero-secondary{font-size:13px}
+.hero-illustration{display:flex;align-items:flex-end;justify-content:center;overflow:hidden;padding:30px 20px 0 0}
+.hero-illustration svg{width:100%;max-width:700px;height:auto;filter:drop-shadow(0 18px 25px rgba(37,66,54,.08))}
+.home-kpis{position:relative;z-index:4;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:0 36px;margin-bottom:62px}
+.home-kpis .kpi{display:grid!important;grid-template-columns:44px 1fr!important;gap:12px;align-items:center;padding:18px!important}
+.home-kpis .kpi-icon{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--sage3);color:#58724e;font-size:19px}
+.home-kpis .num{font-size:27px!important;margin-top:3px!important}
+.home-kpis .lab{font-size:12px!important}
+.home-kpis .progress{height:5px;margin-top:7px}
+.home-heading{display:flex;align-items:end;justify-content:space-between;gap:30px;margin:0 0 20px}
+.home-heading h2{font-size:29px;margin:6px 0 0}
+.home-heading p{color:var(--muted);max-width:570px;margin:0;line-height:1.55}
+.axis-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:13px;margin-bottom:46px}
+.axis-card{background:#fffdf9;border:1px solid #e0d9cd;border-radius:16px;padding:22px 17px;min-height:205px;box-shadow:0 7px 20px rgba(42,59,49,.045);transition:.2s ease}
+.axis-card:hover{transform:translateY(-2px);box-shadow:0 12px 26px rgba(42,59,49,.08)}
+.axis-icon{display:grid;width:42px;height:42px;place-items:center;border-radius:50%;background:var(--sage2);color:#4f6d4d;font-size:20px;margin-bottom:25px}
+.axis-card:nth-child(4) .axis-icon,.axis-card:nth-child(6) .axis-icon{background:#f1dfd4;color:#9b553d}
+.axis-card h3{font-size:15px;margin:0 0 10px}
+.axis-card p{font-size:12px;line-height:1.55;color:var(--muted);margin:0}
+.home-bottom-grid{display:grid;grid-template-columns:.9fr 1.15fr .95fr;gap:16px;margin-bottom:25px}
+.home-bottom-grid>.card{padding:24px!important}
+.home-bottom-grid h2{font-size:20px;margin:6px 0 18px}
+.value-line{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid #eee9df}
+.value-line>span{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--sage3);color:#617b56;flex:none}
+.value-line b{display:block;font-size:13px}.value-line small{display:block;color:var(--muted);font-size:11px;margin-top:3px;line-height:1.4}
+.text-link{border:0;background:transparent;color:var(--forest);font-weight:700;font-size:12px;padding:16px 0 0;cursor:pointer}
+.home-next .phase{font-size:12px}.home-next .phase small{color:var(--muted)}
+.mini-cal{display:grid;grid-template-columns:56px 1fr;gap:13px;align-items:center;padding:10px 0;border-bottom:1px solid #eee9df}
+.mini-date{height:56px;border-radius:12px;background:#f2e8d7;display:grid;place-items:center;align-content:center;color:#805c40}
+.mini-date.sage{background:var(--sage3);color:#5b7253}.mini-date b{font-size:18px;line-height:1}.mini-date span{font-size:8px;letter-spacing:.1em;margin-top:4px}
+.mini-cal>div:last-child b{display:block;font-size:13px}.mini-cal small{display:block;color:var(--muted);font-size:11px;margin-top:4px}
+.home-manifesto{display:flex;justify-content:center;align-items:center;gap:12px;padding:25px;margin:10px 0 5px;border-radius:16px;background:linear-gradient(90deg,#e8ecdf,#f2eadb,#e6ebdd);font-size:16px}
+.home-manifesto .leaf{font-size:27px;color:#647d56}
+
+/* Other sections inherit the identity */
+.charter-hero,.charter-vision{background:#fffdf9!important;border-color:#dfe2d5!important}
+.calendar-upcoming{border-left:4px solid var(--sage)!important}
+.poll-card,.resource-card,.note-card{border-radius:16px!important}
+.footer{color:#829087!important}
+
+@media(max-width:1100px){
+ .home-hero{grid-template-columns:1fr 1fr}.home-hero-copy{padding:48px 20px 80px 38px}.home-hero h1{font-size:48px!important}
+ .axis-grid{grid-template-columns:repeat(3,1fr)}.home-bottom-grid{grid-template-columns:1fr 1fr}.home-calendar{grid-column:1/-1}
+}
+@media(max-width:900px){
+ .brandmark{width:35px;height:35px}.brandtext strong{font-size:14px}
+ .home-hero{grid-template-columns:1fr;min-height:0;margin-bottom:16px}.home-hero-copy{padding:38px 26px 22px}.home-hero h1{font-size:43px!important}.home-hero h2{font-size:24px!important}.hero-illustration{padding:0 15px 0;max-height:270px}
+ .home-kpis{padding:0;grid-template-columns:1fr 1fr;margin-bottom:40px}.home-heading{display:block}.home-heading p{margin-top:10px}
+ .axis-grid{grid-template-columns:1fr 1fr}.home-bottom-grid{grid-template-columns:1fr}.home-calendar{grid-column:auto}
+}
+@media(max-width:560px){
+ .home-hero{border-radius:17px}.home-hero-copy{padding:30px 20px 18px}.home-hero h1{font-size:38px!important}.home-hero p{font-size:15px}
+ .home-kpis{grid-template-columns:1fr;gap:10px}.home-kpis .kpi{grid-template-columns:40px 1fr!important}
+ .axis-grid{grid-template-columns:1fr}.axis-card{min-height:0}.home-heading h2{font-size:25px}
+ .home-manifesto{text-align:center;font-size:14px}
+}
+
 </style>
 </head>
 <body>
 <div class="app">
-<aside class="side"><div class="brand">Tiny <span>Houses</span><br><small style="position:static">Lieu communautaire</small></div><nav class="nav" id="nav">
+<aside class="side"><div class="brand">
+<svg class="brandmark" viewBox="0 0 64 64" aria-hidden="true">
+  <path d="M8 38V27l12-10 12 10v11M27 38V23l11-9 11 9v15M43 38V28l8-7 7 7v10" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M13 42c9 7 29 7 39 0M10 17C16 8 25 4 32 4c10 0 19 5 24 14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M7 29c-4-4-4-8-2-11 4 1 7 4 7 8M57 29c4-4 4-8 2-11-4 1-7 4-7 8" fill="none" stroke="currentColor" stroke-width="2"/>
+</svg>
+<div class="brandtext"><strong>Tiny Houses</strong><small>Lieu communautaire</small></div>
+</div><nav class="nav" id="nav">
 <button class="active" data-page="dashboard">⌂ Vue d'ensemble</button>
 <button data-page="principles">♡ Charte & valeurs</button>
 <button data-page="resources">↗ Ressources</button>
@@ -811,10 +914,82 @@ body{display:block!important;min-height:100vh}
 <button data-page="budget">€ Budget</button>
 </nav><small>Données synchronisées avec Firebase</small></aside>
 <main class="main">
-<section id="dashboard" class="section active"><div class="hero"><div><div class="eyebrow">Projet collectif • habitat & entraide</div><h1>Créer une communauté solidaire et harmonieuse pour se soutenir dans nos vieux jours</h1><p>Un cadre de vie épanouissant, durable, <strong>adaptable</strong> et bienveillant, façonné collectivement selon les besoins de chacun.</p></div></div>
-<div class="grid"><div class="card kpi"><div class="lab">Progression globale</div><div class="num" id="progressNum">32%</div><div class="progress"><i id="progressBar"></i></div></div><div class="card kpi"><div class="lab">Membres / foyers</div><div class="num" id="memberKpi">6</div></div><div class="card kpi"><div class="lab">Actions ouvertes</div><div class="num" id="taskKpi">4</div></div><div class="card kpi"><div class="lab">Budget estimatif</div><div class="num money" id="budgetKpi">0 €</div></div>
-<div class="card wide"><h2>Étapes du projet</h2><div class="phase"><i class="dot done"></i><div><b>1. Vision commune</b><br><small>Intentions, valeurs et besoins fondamentaux</small></div><span class="tag">En cours</span></div><div class="phase"><i class="dot"></i><div><b>2. Groupe fondateur</b><br><small>Constituer un noyau de personnes compatibles</small></div><span class="tag">À structurer</span></div><div class="phase"><i class="dot todo"></i><div><b>3. Modèle juridique & financier</b><br><small>Habitat participatif, SCI, coopérative…</small></div></div><div class="phase"><i class="dot todo"></i><div><b>4. Lieu & conception</b><br><small>Accessibilité, espaces privés/communs, évolutivité</small></div></div><div class="phase"><i class="dot todo"></i><div><b>5. Vie de la communauté</b><br><small>Gouvernance, entraide, prévention des conflits</small></div></div></div>
-<div class="card narrow"><h2>Nos piliers</h2><div class="values"><div class="value"><b>🤝 Solidarité</b><span>Entraide choisie, jamais imposée.</span></div><div class="value"><b>🌱 Durabilité</b><span>Ressources et lieu pensés à long terme.</span></div><div class="value"><b>↔ Adaptabilité</b><span>Évoluer avec l'âge et les besoins.</span></div><div class="value"><b>🏡 Autonomie</b><span>Préserver l'intimité de chacun.</span></div><div class="value"><b>♡ Bienveillance</b><span>Respect, écoute et sécurité.</span></div><div class="value"><b>⚖ Équité</b><span>Contributions selon les capacités.</span></div></div></div></div></section>
+<section id="dashboard" class="section active">
+  <div class="home-hero">
+    <div class="home-hero-copy">
+      <div class="eyebrow">HABITAT PARTAGÉ • LIEN HUMAIN • AVENIR</div>
+      <h1>Tiny Houses</h1>
+      <h2>Lieu communautaire</h2>
+      <p>Un lieu de vie solidaire et inclusif, où chacun peut vivre dignement, préserver son autonomie et construire l’avenir ensemble.</p>
+      <div class="hero-actions">
+        <button class="btn hero-primary" data-go="principles">Découvrir notre vision</button>
+        <button class="btn secondary hero-secondary" data-go="calendar">Voir le calendrier</button>
+      </div>
+    </div>
+    <div class="hero-illustration" aria-hidden="true">
+      <svg viewBox="0 0 620 330">
+        <path d="M0 272C92 220 150 248 224 218c78-32 145-98 231-69 63 21 104 70 165 67v114H0Z" fill="#dfe5d5"/>
+        <path d="M0 296c94-22 155-3 239-30 92-29 158-61 247-39 56 14 91 45 134 47v56H0Z" fill="#b9c7a7"/>
+        <g stroke="#28483d" stroke-width="4" stroke-linejoin="round">
+          <path d="M98 223v-75l61-49 61 49v75Z" fill="#f7f1e4"/>
+          <path d="M274 231v-91l73-58 73 58v91Z" fill="#ead8b7"/>
+          <path d="M445 236v-65l51-41 51 41v65Z" fill="#f7f1e4"/>
+          <path d="M142 223v-46h34v46M324 231v-54h38v54M478 236v-40h27v40" fill="#fffdf8"/>
+          <path d="M117 158h24v25h-24zM183 158h19v25h-19zM295 150h25v27h-25zM375 150h24v27h-24zM458 177h18v20h-18zM516 177h17v20h-17z" fill="#d8e2d3"/>
+        </g>
+        <g fill="none" stroke="#6f8b61" stroke-width="5" stroke-linecap="round">
+          <path d="M58 253c-5-43 2-73 22-99M64 213l-24-20M69 191l20-23M560 254c8-48 2-78-17-104M554 211l24-22M550 190l-19-22"/>
+        </g>
+        <g fill="#8fa57c"><ellipse cx="41" cy="191" rx="14" ry="7" transform="rotate(35 41 191)"/><ellipse cx="91" cy="167" rx="14" ry="7" transform="rotate(-40 91 167)"/><ellipse cx="579" cy="187" rx="14" ry="7" transform="rotate(-35 579 187)"/><ellipse cx="530" cy="168" rx="14" ry="7" transform="rotate(40 530 168)"/></g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="home-kpis">
+    <div class="card kpi"><div class="kpi-icon">↗</div><div><div class="lab">Progression globale</div><div class="num" id="progressNum">32%</div><div class="progress"><i id="progressBar"></i></div></div></div>
+    <div class="card kpi"><div class="kpi-icon">♙</div><div><div class="lab">Membres / foyers</div><div class="num" id="memberKpi">6</div></div></div>
+    <div class="card kpi"><div class="kpi-icon">✓</div><div><div class="lab">Actions ouvertes</div><div class="num" id="taskKpi">4</div></div></div>
+    <div class="card kpi"><div class="kpi-icon">€</div><div><div class="lab">Budget estimatif</div><div class="num money" id="budgetKpi">0 €</div></div></div>
+  </div>
+
+  <div class="home-heading"><div><span class="eyebrow">NOTRE PROJET</span><h2>Un habitat à taille humaine</h2></div><p>Des espaces privés pour préserver l’autonomie, des lieux communs pour faire vivre l’entraide.</p></div>
+  <div class="axis-grid">
+    <article class="axis-card"><span class="axis-icon">⌂</span><h3>Habitat à taille humaine</h3><p>Des maisons individuelles écologiques et abordables, intégrées à leur environnement.</p></article>
+    <article class="axis-card"><span class="axis-icon">◎</span><h3>Vie en communauté</h3><p>Partage, entraide et convivialité au cœur de notre quotidien.</p></article>
+    <article class="axis-card"><span class="axis-icon">♧</span><h3>Autonomie & dignité</h3><p>Permettre à chacun de vivre dignement et d’être acteur de sa vie.</p></article>
+    <article class="axis-card"><span class="axis-icon">↔</span><h3>Partage des ressources</h3><p>Mutualiser pour mieux consommer et réduire notre impact.</p></article>
+    <article class="axis-card"><span class="axis-icon">♡</span><h3>Inclusion</h3><p>Un lieu ouvert, accueillant et respectueux de chaque parcours.</p></article>
+    <article class="axis-card"><span class="axis-icon">↗</span><h3>Projection vers l’avenir</h3><p>Construire ensemble un projet durable pour les générations futures.</p></article>
+  </div>
+
+  <div class="home-bottom-grid">
+    <div class="card home-values">
+      <div class="eyebrow">NOS VALEURS</div><h2>Ce qui nous rassemble</h2>
+      <div class="value-line"><span>♡</span><div><b>Respect & bienveillance</b><small>Écouter et prendre en compte chacun dans ses différences.</small></div></div>
+      <div class="value-line"><span>∞</span><div><b>Solidarité & entraide</b><small>Créer des liens fiables et une communauté attentive.</small></div></div>
+      <div class="value-line"><span>○</span><div><b>Intégrité & responsabilité</b><small>Agir avec franchise, fiabilité et cohérence.</small></div></div>
+      <button class="text-link" data-go="principles">Découvrir la charte →</button>
+    </div>
+    <div class="card home-next">
+      <div class="eyebrow">PROCHAINES ÉTAPES</div><h2>Faire avancer le projet</h2>
+      <div class="phase"><i class="dot done"></i><div><b>Vision commune</b><br><small>Intentions, valeurs et besoins fondamentaux</small></div><span class="tag">En cours</span></div>
+      <div class="phase"><i class="dot"></i><div><b>Groupe fondateur</b><br><small>Constituer un noyau de personnes compatibles</small></div><span class="tag">À structurer</span></div>
+      <div class="phase"><i class="dot todo"></i><div><b>Lieu & conception</b><br><small>Espaces privés, communs et évolutivité</small></div></div>
+      <button class="text-link" data-go="tasks">Voir les actions →</button>
+    </div>
+    <div class="card home-calendar">
+      <div class="eyebrow">AGENDA</div><h2>Se retrouver</h2>
+      <div class="mini-cal">
+        <div class="mini-date"><b>19</b><span>OCT</span></div><div><b>Réunion Tiny Houses</b><small>19:30 · Réunion</small></div>
+      </div>
+      <div class="mini-cal">
+        <div class="mini-date sage"><b>—</b><span>À VENIR</span></div><div><b>Prochain temps collectif</b><small>Consultez le calendrier partagé.</small></div>
+      </div>
+      <button class="text-link" data-go="calendar">Ouvrir le calendrier →</button>
+    </div>
+  </div>
+  <div class="home-manifesto"><span class="leaf">⌁</span><strong>Ensemble, créons un lieu de vie humain, durable et inspirant.</strong></div>
+</section>
 <section id="roadmap" class="section"><h1>Feuille de route</h1><p class="intro">Transformez la vision en étapes concrètes et mesurables.</p><div class="two"><div class="card"><h2>0–6 mois • Cadrer</h2><p>Formaliser la vision, identifier 5–10 membres fondateurs, recueillir les besoins, rédiger une première charte.</p></div><div class="card"><h2>6–18 mois • Concevoir</h2><p>Choisir la zone géographique, étudier les modèles juridiques, établir le financement et définir le programme immobilier.</p></div><div class="card"><h2>18–36 mois • Réaliser</h2><p>Sélectionner le lieu, finaliser les accords, concevoir l'habitat adaptable, obtenir les autorisations et lancer les travaux.</p></div><div class="card"><h2>Après installation • Faire vivre</h2><p>Rituels collectifs, gouvernance légère, fonds de solidarité, évaluation annuelle des besoins et adaptation du cadre de vie.</p></div></div></section>
 <section id="tasks" class="section"><h1>Actions</h1><p class="intro">Suivez les prochaines étapes, les responsables et les échéances.</p><div class="card"><div class="toolbar"><input id="taskName" placeholder="Nouvelle action"><input id="taskOwner" placeholder="Responsable"><input id="taskDate" type="date"><select id="taskStatus"><option>À faire</option><option>En cours</option><option>Bloqué</option></select><button class="btn" onclick="addTask()">Ajouter</button></div><div id="taskList"></div></div></section>
 <section id="community" class="section"><h1>Communauté</h1><p class="intro">Cartographiez le groupe fondateur et les compétences disponibles.</p><div class="card"><div class="toolbar"><input id="memberName" placeholder="Nom / foyer"><input id="memberSkill" placeholder="Compétence / contribution"><button class="btn" onclick="addMember()">Ajouter</button></div><div id="memberList"></div></div></section>
@@ -1371,6 +1546,14 @@ if(document.getElementById('addResourceBtn')) addResourceBtn.style.display=user.
 renderResources();
 const snap=await getDoc(projectRef);if(!snap.exists())await setDoc(projectRef,defaults);
 unsub=onSnapshot(projectRef,s=>{if(s.exists()){data={...structuredClone(defaults),...s.data()};renderAll()}});
+});
+
+document.querySelectorAll('[data-go]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const target=btn.dataset.go;
+    const navBtn=document.querySelector(`#nav button[data-page="${target}"]`);
+    if(navBtn) navBtn.click();
+  });
 });
 </script>
 </body></html>
