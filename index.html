@@ -116,70 +116,745 @@ button,input,select,textarea{font:inherit}.app{display:grid;grid-template-column
 #deleteCalendarEvent{margin-right:auto}
 @media(max-width:650px){.calendar-form-grid{grid-template-columns:1fr}.calendar-form-grid .full{grid-column:auto}.calendar-dialog-head,.calendar-dialog-body{padding-left:19px;padding-right:19px}}
 
-/* Sondages — collection Firestore dédiée */
-let pollsCache=[];
-let pollsUnsub=null;
+/* Sondages */
+.polls-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap;margin-bottom:22px}
+.poll-list{display:grid;gap:16px}.poll-card{padding:22px 24px}.poll-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:12px;margin:6px 0 17px}
+.poll-status{padding:4px 8px;border-radius:999px;background:#e7efe8;color:#38564b;font-weight:800;font-size:10px;text-transform:uppercase;letter-spacing:.06em}
+.poll-options{display:grid;gap:9px}.poll-option{display:grid;grid-template-columns:minmax(120px,1fr) 2fr auto;gap:10px;align-items:center;font-size:13px}
+.poll-bar{height:9px;background:#eceeea;border-radius:99px;overflow:hidden}.poll-fill{height:100%;background:#6f8d80;border-radius:99px}
+.poll-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;padding-top:15px;border-top:1px solid #ecece8}
+.poll-dialog{max-width:650px;margin:40px auto;padding:0;overflow:hidden}.poll-options-editor{display:grid;gap:9px}.poll-option-edit{display:flex;gap:8px}.poll-option-edit input{flex:1}
 
-function isAdmin(){ return auth.currentUser?.uid===ADMIN_UID; }
-
-function startPollsSync(){
-  if(pollsUnsub) pollsUnsub();
-  pollsUnsub=onSnapshot(collection(db,'polls'),snap=>{
-    pollsCache=snap.docs.map(d=>({id:d.id,...d.data()}));
-    pollsCache.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
-    renderPolls();
-  });
+/* Charte & valeurs — mise en page de référence, plus compacte */
+#principles .charter-head{margin-bottom:18px}
+#principles .vision-card{
+  padding:22px 24px;
+  border-left:4px solid #79a28e;
+  border-radius:12px;
+  box-shadow:0 10px 24px rgba(49,72,63,.06);
+}
+#principles .vision-card h2{display:none}
+#principles .vision-kicker{margin-bottom:8px;font-size:10px}
+#principles .vision-card p{font-size:13px;line-height:1.65;max-width:980px}
+#principles .vision-card:after{font-size:58px;right:24px;top:17px}
+#principles .values-title{margin:28px 0 10px}
+#principles .values-title h2{font-size:19px;margin-bottom:0}
+#principles .values-title p{display:none}
+#principles .charter-values{border-top:1px solid #d5ddd8}
+#principles .charter-value,
+#principles .charter-value.foundation{
+  grid-template-columns:72px minmax(0,1fr);
+  gap:22px;
+  padding:20px 2px;
+  border-bottom:1px solid #d5ddd8;
+}
+#principles .charter-value .value-number{
+  font-size:29px;
+  padding-top:2px;
+}
+#principles .charter-value h3{
+  font-size:17px;
+  margin:0 0 8px;
+}
+#principles .charter-value>p{
+  font-size:12.5px;
+  line-height:1.55;
+}
+#principles .foundation-badge{
+  margin-bottom:7px;
+  font-size:9px;
+}
+#principles .foundation-note{
+  margin-top:10px!important;
+  font-size:11px!important;
+  line-height:1.45!important;
+}
+#principles .charter-closing{
+  margin-top:26px;
+  padding:15px 0 0;
+}
+#principles .charter-closing strong{font-size:13px;margin-bottom:5px}
+#principles .charter-closing span{font-size:10.5px}
+@media(max-width:650px){
+ #principles .charter-value,#principles .charter-value.foundation{grid-template-columns:48px 1fr;gap:12px;padding:17px 0}
+ #principles .charter-value .value-number{font-size:25px}
 }
 
+/* =========================================================
+   RESPONSIVE GLOBAL — desktop / tablette / smartphone
+   ========================================================= */
+html{-webkit-text-size-adjust:100%}
+body{overflow-x:hidden}
+img,svg,video,canvas{max-width:100%;height:auto}
+input,select,textarea,button{max-width:100%}
+*{box-sizing:border-box}
+
+/* Tablette */
+@media (max-width:1024px){
+  main{padding:24px 22px}
+  .grid{grid-template-columns:1fr 1fr}
+  .calendar-day{min-height:96px}
+  .calendar-event{font-size:10px}
+  #principles .vision-card p{padding-right:55px}
+}
+
+/* Smartphone + petite tablette */
+@media (max-width:760px){
+  body{font-size:14px}
+
+  /* Navigation latérale -> barre horizontale compacte */
+  aside{
+    position:relative!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    padding:14px 14px 10px!important;
+  }
+  aside nav{
+    display:flex!important;
+    flex-direction:row!important;
+    gap:7px!important;
+    overflow-x:auto!important;
+    padding-bottom:5px!important;
+    scrollbar-width:thin;
+    -webkit-overflow-scrolling:touch;
+  }
+  aside nav button{
+    flex:0 0 auto!important;
+    width:auto!important;
+    white-space:nowrap!important;
+    padding:9px 12px!important;
+    font-size:12px!important;
+  }
+  aside .brand,aside h1{margin-bottom:10px!important}
+  aside .sync,aside .footer,aside small{font-size:10px!important}
+
+  main{
+    margin-left:0!important;
+    width:100%!important;
+    max-width:none!important;
+    padding:20px 15px 32px!important;
+  }
+  .section{width:100%;max-width:100%}
+  .grid{grid-template-columns:1fr!important}
+  .card{max-width:100%}
+
+  h1{font-size:26px!important;line-height:1.15}
+  h2{line-height:1.2}
+  .intro{font-size:13px}
+
+  /* Charte */
+  #principles .vision-card{padding:18px 17px!important}
+  #principles .vision-card:after{display:none!important}
+  #principles .vision-card p{padding-right:0!important;font-size:12px!important}
+  #principles .charter-value,
+  #principles .charter-value.foundation{
+    grid-template-columns:42px minmax(0,1fr)!important;
+    gap:10px!important;
+    padding:16px 0!important;
+  }
+  #principles .charter-value .value-number{font-size:24px!important}
+  #principles .charter-value h3{font-size:16px!important}
+
+  /* Calendrier : lisible sans dépasser de l'écran */
+  .calendar-toolbar{align-items:stretch!important}
+  .calendar-nav{order:1;width:100%;justify-content:center}
+  .calendar-nav h2{min-width:145px!important;font-size:17px!important}
+  #addCalendarEvent,#calToday{flex:1}
+  .calendar-grid{
+    width:100%;
+    min-width:0;
+    grid-template-columns:repeat(7,minmax(0,1fr))!important;
+  }
+  .calendar-weekday{padding:7px 1px!important;font-size:8px!important;letter-spacing:0!important}
+  .calendar-day{min-height:68px!important;padding:3px!important;overflow:hidden}
+  .day-number{width:22px!important;height:22px!important;font-size:10px!important}
+  .calendar-event{
+    padding:3px!important;
+    margin-top:3px!important;
+    font-size:8px!important;
+    border-left-width:2px!important;
+  }
+  .calendar-upcoming-item{align-items:flex-start!important;flex-direction:column!important}
+  .calendar-upcoming-item button{width:100%}
+
+  /* Fenêtres modales */
+  #calendarModal,#pollModal{
+    padding:10px!important;
+    align-items:flex-start;
+  }
+  #calendarModal .calendar-dialog,.poll-dialog{
+    width:100%!important;
+    max-width:100%!important;
+    margin:12px auto!important;
+    max-height:calc(100vh - 24px);
+    overflow-y:auto!important;
+  }
+  .calendar-dialog-head{
+    padding:18px 16px 14px!important;
+    position:sticky;
+    top:0;
+    background:#fffdf8;
+    z-index:2;
+  }
+  .calendar-dialog-body{padding:17px 16px 20px!important}
+  .calendar-form-grid{grid-template-columns:1fr!important;gap:14px!important}
+  .calendar-form-grid .full{grid-column:auto!important}
+  .calendar-actions{
+    flex-wrap:wrap!important;
+    position:sticky;
+    bottom:0;
+    background:#fffdf8;
+    padding-bottom:2px;
+  }
+  .calendar-actions .btn{flex:1;min-width:90px}
+  #deleteCalendarEvent,#deletePollBtn{margin-right:0!important}
+
+  /* Sondages */
+  .polls-head{align-items:stretch!important}
+  .polls-head>button{width:100%}
+  .poll-card{padding:18px 16px!important}
+  .poll-option{grid-template-columns:1fr auto!important}
+  .poll-option .poll-bar{grid-column:1/-1;grid-row:2}
+  .poll-actions{flex-wrap:wrap}
+  .poll-actions .btn{flex:1}
+  .poll-option-edit{align-items:center}
+}
+
+/* Très petits smartphones */
+@media (max-width:420px){
+  main{padding-left:11px!important;padding-right:11px!important}
+  aside{padding-left:10px!important;padding-right:10px!important}
+  h1{font-size:23px!important}
+  .calendar-nav h2{min-width:125px!important;font-size:15px!important}
+  .calendar-day{min-height:59px!important}
+  .calendar-event{font-size:7px!important}
+  #principles .charter-value,
+  #principles .charter-value.foundation{grid-template-columns:35px minmax(0,1fr)!important}
+  #principles .charter-value .value-number{font-size:21px!important}
+}
+
+/* ===== RESPONSIVE FIX — actual site selectors (.side / .main) ===== */
+@media (max-width: 900px){
+  .app{
+    display:block !important;
+    width:100% !important;
+    min-width:0 !important;
+    overflow-x:hidden !important;
+  }
+
+  .side{
+    position:relative !important;
+    top:auto !important;
+    width:100% !important;
+    height:auto !important;
+    min-height:0 !important;
+    padding:16px 14px 11px !important;
+  }
+
+  .brand{
+    margin:0 0 12px !important;
+    font-size:20px !important;
+  }
+
+  .nav{
+    display:flex !important;
+    flex-direction:row !important;
+    gap:6px !important;
+    width:100% !important;
+    overflow-x:auto !important;
+    overflow-y:hidden !important;
+    padding:0 0 5px !important;
+    -webkit-overflow-scrolling:touch;
+    scrollbar-width:thin;
+  }
+
+  .nav button{
+    flex:0 0 auto !important;
+    width:auto !important;
+    min-width:max-content !important;
+    margin:0 !important;
+    padding:9px 11px !important;
+    white-space:nowrap !important;
+    font-size:12px !important;
+  }
+
+  .side small{
+    display:none !important;
+  }
+
+  .main{
+    width:100% !important;
+    max-width:100% !important;
+    min-width:0 !important;
+    margin:0 !important;
+    padding:20px 14px 34px !important;
+    overflow:hidden !important;
+  }
+
+  .section,
+  .card,
+  .hero,
+  .charter-head,
+  .vision-card,
+  .charter-values,
+  .value-copy{
+    min-width:0 !important;
+    max-width:100% !important;
+  }
+
+  .section h1,
+  .charter-head h1{
+    font-size:27px !important;
+    overflow-wrap:anywhere;
+  }
+
+  p, h1, h2, h3, strong, span{
+    overflow-wrap:anywhere;
+  }
+
+  input, select, textarea{
+    min-width:0 !important;
+    width:100% !important;
+  }
+
+  /* Charte */
+  #principles .charter-head p{
+    white-space:normal !important;
+  }
+
+  #principles .vision-card{
+    width:100% !important;
+    padding:18px 16px !important;
+  }
+
+  #principles .vision-card p{
+    width:100% !important;
+    max-width:none !important;
+    padding-right:0 !important;
+    white-space:normal !important;
+  }
+
+  #principles .charter-value,
+  #principles .charter-value.foundation{
+    width:100% !important;
+    grid-template-columns:46px minmax(0,1fr) !important;
+    gap:12px !important;
+    padding:16px 0 !important;
+  }
+
+  #principles .value-copy{
+    width:auto !important;
+    min-width:0 !important;
+  }
+
+  #principles .charter-value > p,
+  #principles .value-copy p{
+    max-width:100% !important;
+    white-space:normal !important;
+  }
+
+  /* Dashboard / generic grids */
+  .grid,
+  .two,
+  .values{
+    grid-template-columns:1fr !important;
+  }
+
+  .kpi,.wide,.narrow,.full{
+    grid-column:1/-1 !important;
+  }
+
+  /* Calendar */
+  .calendar-grid{
+    width:100% !important;
+    max-width:100% !important;
+    grid-template-columns:repeat(7,minmax(0,1fr)) !important;
+  }
+
+  .calendar-day{
+    min-width:0 !important;
+  }
+
+  /* Polls */
+  .poll-option{
+    min-width:0 !important;
+  }
+}
+
+@media (max-width: 520px){
+  .main{padding:17px 12px 28px !important}
+  .side{padding:14px 10px 9px !important}
+  .brand{font-size:19px !important}
+  .nav button{font-size:11px !important;padding:8px 9px !important}
+
+  #principles .charter-value,
+  #principles .charter-value.foundation{
+    grid-template-columns:38px minmax(0,1fr) !important;
+    gap:9px !important;
+  }
+
+  #principles .charter-value .value-number{
+    font-size:22px !important;
+  }
+
+  #principles .charter-value h3{
+    font-size:15px !important;
+  }
+}
+
+
+/* ===== SONDAGES : vote utilisateur ===== */
+.poll-choice{
+  display:grid;
+  grid-template-columns:minmax(150px,1fr) minmax(140px,2fr) auto;
+  gap:12px;align-items:center;padding:10px 12px;border:1px solid #e2e5e1;
+  border-radius:10px;background:#fff;cursor:pointer;transition:.15s ease;
+}
+.poll-choice:hover{border-color:#91a99e;background:#fafcf9}
+.poll-choice.selected{border-color:#4f7464;background:#f0f5f1}
+.poll-choice-main{display:flex;align-items:center;gap:9px;min-width:0}
+.poll-choice input{width:auto!important;margin:0;accent-color:#38564b}
+.poll-choice-label{font-weight:650;overflow-wrap:anywhere}
+.poll-vote-count{font-size:11px;color:var(--muted);white-space:nowrap}
+.poll-vote-message{margin:12px 0 0;font-size:12px;color:#38564b;font-weight:650}
+.poll-vote-footer{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:14px}
+.poll-vote-footer .btn{min-width:130px}
+@media(max-width:760px){
+ .poll-choice{grid-template-columns:1fr auto}
+ .poll-choice .poll-bar{grid-column:1/-1;grid-row:2}
+ .poll-vote-footer{align-items:stretch}
+ .poll-vote-footer .btn{width:100%}
+}
+
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="side"><div class="brand">Maison <span>Demain</span><br><small style="position:static">Projet de vie partagée</small></div><nav class="nav" id="nav">
+<button class="active" data-page="dashboard">⌂ Vue d'ensemble</button><button data-page="roadmap">◎ Feuille de route</button><button data-page="tasks">✓ Actions</button><button data-page="calendar">▣ Calendrier</button><button data-page="polls">◉ Sondages</button><button data-page="community">♧ Communauté</button><button data-page="budget">€ Budget</button><button data-page="principles">♡ Charte & valeurs</button><button data-page="notes">✎ Notes & décisions</button></nav><small>Données synchronisées avec Firebase</small></aside>
+<main class="main">
+<section id="dashboard" class="section active"><div class="hero"><div><div class="eyebrow">Projet collectif • habitat & entraide</div><h1>Créer une communauté solidaire et harmonieuse pour se soutenir dans nos vieux jours</h1><p>Un cadre de vie épanouissant, durable, <strong>adaptable</strong> et bienveillant, façonné collectivement selon les besoins de chacun.</p></div><span class="pill">🌿 Vision 2035+</span></div>
+<div class="grid"><div class="card kpi"><div class="lab">Progression globale</div><div class="num" id="progressNum">32%</div><div class="progress"><i id="progressBar"></i></div></div><div class="card kpi"><div class="lab">Membres / foyers</div><div class="num" id="memberKpi">6</div></div><div class="card kpi"><div class="lab">Actions ouvertes</div><div class="num" id="taskKpi">4</div></div><div class="card kpi"><div class="lab">Budget estimatif</div><div class="num money" id="budgetKpi">0 €</div></div>
+<div class="card wide"><h2>Étapes du projet</h2><div class="phase"><i class="dot done"></i><div><b>1. Vision commune</b><br><small>Intentions, valeurs et besoins fondamentaux</small></div><span class="tag">En cours</span></div><div class="phase"><i class="dot"></i><div><b>2. Groupe fondateur</b><br><small>Constituer un noyau de personnes compatibles</small></div><span class="tag">À structurer</span></div><div class="phase"><i class="dot todo"></i><div><b>3. Modèle juridique & financier</b><br><small>Habitat participatif, SCI, coopérative…</small></div></div><div class="phase"><i class="dot todo"></i><div><b>4. Lieu & conception</b><br><small>Accessibilité, espaces privés/communs, évolutivité</small></div></div><div class="phase"><i class="dot todo"></i><div><b>5. Vie de la communauté</b><br><small>Gouvernance, entraide, prévention des conflits</small></div></div></div>
+<div class="card narrow"><h2>Nos piliers</h2><div class="values"><div class="value"><b>🤝 Solidarité</b><span>Entraide choisie, jamais imposée.</span></div><div class="value"><b>🌱 Durabilité</b><span>Ressources et lieu pensés à long terme.</span></div><div class="value"><b>↔ Adaptabilité</b><span>Évoluer avec l'âge et les besoins.</span></div><div class="value"><b>🏡 Autonomie</b><span>Préserver l'intimité de chacun.</span></div><div class="value"><b>♡ Bienveillance</b><span>Respect, écoute et sécurité.</span></div><div class="value"><b>⚖ Équité</b><span>Contributions selon les capacités.</span></div></div></div></div></section>
+<section id="roadmap" class="section"><h1>Feuille de route</h1><p class="intro">Transformez la vision en étapes concrètes et mesurables.</p><div class="two"><div class="card"><h2>0–6 mois • Cadrer</h2><p>Formaliser la vision, identifier 5–10 membres fondateurs, recueillir les besoins, rédiger une première charte.</p></div><div class="card"><h2>6–18 mois • Concevoir</h2><p>Choisir la zone géographique, étudier les modèles juridiques, établir le financement et définir le programme immobilier.</p></div><div class="card"><h2>18–36 mois • Réaliser</h2><p>Sélectionner le lieu, finaliser les accords, concevoir l'habitat adaptable, obtenir les autorisations et lancer les travaux.</p></div><div class="card"><h2>Après installation • Faire vivre</h2><p>Rituels collectifs, gouvernance légère, fonds de solidarité, évaluation annuelle des besoins et adaptation du cadre de vie.</p></div></div></section>
+<section id="tasks" class="section"><h1>Actions</h1><p class="intro">Suivez les prochaines étapes, les responsables et les échéances.</p><div class="card"><div class="toolbar"><input id="taskName" placeholder="Nouvelle action"><input id="taskOwner" placeholder="Responsable"><input id="taskDate" type="date"><select id="taskStatus"><option>À faire</option><option>En cours</option><option>Bloqué</option></select><button class="btn" onclick="addTask()">Ajouter</button></div><div id="taskList"></div></div></section>
+<section id="community" class="section"><h1>Communauté</h1><p class="intro">Cartographiez le groupe fondateur et les compétences disponibles.</p><div class="card"><div class="toolbar"><input id="memberName" placeholder="Nom / foyer"><input id="memberSkill" placeholder="Compétence / contribution"><button class="btn" onclick="addMember()">Ajouter</button></div><div id="memberList"></div></div></section>
+<section id="budget" class="section"><h1>Budget</h1><p class="intro">Première estimation des postes nécessaires au projet.</p><div class="card"><div class="toolbar"><input id="budgetLabel" placeholder="Poste (étude, terrain…)"><input id="budgetAmount" type="number" placeholder="Montant €"><select id="budgetType"><option>Investissement</option><option>Fonctionnement</option><option>Réserve solidaire</option></select><button class="btn" onclick="addBudget()">Ajouter</button></div><div id="budgetList"></div><hr style="border:0;border-top:1px solid #e7e1d7;margin:18px 0"><b>Total : <span id="budgetTotal">0 €</span></b></div></section>
+
+<section id="calendar" class="section">
+  <div class="charter-head">
+    <div class="eyebrow">Organisation collective</div>
+    <h1>Calendrier</h1>
+    <p>Planifiez les réunions, rendez-vous et actions importantes de la communauté.</p>
+  </div>
+
+  <div class="card">
+    <div class="calendar-toolbar">
+      <button id="addCalendarEvent" class="btn">+ Ajouter</button>
+      <div class="calendar-nav">
+        <button id="calPrev" class="btn secondary">‹</button>
+        <h2 id="calMonthLabel"></h2>
+        <button id="calNext" class="btn secondary">›</button>
+      </div>
+      <button id="calToday" class="btn secondary">Aujourd'hui</button>
+    </div>
+    <div class="calendar-grid" id="calendarGrid"></div>
+    <div class="calendar-legend"><span><i class="legend-dot"></i>Réunion</span><span><i class="legend-dot action"></i>Action</span></div>
+  </div>
+
+  <div class="card calendar-upcoming">
+    <h2>À venir</h2>
+    <div id="calendarUpcoming"></div>
+  </div>
+</section>
+
+<div id="calendarModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9998;padding:20px;overflow:auto">
+  <div class="card calendar-dialog">
+    <div class="calendar-dialog-head">
+      <div><h2 id="calendarModalTitle">Ajouter au calendrier</h2><p id="calendarModalSubtitle">Planifiez une réunion ou une action.</p></div>
+      <button id="closeCalendarModal" class="btn secondary">Fermer</button>
+    </div>
+    <div class="calendar-dialog-body">
+      <div class="calendar-form-grid">
+        <label>Type *<select id="calType"><option value="meeting">Réunion</option><option value="action">Action</option></select></label>
+        <label>Date *<input id="calDate" type="date"></label>
+        <label>Heure<input id="calTime" type="time"></label>
+        <label>Responsable<input id="calOwner" placeholder="Nom du responsable"></label>
+        <label class="full">Titre *<input id="calTitle" placeholder="Ex. Réunion mensuelle"></label>
+        <label class="full">Description<textarea id="calDescription" placeholder="Ordre du jour, informations utiles, lieu..."></textarea></label>
+      </div>
+      <p id="calError" style="color:#a75f50;font-size:13px;margin-bottom:0"></p>
+      <div class="calendar-actions">
+        <button id="deleteCalendarEvent" class="btn secondary" style="display:none">Supprimer</button>
+        <button id="cancelCalendarEvent" class="btn secondary">Annuler</button>
+        <button id="saveCalendarEvent" class="btn">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<section id="polls" class="section">
+  <div class="polls-head">
+    <div class="charter-head" style="margin:0"><div class="eyebrow">Décisions collectives</div><h1>Sondages</h1><p>Posez une question à la communauté et rassemblez les avis.</p></div>
+    <button id="addPollBtn" class="btn">+ Créer un sondage</button>
+  </div>
+  <div id="pollList" class="poll-list"></div>
+</section>
+
+<div id="pollModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9998;padding:20px;overflow:auto">
+ <div class="card poll-dialog">
+  <div class="calendar-dialog-head"><div><h2 id="pollModalTitle">Créer un sondage</h2><p>Définissez la question et les réponses proposées.</p></div><button id="closePollModal" class="btn secondary">Fermer</button></div>
+  <div class="calendar-dialog-body">
+   <div class="calendar-form-grid">
+    <label class="full">Question *<input id="pollQuestion" placeholder="Ex. Quelle date retenons-nous ?"></label>
+    <label class="full">Description<textarea id="pollDescription" placeholder="Contexte ou précision facultative..."></textarea></label>
+    <label>Date de clôture<input id="pollDeadline" type="date"></label>
+   </div>
+   <div style="margin-top:20px"><label style="font-size:13px;font-weight:700">Réponses proposées *</label><div id="pollOptionsEditor" class="poll-options-editor" style="margin-top:8px"></div><button id="addPollOption" class="btn secondary" style="margin-top:10px">+ Ajouter une réponse</button></div>
+   <p id="pollError" style="color:#a75f50;font-size:13px"></p>
+   <div class="calendar-actions"><button id="deletePollBtn" class="btn secondary" style="display:none;margin-right:auto">Supprimer</button><button id="cancelPollBtn" class="btn secondary">Annuler</button><button id="savePollBtn" class="btn">Enregistrer</button></div>
+  </div>
+ </div>
+</div>
+
+<section id="principles" class="section">
+<div class="charter-head"><div class="eyebrow">Notre cadre commun</div><h1>Charte & valeurs</h1><p>Les principes qui nous rassemblent et guident notre manière de vivre, décider et avancer ensemble.</p></div>
+<div class="card vision-card"><div class="vision-kicker">Notre vision</div><h2>Construire ensemble un lieu où bien vivre et bien vieillir</h2><p>Créer une communauté solidaire et harmonieuse pour se soutenir dans nos vieux jours, où chacun contribue à façonner un cadre de vie épanouissant, durable, adaptable et bienveillant. Ici, nous apprenons à gérer nos conflits avec respect, à partager nos espaces et nos rêves, et à cultiver des liens forts pour que ce projet soit une source de joie et de sérénité pour tous.</p></div>
+<div class="values-title"><h2>Nos valeurs fondatrices</h2><p>Quatre repères pour orienter nos comportements, nos choix et nos décisions collectives.</p></div>
+<div class="charter-values">
+<div class="card charter-value foundation"><div class="value-top"><div class="value-icon">♡</div><div class="value-number">00</div></div><div class="value-copy"><span class="foundation-badge">VALEUR SOCLE</span><h3>Respect & bienveillance</h3><p>Écouter et prendre en compte chacun et chacune dans ses différences.</p><p class="foundation-note">Cette valeur est le fondement de toutes les autres. Elle prévaut sur toute autre considération lorsqu'il s'agit de prendre une décision ou de résoudre une situation.</p></div></div>
+<div class="card charter-value"><div class="value-top"><div class="value-icon">◇</div><div class="value-number">01</div></div><div class="value-copy"><h3>Intégrité & responsabilité</h3><p>Honnêteté intellectuelle et émotionnelle, franchise, fiabilité dans nos engagements.</p></div></div>
+<div class="card charter-value"><div class="value-top"><div class="value-icon">◎</div><div class="value-number">02</div></div><div class="value-copy"><h3>Solidarité & entraide</h3><p>Solidarité humaine, émotionnelle et financière.</p></div></div>
+<div class="card charter-value"><div class="value-top"><div class="value-icon">☀</div><div class="value-number">03</div></div><div class="value-copy"><h3>Qualité de vie</h3><p>Confort physiologique et mental.</p></div></div>
+</div>
+<div class="charter-closing"><strong>Cette charte est notre point de référence commun.</strong><span>Nos décisions, nos comportements et l'évolution du projet doivent rester cohérents avec ces principes.</span></div>
+</section>
+<section id="notes" class="section"><h1>Notes & décisions</h1><p class="intro">Un espace libre pour préparer les réunions et conserver les décisions importantes.</p><div class="two"><div class="card"><h2>Notes de travail</h2><textarea id="notesArea" class="note" placeholder="Idées, questions, sujets à étudier…"></textarea><button class="btn" onclick="saveNotes()">Enregistrer</button></div><div class="card"><h2>Questions structurantes</h2><div class="risk"><b>Où ?</b><br>Ville, campagne, proximité des soins, transports, climat.</div><div class="risk"><b>Avec qui ?</b><br>Taille du groupe, critères d'entrée et de sortie.</div><div class="risk"><b>Quel niveau de mutualisation ?</b><br>Repas, véhicule, jardin, aide quotidienne, services professionnels.</div><div class="risk"><b>Comment financer ?</b><br>Apports, propriété, location, fonds commun, solidarité entre revenus.</div></div></div></section>
+<div class="footer">Communauté solidaire des Gens de confiance — données partagées et synchronisées via Firebase.</div></main></div>
+
+<div id="adminModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;padding:24px;overflow:auto">
+  <div style="max-width:900px;margin:30px auto;background:#fffdf8;border-radius:18px;padding:24px;box-shadow:0 18px 60px rgba(0,0,0,.25)">
+    <div style="display:flex;justify-content:space-between;gap:16px;align-items:center">
+      <div><h2 style="margin:0">Administration des utilisateurs</h2><p style="margin:6px 0 0;color:#666">Valider, refuser, suspendre ou réactiver les membres.</p></div>
+      <button id="closeAdmin" class="btn">Fermer</button>
+    </div>
+    <input id="adminSearch" placeholder="Rechercher par e-mail..." style="width:100%;box-sizing:border-box;margin:18px 0;padding:11px;border:1px solid #ddd;border-radius:10px">
+    <div id="adminUsers"></div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAxjDMddH2p_uwzex1hpGa3LXATxjqkEXs",
+  authDomain: "lieu-communautaire.firebaseapp.com",
+  projectId: "lieu-communautaire",
+  storageBucket: "lieu-communautaire.firebasestorage.app",
+  messagingSenderId: "770451809596",
+  appId: "1:770451809596:web:0a0cedd9bbcdf70729ea39"
+};
+const app=initializeApp(firebaseConfig), auth=getAuth(app), db=getFirestore(app);
+const defaults={tasks:[{name:'Formaliser la vision commune',owner:'Groupe fondateur',date:'',status:'En cours',done:false},{name:'Identifier les besoins à 10–20 ans',owner:'Tous',date:'',status:'À faire',done:false},{name:'Comparer 3 modèles juridiques',owner:'À définir',date:'',status:'À faire',done:false},{name:'Définir les critères du lieu',owner:'Tous',date:'',status:'À faire',done:false}],members:[{name:'Foyer 1',skill:'Coordination'},{name:'Foyer 2',skill:'Finance'},{name:'Foyer 3',skill:'Jardin / écologie'},{name:'Foyer 4',skill:'Santé / bien-être'},{name:'Foyer 5',skill:'Bricolage'},{name:'Foyer 6',skill:'Vie collective'}],budget:[],notes:''};
+let data=structuredClone(defaults), unsub=null;
+const projectRef=doc(db,'projects','maison-demain');
+
+const overlay=document.createElement('div'); overlay.id='loginOverlay'; overlay.innerHTML=`<div style="max-width:420px;margin:12vh auto;background:#fffdf8;border:1px solid #ddd8cd;border-radius:16px;padding:28px;box-shadow:0 12px 40px #0002"><h2>Communauté solidaire des Gens de confiance</h2><p></p><input id="loginEmail" type="email" placeholder="E-mail" style="width:100%;margin:7px 0"><input id="loginPassword" type="password" placeholder="Mot de passe" style="width:100%;margin:7px 0"><button id="loginBtn" class="btn" style="width:100%;margin-top:8px">Se connecter</button>
+<button id="signupBtn" type="button" style="width:100%;margin-top:10px;background:transparent;border:0;color:#365d55;cursor:pointer;text-decoration:underline">Créer un compte</button>
+<p id="loginError" style="color:#a75f50;font-size:13px"></p><div id="approvalMessage" style="display:none;margin-top:14px;padding:14px;border-radius:12px;background:#f4efe6;line-height:1.5"></div></div>`; Object.assign(overlay.style,{position:'fixed',inset:'0',background:'#f4f1e9',zIndex:'9999'}); document.body.appendChild(overlay);
+const logout=document.createElement('button'); logout.textContent='Se déconnecter'; logout.className='btn secondary'; logout.style.cssText='position:fixed;right:18px;bottom:18px;z-index:20'; logout.hidden=true; document.body.appendChild(logout);
+const adminBtn=document.createElement('button');
+adminBtn.textContent='Administration';
+adminBtn.className='btn';
+adminBtn.style.cssText='display:none;position:fixed;right:170px;bottom:18px;z-index:20';
+document.body.appendChild(adminBtn);
+
+loginBtn.onclick=async()=>{
+loginError.textContent='';approvalMessage.style.display='none';
+const email=loginEmail.value.trim(),password=loginPassword.value;
+if(!email||!password){loginError.textContent='Veuillez saisir votre e-mail et votre mot de passe.';return}
+const originalText=loginBtn.textContent;loginBtn.disabled=true;loginBtn.innerHTML='<span class="login-spinner"></span>Connexion en cours…';
+try{await signInWithEmailAndPassword(auth,email,password)}
+catch(e){
+if(e.code==='auth/invalid-email')loginError.textContent='E-mail ou mot de passe incorrect.';
+else if(e.code==='auth/too-many-requests')loginError.textContent='Trop de tentatives. Veuillez patienter quelques minutes avant de réessayer.';
+else if(e.code==='auth/network-request-failed')loginError.textContent='Impossible de se connecter au réseau. Vérifiez votre connexion Internet.';
+else loginError.textContent='E-mail ou mot de passe incorrect.';
+}
+finally{loginBtn.disabled=false;loginBtn.textContent=originalText}
+};
+loginPassword.addEventListener('keydown',e=>{if(e.key==='Enter'&&!loginBtn.disabled)loginBtn.click()});
+signupBtn.onclick=async()=>{loginError.textContent='';const email=loginEmail.value.trim(), password=loginPassword.value;if(!email){loginError.textContent='Saisissez votre e-mail.';return}if(password.length<6){loginError.textContent='Le mot de passe doit contenir au moins 6 caractères.';return}try{const cred=await createUserWithEmailAndPassword(auth,email,password);await setDoc(doc(db,'users',cred.user.uid),{email:cred.user.email,status:'pending',createdAt:serverTimestamp()})}catch(e){if(e.code==='auth/email-already-in-use') loginError.textContent='Un compte existe déjà avec cet e-mail.';else if(e.code==='auth/invalid-email') loginError.textContent='Adresse e-mail invalide.';else if(e.code==='auth/weak-password') loginError.textContent='Choisissez un mot de passe plus sécurisé.';else loginError.textContent='Impossible de créer le compte pour le moment.'}};
+logout.onclick=()=>signOut(auth);
+
+async function save(){await setDoc(projectRef,{...data,updatedAt:new Date().toISOString()});}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function money(n){return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n)}
+function renderTasks(){taskList.innerHTML=data.tasks.map((t,i)=>`<div class="taskrow ${t.done?'done':''}"><input type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${i},this.checked)"><b class="taskname">${esc(t.name)}</b><span>${esc(t.owner)}</span><span>${t.date||'Sans date'}</span><span class="tag">${esc(t.status)}</span><button class="del" onclick="deleteTask(${i})">×</button></div>`).join('')}
+function renderMembers(){memberList.innerHTML=data.members.map((m,i)=>`<div class="member"><div class="avatar">${esc(m.name).charAt(0).toUpperCase()}</div><div><b>${esc(m.name)}</b><br><small>${esc(m.skill)}</small></div><button class="del" style="margin-left:auto" onclick="deleteMember(${i})">×</button></div>`).join('')}
+function renderBudget(){budgetList.innerHTML=data.budget.map((b,i)=>`<div class="budgetrow"><b>${esc(b.label)}</b><span>${esc(b.type)}</span><span class="money">${money(b.amount)}</span><button class="del" onclick="deleteBudget(${i})">×</button></div>`).join('');let total=data.budget.reduce((s,b)=>s+Number(b.amount),0);budgetTotal.textContent=money(total);budgetKpi.textContent=money(total)}
+function renderAll(){renderTasks();renderMembers();renderBudget();notesArea.value=data.notes||'';memberKpi.textContent=data.members.length;taskKpi.textContent=data.tasks.filter(t=>!t.done).length;let p=data.tasks.length?Math.round(data.tasks.filter(t=>t.done).length/data.tasks.length*100):0;progressNum.textContent=p+'%';progressBar.style.width=p+'%'
+renderCalendar();
+renderPolls();}
+window.addTask=()=>{let n=taskName.value.trim();if(!n)return;data.tasks.push({name:n,owner:taskOwner.value||'À définir',date:taskDate.value,status:taskStatus.value,done:false});taskName.value='';save()};
+window.toggleTask=(i,v)=>{data.tasks[i].done=v;save()}; window.deleteTask=i=>{data.tasks.splice(i,1);save()};
+window.addMember=()=>{let n=memberName.value.trim();if(!n)return;data.members.push({name:n,skill:memberSkill.value||'À définir'});memberName.value='';memberSkill.value='';save()}; window.deleteMember=i=>{data.members.splice(i,1);save()};
+window.addBudget=()=>{let l=budgetLabel.value.trim(),a=Number(budgetAmount.value);if(!l||!a)return;data.budget.push({label:l,amount:a,type:budgetType.value});budgetLabel.value='';budgetAmount.value='';save()}; window.deleteBudget=i=>{data.budget.splice(i,1);save()};
+window.saveNotes=()=>{data.notes=notesArea.value;save()};
+document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(b.dataset.page).classList.add('active')});
+
+const ADMIN_UID='CPEGyrjksdMarhLXope92fgLbiq2';
+let adminUsersCache=[];
+let adminUnsub=null;
+
+function statusLabel(s){
+  return ({pending:'En attente',approved:'Actif',suspended:'Suspendu',rejected:'Refusé'})[s]||s;
+}
+function renderAdminUsers(){
+  const term=(adminSearch.value||'').toLowerCase();
+  const rows=adminUsersCache.filter(x=>(x.email||'').toLowerCase().includes(term));
+  adminUsers.innerHTML=rows.length?'':'<p>Aucun utilisateur trouvé.</p>';
+  rows.forEach(u=>{
+    const box=document.createElement('div');
+    box.style.cssText='border:1px solid #ddd;border-radius:14px;padding:14px;margin:10px 0;display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap';
+    const left=document.createElement('div');
+    left.innerHTML=`<strong>${u.email||'Sans e-mail'}</strong><br><small>Statut : ${statusLabel(u.status)}</small>${u.id===ADMIN_UID?'<br><small>Administrateur principal</small>':''}`;
+    const actions=document.createElement('div');
+    if(u.id!==ADMIN_UID){
+      const choices=[];
+      if(u.status==='pending'){choices.push(['Accepter','approved'],['Refuser','rejected']);}
+      if(u.status==='approved'){choices.push(['Suspendre','suspended']);}
+      if(u.status==='suspended'||u.status==='rejected'){choices.push(['Réactiver','approved']);}
+      choices.forEach(([label,status])=>{
+        const b=document.createElement('button'); b.className='btn'; b.style.marginLeft='6px'; b.textContent=label;
+        b.onclick=async()=>{await updateDoc(doc(db,'users',u.id),{status,updatedAt:serverTimestamp()})};
+        actions.appendChild(b);
+      });
+    }
+    box.append(left,actions); adminUsers.appendChild(box);
+  });
+}
+adminSearch.oninput=renderAdminUsers;
+adminBtn.onclick=()=>{
+  adminModal.style.display='block';
+  if(adminUnsub) adminUnsub();
+  adminUnsub=onSnapshot(collection(db,'users'),snap=>{
+    adminUsersCache=snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderAdminUsers();
+  });
+};
+closeAdmin.onclick=()=>{adminModal.style.display='none';if(adminUnsub){adminUnsub();adminUnsub=null}};
+
+
+
+let calendarCursor=new Date(); calendarCursor.setDate(1);
+let editingCalendarId=null;
+let editingPollId=null;
+
+function calISO(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function renderCalendar(){
+  if(!document.getElementById('calendarGrid')) return;
+  const month=calendarCursor.getMonth(), year=calendarCursor.getFullYear();
+  calMonthLabel.textContent=new Intl.DateTimeFormat('fr-FR',{month:'long',year:'numeric'}).format(calendarCursor);
+  calendarGrid.innerHTML='';
+  ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].forEach(x=>{const e=document.createElement('div');e.className='calendar-weekday';e.textContent=x;calendarGrid.appendChild(e)});
+  const first=new Date(year,month,1), offset=(first.getDay()+6)%7, start=new Date(year,month,1-offset), today=calISO(new Date());
+  for(let i=0;i<42;i++){
+    const d=new Date(start);d.setDate(start.getDate()+i);const iso=calISO(d);
+    const cell=document.createElement('div');cell.className='calendar-day'+(d.getMonth()!==month?' outside':'')+(iso===today?' today':'');
+    cell.innerHTML='<span class="day-number">'+d.getDate()+'</span>';
+    (data.calendarEvents||[]).filter(e=>e.date===iso).sort((a,b)=>(a.time||'').localeCompare(b.time||'')).forEach(ev=>{
+      const x=document.createElement('div');x.className='calendar-event '+(ev.type==='action'?'action':'');x.title='Cliquer pour modifier · '+ev.title;x.textContent=(ev.time?ev.time+' ':'')+ev.title;
+      x.onclick=(event)=>{event.stopPropagation();openCalendarModal(iso,ev.id)};cell.appendChild(x);
+    });
+    cell.onclick=()=>openCalendarModal(iso);calendarGrid.appendChild(cell);
+  }
+  renderUpcoming();
+}
+function renderUpcoming(){
+  const now=calISO(new Date()), list=(data.calendarEvents||[]).filter(e=>e.date>=now).sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||''))).slice(0,8);
+  calendarUpcoming.innerHTML=list.length?'':'<p class="intro">Aucun événement à venir.</p>';
+  list.forEach(ev=>{
+    const row=document.createElement('div');row.className='calendar-upcoming-item';
+    const left=document.createElement('div');left.innerHTML='<strong>'+ev.title+'</strong><br><small>'+new Date(ev.date+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'long'})+(ev.time?' · '+ev.time:'')+' · '+(ev.type==='action'?'Action':'Réunion')+(ev.owner?' · '+ev.owner:'')+'</small>';
+    const edit=document.createElement('button');edit.className='btn secondary';edit.textContent='Modifier';edit.onclick=()=>openCalendarModal(ev.date,ev.id);
+    row.append(left,edit);calendarUpcoming.appendChild(row);
+  });
+}
+function openCalendarModal(date,id=null){
+  editingCalendarId=id;calError.textContent='';
+  const ev=id?(data.calendarEvents||[]).find(x=>x.id===id):null;
+  calendarModalTitle.textContent=ev?'Modifier '+(ev.type==='action'?'l’action':'la réunion'):'Ajouter au calendrier';
+  calendarModalSubtitle.textContent=ev?'Mettez à jour les informations ou supprimez cet élément.':'Planifiez une réunion ou une action.';
+  calDate.value=ev?.date||date||calISO(new Date());calTitle.value=ev?.title||'';calTime.value=ev?.time||'';calOwner.value=ev?.owner||'';calDescription.value=ev?.description||'';calType.value=ev?.type||'meeting';
+  deleteCalendarEvent.style.display=ev?'inline-block':'none';calendarModal.style.display='block';
+}
+function closeCal(){calendarModal.style.display='none';editingCalendarId=null}
+addCalendarEvent.onclick=()=>openCalendarModal();closeCalendarModal.onclick=closeCal;cancelCalendarEvent.onclick=closeCal;
+calPrev.onclick=()=>{calendarCursor.setMonth(calendarCursor.getMonth()-1);renderCalendar()};calNext.onclick=()=>{calendarCursor.setMonth(calendarCursor.getMonth()+1);renderCalendar()};calToday.onclick=()=>{calendarCursor=new Date();calendarCursor.setDate(1);renderCalendar()};
+saveCalendarEvent.onclick=async()=>{
+  if(!calDate.value||!calTitle.value.trim()){calError.textContent='La date et le titre sont obligatoires.';return}
+  const ev={id:editingCalendarId||crypto.randomUUID(),type:calType.value,date:calDate.value,time:calTime.value,title:calTitle.value.trim(),owner:calOwner.value.trim(),description:calDescription.value.trim()};
+  data.calendarEvents=data.calendarEvents||[];
+  if(editingCalendarId){const i=data.calendarEvents.findIndex(x=>x.id===editingCalendarId);if(i>=0)data.calendarEvents[i]=ev}else data.calendarEvents.push(ev);
+  await save();closeCal();renderCalendar();
+};
+deleteCalendarEvent.onclick=async()=>{if(editingCalendarId&&confirm('Supprimer définitivement cet élément ?')){data.calendarEvents=(data.calendarEvents||[]).filter(x=>x.id!==editingCalendarId);await save();closeCal();renderCalendar()}};
+
+/* Sondages */
+function isAdmin(){return auth.currentUser?.uid===ADMIN_UID;}
 function addPollOptionField(value=''){
  const row=document.createElement('div');row.className='poll-option-edit';
  const inp=document.createElement('input');inp.placeholder='Réponse proposée';inp.value=value;
  const del=document.createElement('button');del.className='btn secondary';del.textContent='×';del.type='button';del.onclick=()=>row.remove();
  row.append(inp,del);pollOptionsEditor.appendChild(row);
 }
-
 function openPollModal(id=null){
  if(!isAdmin()) return;
  editingPollId=id;pollError.textContent='';pollOptionsEditor.innerHTML='';
- const p=id?pollsCache.find(x=>x.id===id):null;
- pollModalTitle.textContent=p?'Modifier le sondage':'Créer un sondage';
- pollQuestion.value=p?.question||'';pollDescription.value=p?.description||'';pollDeadline.value=p?.deadline||'';
+ const p=id?(data.polls||[]).find(x=>x.id===id):null;
+ pollModalTitle.textContent=p?'Modifier le sondage':'Créer un sondage';pollQuestion.value=p?.question||'';pollDescription.value=p?.description||'';pollDeadline.value=p?.deadline||'';
  (p?.options||['','']).forEach(o=>addPollOptionField(typeof o==='string'?o:o.label));
  deletePollBtn.style.display=p?'inline-block':'none';pollModal.style.display='block';
 }
-
 function closePoll(){pollModal.style.display='none';editingPollId=null}
-
 function renderPolls(){
  if(!document.getElementById('pollList'))return;
  addPollBtn.style.display=isAdmin()?'inline-block':'none';
- pollList.innerHTML=pollsCache.length?'':'<div class="card"><p class="intro">Aucun sondage pour le moment.</p></div>';
+ data.polls=data.polls||[];
+ pollList.innerHTML=data.polls.length?'':'<div class="card"><p class="intro">Aucun sondage pour le moment. Créez le premier pour recueillir l’avis de la communauté.</p></div>';
 
- pollsCache.forEach(p=>{
-  const votes=p.votes||{};
+ data.polls.forEach(p=>{
+  // Compatibilité avec les anciens sondages : création du registre de votes si absent.
+  p.votes=p.votes||{};
   const uid=auth.currentUser?.uid||null;
-  const myVote=uid && Object.prototype.hasOwnProperty.call(votes,uid) ? Number(votes[uid]) : null;
-  const counts=(p.options||[]).map((_,i)=>Object.values(votes).filter(v=>Number(v)===i).length);
-  const total=Object.keys(votes).length;
+  const myVote=uid && Object.prototype.hasOwnProperty.call(p.votes,uid) ? Number(p.votes[uid]) : null;
+  const counts=(p.options||[]).map((_,i)=>Object.values(p.votes).filter(v=>Number(v)===i).length);
+  const total=Object.keys(p.votes).length;
   const isClosed=p.deadline && p.deadline < calISO(new Date());
 
   const card=document.createElement('div');card.className='card poll-card';
   const deadline=p.deadline?' · Clôture '+new Date(p.deadline+'T12:00:00').toLocaleDateString('fr-FR'):'';
   card.innerHTML=
-    '<h2 style="margin:0">'+esc(p.question)+'</h2>'+
+    '<h2 style="margin:0">'+p.question+'</h2>'+
     '<div class="poll-meta"><span class="poll-status">'+(isClosed?'Clôturé':'Sondage')+'</span><span>'+total+' vote'+(total>1?'s':'')+deadline+'</span></div>'+
-    (p.description?'<p>'+esc(p.description)+'</p>':'')+
+    (p.description?'<p>'+p.description+'</p>':'')+
     '<div class="poll-options"></div>'+
     '<div class="poll-vote-footer"><span class="poll-vote-message"></span><button class="btn poll-submit" '+(isClosed?'disabled':'')+'>'+(myVote===null?'Voter':'Modifier mon vote')+'</button></div>'+
     '<div class="poll-actions"></div>';
 
   const opts=card.querySelector('.poll-options');
   (p.options||[]).forEach((o,i)=>{
-    const label=typeof o==='string'?o:o.label;
     const pct=total?Math.round(counts[i]*100/total):0;
-    const row=document.createElement('label');row.className='poll-choice'+(myVote===i?' selected':'');
+    const row=document.createElement('label');
+    row.className='poll-choice'+(myVote===i?' selected':'');
     row.innerHTML=
-      '<span class="poll-choice-main"><input type="radio" name="poll-'+p.id+'" value="'+i+'" '+(myVote===i?'checked':'')+' '+(isClosed?'disabled':'')+'><span class="poll-choice-label">'+esc(label)+'</span></span>'+
+      '<span class="poll-choice-main"><input type="radio" name="poll-'+p.id+'" value="'+i+'" '+(myVote===i?'checked':'')+' '+(isClosed?'disabled':'')+'><span class="poll-choice-label">'+o.label+'</span></span>'+
       '<div class="poll-bar"><div class="poll-fill" style="width:'+pct+'%"></div></div>'+
       '<span class="poll-vote-count">'+counts[i]+' · '+pct+'%</span>';
     opts.appendChild(row);
@@ -187,7 +862,7 @@ function renderPolls(){
 
   const msg=card.querySelector('.poll-vote-message');
   if(isClosed) msg.textContent='Ce sondage est clôturé.';
-  else if(myVote!==null) msg.textContent='Votre vote est enregistré. Vous pouvez le modifier.';
+  else if(myVote!==null) msg.textContent='Votre vote est enregistré. Vous pouvez sélectionner une autre réponse pour le modifier.';
   else msg.textContent='Sélectionnez une réponse.';
 
   const submit=card.querySelector('.poll-submit');
@@ -195,13 +870,11 @@ function renderPolls(){
     if(!uid){msg.textContent='Vous devez être connecté pour voter.';return}
     const checked=card.querySelector('input[type="radio"]:checked');
     if(!checked){msg.textContent='Sélectionnez une réponse avant de voter.';return}
+    const selected=Number(checked.value);
     submit.disabled=true;submit.textContent='Enregistrement…';
-    try{
-      await updateDoc(doc(db,'polls',p.id),{['votes.'+uid]:Number(checked.value)});
-    }catch(e){
-      console.error(e);msg.textContent="Impossible d'enregistrer le vote.";
-      submit.disabled=false;
-    }
+    p.votes[uid]=selected;
+    await save();
+    renderPolls();
   };
 
   opts.onchange=()=>{
@@ -213,40 +886,26 @@ function renderPolls(){
   if(isAdmin()){
     const edit=document.createElement('button');edit.className='btn secondary';edit.textContent='Modifier le sondage';edit.onclick=()=>openPollModal(p.id);
     actions.appendChild(edit);
-  } else {
-    actions.style.display='none';
-  }
+  } else { actions.style.display='none'; }
   pollList.appendChild(card);
  });
 }
-
-addPollBtn.onclick=()=>openPollModal();
-closePollModal.onclick=closePoll;cancelPollBtn.onclick=closePoll;addPollOption.onclick=()=>addPollOptionField();
-
+addPollBtn.onclick=()=>openPollModal();closePollModal.onclick=closePoll;cancelPollBtn.onclick=closePoll;addPollOption.onclick=()=>addPollOptionField();
 savePollBtn.onclick=async()=>{
  if(!isAdmin()){pollError.textContent='Action réservée à un administrateur.';return}
  const labels=[...pollOptionsEditor.querySelectorAll('input')].map(x=>x.value.trim()).filter(Boolean);
  if(!pollQuestion.value.trim()||labels.length<2){pollError.textContent='Saisissez une question et au moins deux réponses.';return}
- const old=editingPollId?pollsCache.find(x=>x.id===editingPollId):null;
- const options=labels.map(label=>({label}));
- const id=editingPollId||crypto.randomUUID();
- const payload={question:pollQuestion.value.trim(),description:pollDescription.value.trim(),deadline:pollDeadline.value,options,votes:old?.votes||{},updatedAt:serverTimestamp()};
- if(!editingPollId) payload.createdAt=serverTimestamp();
- await setDoc(doc(db,'polls',id),payload,{merge:true});
- closePoll();
+ data.polls=data.polls||[];const old=editingPollId?data.polls.find(x=>x.id===editingPollId):null;
+ const options=labels.map(label=>{const prev=old?.options?.find(o=>o.label===label);return {label,votes:prev?.votes||0}});
+ const p={id:editingPollId||crypto.randomUUID(),question:pollQuestion.value.trim(),description:pollDescription.value.trim(),deadline:pollDeadline.value,options,votes:old?.votes||{}};
+ if(editingPollId){const i=data.polls.findIndex(x=>x.id===editingPollId);if(i>=0)data.polls[i]=p}else data.polls.push(p);
+ await save();closePoll();renderPolls();
 };
-
-deletePollBtn.onclick=async()=>{
- if(!isAdmin()||!editingPollId)return;
- if(confirm('Supprimer définitivement ce sondage ?')){
-   await deleteDoc(doc(db,'polls',editingPollId));
-   closePoll();
- }
-};
+deletePollBtn.onclick=async()=>{if(!isAdmin())return;if(editingPollId&&confirm('Supprimer définitivement ce sondage ?')){data.polls=(data.polls||[]).filter(x=>x.id!==editingPollId);await save();closePoll();renderPolls()}};
 onAuthStateChanged(auth,async user=>{
 if(unsub){unsub();unsub=null}
 approvalMessage.style.display='none';
-if(!user){if(pollsUnsub){pollsUnsub();pollsUnsub=null} adminBtn.style.display='none';overlay.style.display='block';logout.hidden=true;loginBtn.style.display='';signupBtn.style.display='';loginEmail.style.display='';loginPassword.style.display='';return}
+if(!user){adminBtn.style.display='none';overlay.style.display='block';logout.hidden=true;loginBtn.style.display='';signupBtn.style.display='';loginEmail.style.display='';loginPassword.style.display='';return}
 adminBtn.style.display=user.uid===ADMIN_UID?'inline-block':'none';
 const userRef=doc(db,'users',user.uid);
 let profile=await getDoc(userRef);
@@ -270,8 +929,7 @@ approvalMessage.innerHTML=status==='rejected'
 :'<strong>Inscription enregistrée.</strong><br>Votre demande est en attente de validation par un administrateur.';
 return}
 overlay.style.display='none';logout.hidden=false;
-startPollsSync();
-addPollBtn.style.display=user.uid===ADMIN_UID?'inline-block':'none';
+if(document.getElementById('addPollBtn')) addPollBtn.style.display=user.uid===ADMIN_UID?'inline-block':'none';
 const snap=await getDoc(projectRef);if(!snap.exists())await setDoc(projectRef,defaults);
 unsub=onSnapshot(projectRef,s=>{if(s.exists()){data={...structuredClone(defaults),...s.data()};renderAll()}});
 });
