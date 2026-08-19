@@ -1242,6 +1242,179 @@ body.auth-pending .app{visibility:hidden}
  .account-settings-nav{flex-direction:row;border-right:0;border-bottom:1px solid var(--line);overflow-x:auto}
 }
 
+
+.password-separator{height:1px;background:var(--line);margin:1px 0 2px}
+.password-eye{min-width:82px}
+
+
+/* ===== Account settings UX/UI redesign ===== */
+#profileModal{
+  padding:32px 18px!important;
+  align-items:center!important;
+  justify-content:center!important;
+}
+#profileModal .profile-dialog{
+  width:min(820px, calc(100vw - 36px))!important;
+  max-height:min(720px, calc(100vh - 64px))!important;
+  overflow:auto!important;
+  border-radius:20px!important;
+  padding:0!important;
+  box-shadow:0 24px 70px rgba(30,48,41,.18)!important;
+}
+#profileModal .modal-head{
+  padding:28px 32px 24px!important;
+  margin:0!important;
+  border-bottom:1px solid var(--line)!important;
+  align-items:flex-start!important;
+}
+#profileModal .modal-head h2{
+  font-size:25px!important;
+  line-height:1.15!important;
+  margin:5px 0 0!important;
+}
+#profileModal .modal-close-x{
+  width:40px!important;height:40px!important;min-width:40px!important;
+  flex:0 0 40px!important;margin-left:20px!important;
+}
+#profileModal .account-settings-layout{
+  grid-template-columns:190px minmax(0,1fr)!important;
+  min-height:350px!important;
+  margin:0!important;
+  border:0!important;
+}
+#profileModal .account-settings-nav{
+  padding:24px 16px!important;
+  border-right:1px solid var(--line)!important;
+  background:#f5f3ed!important;
+  gap:8px!important;
+}
+#profileModal .account-settings-tab{
+  min-height:44px!important;
+  padding:11px 14px!important;
+  border-radius:10px!important;
+  font-size:14px!important;
+  line-height:1.3!important;
+  font-weight:700!important;
+}
+#profileModal .account-settings-tab.active{
+  background:#dfe8dd!important;
+}
+#profileModal .account-settings-content{
+  padding:30px 34px 34px!important;
+  min-width:0!important;
+}
+#profileModal .account-settings-panel{
+  max-width:100%!important;
+}
+#profileModal .account-settings-panel::before{
+  display:block;
+  margin-bottom:22px;
+  font-size:12px;
+  line-height:1;
+  font-weight:800;
+  letter-spacing:.09em;
+  color:var(--terracotta);
+  text-transform:uppercase;
+}
+#profileModal .account-settings-panel[data-account-content="profile"]::before{content:"INFORMATIONS DU PROFIL"}
+#profileModal .account-settings-panel[data-account-content="security"]::before{content:"SÉCURITÉ DU COMPTE"}
+
+#profileModal .profile-form{
+  gap:22px!important;
+}
+#profileModal .profile-photo-row{
+  display:grid!important;
+  grid-template-columns:76px minmax(0,1fr)!important;
+  gap:20px!important;
+  align-items:center!important;
+  padding-bottom:24px!important;
+  border-bottom:1px solid var(--line)!important;
+}
+#profileModal .profile-preview{
+  width:76px!important;height:76px!important;
+}
+#profileModal .profile-form label{
+  gap:8px!important;
+  font-size:13px!important;
+}
+#profileModal .profile-form input{
+  min-height:44px!important;
+}
+#profileModal .profile-help{
+  max-width:440px!important;
+  line-height:1.45!important;
+  margin-top:5px!important;
+}
+#profileModal .profile-section-divider{
+  display:none!important;
+}
+#profileModal .profile-section{
+  gap:0!important;
+}
+#profileModal .profile-section-title{
+  display:none!important;
+}
+#profileModal .profile-section-row{
+  display:grid!important;
+  grid-template-columns:minmax(0,1fr) auto!important;
+  gap:28px!important;
+  align-items:center!important;
+  padding:22px!important;
+  border:1px solid var(--line)!important;
+  border-radius:14px!important;
+  background:#fffdf9!important;
+}
+#profileModal .profile-section-row strong{
+  display:block!important;
+  margin-bottom:7px!important;
+  font-size:15px!important;
+  line-height:1.25!important;
+}
+#profileModal .account-setting-action{
+  min-width:180px!important;
+  min-height:44px!important;
+  font-size:13px!important;
+  font-weight:650!important;
+}
+#profileModal .profile-actions{
+  display:flex!important;
+  justify-content:flex-end!important;
+  gap:10px!important;
+  margin:0!important;
+  padding:18px 32px 22px!important;
+  border-top:1px solid var(--line)!important;
+  background:#fffdf9!important;
+}
+#profileModal .profile-actions .btn{
+  min-height:44px!important;
+  padding-left:20px!important;
+  padding-right:20px!important;
+}
+/* Security does not edit profile fields, so hide global Save while this tab is open. */
+#profileModal:has(.account-settings-tab[data-account-panel="security"].active) #saveProfile{
+  display:none!important;
+}
+
+@media(max-width:680px){
+ #profileModal{padding:12px!important;align-items:flex-start!important}
+ #profileModal .profile-dialog{
+   width:100%!important;max-height:calc(100vh - 24px)!important;border-radius:16px!important;
+ }
+ #profileModal .modal-head{padding:22px 20px 18px!important}
+ #profileModal .account-settings-layout{grid-template-columns:1fr!important}
+ #profileModal .account-settings-nav{
+   flex-direction:row!important;overflow-x:auto!important;
+   padding:10px 14px!important;border-right:0!important;border-bottom:1px solid var(--line)!important;
+ }
+ #profileModal .account-settings-tab{min-width:max-content!important}
+ #profileModal .account-settings-content{padding:24px 20px 28px!important}
+ #profileModal .profile-section-row{
+   grid-template-columns:1fr!important;gap:16px!important;padding:18px!important;
+ }
+ #profileModal .account-setting-action{width:100%!important;min-width:0!important}
+ #profileModal .profile-actions{padding:15px 20px 18px!important}
+}
+
 </style>
 </head>
 <body class="auth-pending">
@@ -1566,7 +1739,7 @@ body.auth-pending .app{visibility:hidden}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updatePassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updatePassword, signOut, onAuthStateChanged, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -2078,7 +2251,7 @@ renderCharterValues();
 
 /* Change password */
 (function(){
-  function initPasswordChange(){
+  function initPasswordChange_OLD_DISABLED(){
     const menuBtn=document.getElementById('changePasswordMenuBtn');
     const modal=document.getElementById('changePasswordModal');
     const form=document.getElementById('changePasswordForm');
@@ -2151,7 +2324,7 @@ renderCharterValues();
       }
     });
   }
-  document.addEventListener('DOMContentLoaded',initPasswordChange);
+  /* old password handler disabled */
 })();
 
 
@@ -2176,7 +2349,7 @@ renderCharterValues();
 
 /* Password change now belongs to Account Settings */
 (function(){
-  function bindPasswordInsideProfile(){
+  function bindPasswordInsideProfile_OLD_DISABLED(){
     const btn=document.getElementById('openPasswordFromProfile');
     const profile=document.getElementById('profileModal');
     const password=document.getElementById('changePasswordModal');
@@ -2189,8 +2362,8 @@ renderCharterValues();
       if(input) setTimeout(()=>input.focus(),50);
     });
   }
-  document.addEventListener('DOMContentLoaded',bindPasswordInsideProfile);
-  setTimeout(bindPasswordInsideProfile,300);
+  /* old profile password handler disabled */
+  /* old profile password handler disabled */
 })();
 
 
@@ -2226,6 +2399,99 @@ renderCharterValues();
  setTimeout(initSafeAccountEnhancements,250);
 })();
 
+
+/* Definitive password-change flow: current password -> reauthenticate -> update */
+(function(){
+ function initPasswordFlow(){
+   const openBtn=document.getElementById('openPasswordFromProfile');
+   const modal=document.getElementById('changePasswordModal');
+   const form=document.getElementById('changePasswordForm');
+   const closeBtn=document.getElementById('closePasswordModal');
+   const cancelBtn=document.getElementById('cancelPasswordModal');
+   if(!modal || !form || form.dataset.passwordBound==='1') return;
+   form.dataset.passwordBound='1';
+
+   const error=document.getElementById('changePasswordError');
+   const success=document.getElementById('changePasswordSuccess');
+   const current=document.getElementById('currentAccountPassword');
+   const next=document.getElementById('newAccountPassword');
+   const confirm=document.getElementById('confirmAccountPassword');
+   const saveBtn=document.getElementById('savePasswordBtn');
+
+   const resetMessages=()=>{if(error)error.textContent='';if(success)success.textContent='';};
+   const close=()=>{
+     modal.style.display='none';
+     form.reset();
+     resetMessages();
+     document.querySelectorAll('#changePasswordModal .password-eye').forEach(b=>b.textContent='Afficher');
+     document.querySelectorAll('#changePasswordModal input').forEach(i=>i.type='password');
+   };
+   const open=()=>{
+     const profile=document.getElementById('profileModal');
+     if(profile) profile.style.display='none';
+     form.reset(); resetMessages();
+     modal.style.display='grid';
+     setTimeout(()=>current && current.focus(),50);
+   };
+
+   if(openBtn && openBtn.dataset.passwordOpenBound!=='1'){
+     openBtn.dataset.passwordOpenBound='1';
+     openBtn.addEventListener('click',open);
+   }
+   if(closeBtn) closeBtn.addEventListener('click',close);
+   if(cancelBtn) cancelBtn.addEventListener('click',close);
+   modal.addEventListener('click',e=>{if(e.target===modal)close();});
+
+   document.querySelectorAll('#changePasswordModal .password-eye').forEach(btn=>{
+     btn.addEventListener('click',()=>{
+       const input=document.getElementById(btn.dataset.target);
+       if(!input)return;
+       const reveal=input.type==='password';
+       input.type=reveal?'text':'password';
+       btn.textContent=reveal?'Masquer':'Afficher';
+       btn.setAttribute('aria-label',reveal?'Masquer le mot de passe':'Afficher le mot de passe');
+     });
+   });
+
+   form.addEventListener('submit',async e=>{
+     e.preventDefault(); resetMessages();
+     const user=auth.currentUser;
+     if(!user || !user.email){
+       error.textContent='Votre session a expiré. Reconnectez-vous puis réessayez.';
+       return;
+     }
+     if(!current.value){error.textContent='Saisissez votre mot de passe actuel.';return;}
+     if(next.value.length<6){error.textContent='Le nouveau mot de passe doit contenir au moins 6 caractères.';return;}
+     if(next.value!==confirm.value){error.textContent='Les deux nouveaux mots de passe ne correspondent pas.';return;}
+     if(current.value===next.value){error.textContent='Le nouveau mot de passe doit être différent du mot de passe actuel.';return;}
+
+     saveBtn.disabled=true; saveBtn.textContent='Modification…';
+     try{
+       const credential=EmailAuthProvider.credential(user.email,current.value);
+       await reauthenticateWithCredential(user,credential);
+       await updatePassword(user,next.value);
+       success.textContent='Votre mot de passe a bien été modifié.';
+       setTimeout(close,1300);
+     }catch(err){
+       const code=err && err.code || '';
+       if(code==='auth/invalid-credential' || code==='auth/wrong-password'){
+         error.textContent='Le mot de passe actuel est incorrect.';
+       }else if(code==='auth/weak-password'){
+         error.textContent='Le nouveau mot de passe est trop faible.';
+       }else if(code==='auth/too-many-requests'){
+         error.textContent='Trop de tentatives. Réessayez un peu plus tard.';
+       }else{
+         error.textContent="Impossible de modifier le mot de passe pour le moment.";
+       }
+     }finally{
+       saveBtn.disabled=false; saveBtn.textContent='Modifier le mot de passe';
+     }
+   });
+ }
+ document.addEventListener('DOMContentLoaded',initPasswordFlow);
+ setTimeout(initPasswordFlow,300);
+})();
+
 </script>
 
 <div id="changePasswordModal" class="modal-shell" style="display:none">
@@ -2234,23 +2500,31 @@ renderCharterValues();
       <div>
         <div class="eyebrow">SÉCURITÉ DU COMPTE</div>
         <h2 id="changePasswordTitle">Changer le mot de passe</h2>
-        <p>Choisissez un nouveau mot de passe pour votre compte.</p>
+        <p>Pour votre sécurité, confirmez d’abord votre mot de passe actuel.</p>
       </div>
-      <button id="closePasswordModal" type="button" class="btn secondary modal-close-x" aria-label="Fermer" title="Fermer">×</button>
+      <button id="closePasswordModal" type="button" class="modal-close-x" aria-label="Fermer" title="Fermer">×</button>
     </div>
     <form id="changePasswordForm" class="password-form">
+      <label>
+        <span>Mot de passe actuel *</span>
+        <div class="password-field">
+          <input id="currentAccountPassword" type="password" autocomplete="current-password" required placeholder="Votre mot de passe actuel">
+          <button type="button" class="password-eye" data-target="currentAccountPassword">Afficher</button>
+        </div>
+      </label>
+      <div class="password-separator"></div>
       <label>
         <span>Nouveau mot de passe *</span>
         <div class="password-field">
           <input id="newAccountPassword" type="password" autocomplete="new-password" minlength="6" required placeholder="Minimum 6 caractères">
-          <button type="button" class="password-eye" data-target="newAccountPassword" aria-label="Afficher le mot de passe">Afficher</button>
+          <button type="button" class="password-eye" data-target="newAccountPassword">Afficher</button>
         </div>
       </label>
       <label>
         <span>Confirmer le nouveau mot de passe *</span>
         <div class="password-field">
           <input id="confirmAccountPassword" type="password" autocomplete="new-password" minlength="6" required placeholder="Saisissez-le à nouveau">
-          <button type="button" class="password-eye" data-target="confirmAccountPassword" aria-label="Afficher le mot de passe">Afficher</button>
+          <button type="button" class="password-eye" data-target="confirmAccountPassword">Afficher</button>
         </div>
       </label>
       <p id="changePasswordError" class="error" aria-live="polite"></p>
