@@ -102,12 +102,89 @@ button,input,select,textarea{font:inherit}.app{display:grid;grid-template-column
   #principles .charter-value.foundation{grid-template-columns:55px 1fr;gap:14px;padding:24px 0}
   #principles .charter-value .value-number{font-size:30px}
 }
+
+/* Modal calendrier améliorée */
+#calendarModal .calendar-dialog{max-width:680px;margin:40px auto;padding:0;overflow:hidden}
+.calendar-dialog-head{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;padding:25px 28px 19px;border-bottom:1px solid #e5e7e3}
+.calendar-dialog-head h2{margin:0 0 5px;font-size:23px}.calendar-dialog-head p{margin:0;color:var(--muted);font-size:13px}
+.calendar-dialog-body{padding:25px 28px 28px}
+.calendar-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:19px 22px}
+.calendar-form-grid label{display:flex;flex-direction:column;gap:7px;font-size:13px;font-weight:700;color:#43544d}
+.calendar-form-grid input,.calendar-form-grid select,.calendar-form-grid textarea{width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid #d8d5cc;border-radius:10px;background:#fff;font:inherit;color:#263d35}
+.calendar-form-grid textarea{min-height:110px;resize:vertical}.calendar-form-grid .full{grid-column:1/-1}
+.calendar-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px;padding-top:19px;border-top:1px solid #ecece8}
+#deleteCalendarEvent{margin-right:auto}
+@media(max-width:650px){.calendar-form-grid{grid-template-columns:1fr}.calendar-form-grid .full{grid-column:auto}.calendar-dialog-head,.calendar-dialog-body{padding-left:19px;padding-right:19px}}
+
+/* Sondages */
+.polls-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap;margin-bottom:22px}
+.poll-list{display:grid;gap:16px}.poll-card{padding:22px 24px}.poll-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:12px;margin:6px 0 17px}
+.poll-status{padding:4px 8px;border-radius:999px;background:#e7efe8;color:#38564b;font-weight:800;font-size:10px;text-transform:uppercase;letter-spacing:.06em}
+.poll-options{display:grid;gap:9px}.poll-option{display:grid;grid-template-columns:minmax(120px,1fr) 2fr auto;gap:10px;align-items:center;font-size:13px}
+.poll-bar{height:9px;background:#eceeea;border-radius:99px;overflow:hidden}.poll-fill{height:100%;background:#6f8d80;border-radius:99px}
+.poll-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:18px;padding-top:15px;border-top:1px solid #ecece8}
+.poll-dialog{max-width:650px;margin:40px auto;padding:0;overflow:hidden}.poll-options-editor{display:grid;gap:9px}.poll-option-edit{display:flex;gap:8px}.poll-option-edit input{flex:1}
+
+/* Charte & valeurs — mise en page de référence, plus compacte */
+#principles .charter-head{margin-bottom:18px}
+#principles .vision-card{
+  padding:22px 24px;
+  border-left:4px solid #79a28e;
+  border-radius:12px;
+  box-shadow:0 10px 24px rgba(49,72,63,.06);
+}
+#principles .vision-card h2{display:none}
+#principles .vision-kicker{margin-bottom:8px;font-size:10px}
+#principles .vision-card p{font-size:13px;line-height:1.65;max-width:980px}
+#principles .vision-card:after{font-size:58px;right:24px;top:17px}
+#principles .values-title{margin:28px 0 10px}
+#principles .values-title h2{font-size:19px;margin-bottom:0}
+#principles .values-title p{display:none}
+#principles .charter-values{border-top:1px solid #d5ddd8}
+#principles .charter-value,
+#principles .charter-value.foundation{
+  grid-template-columns:72px minmax(0,1fr);
+  gap:22px;
+  padding:20px 2px;
+  border-bottom:1px solid #d5ddd8;
+}
+#principles .charter-value .value-number{
+  font-size:29px;
+  padding-top:2px;
+}
+#principles .charter-value h3{
+  font-size:17px;
+  margin:0 0 8px;
+}
+#principles .charter-value>p{
+  font-size:12.5px;
+  line-height:1.55;
+}
+#principles .foundation-badge{
+  margin-bottom:7px;
+  font-size:9px;
+}
+#principles .foundation-note{
+  margin-top:10px!important;
+  font-size:11px!important;
+  line-height:1.45!important;
+}
+#principles .charter-closing{
+  margin-top:26px;
+  padding:15px 0 0;
+}
+#principles .charter-closing strong{font-size:13px;margin-bottom:5px}
+#principles .charter-closing span{font-size:10.5px}
+@media(max-width:650px){
+ #principles .charter-value,#principles .charter-value.foundation{grid-template-columns:48px 1fr;gap:12px;padding:17px 0}
+ #principles .charter-value .value-number{font-size:25px}
+}
 </style>
 </head>
 <body>
 <div class="app">
 <aside class="side"><div class="brand">Maison <span>Demain</span><br><small style="position:static">Projet de vie partagée</small></div><nav class="nav" id="nav">
-<button class="active" data-page="dashboard">⌂ Vue d'ensemble</button><button data-page="roadmap">◎ Feuille de route</button><button data-page="tasks">✓ Actions</button><button data-page="calendar">▣ Calendrier</button><button data-page="community">♧ Communauté</button><button data-page="budget">€ Budget</button><button data-page="principles">♡ Charte & valeurs</button><button data-page="notes">✎ Notes & décisions</button></nav><small>Données synchronisées avec Firebase</small></aside>
+<button class="active" data-page="dashboard">⌂ Vue d'ensemble</button><button data-page="roadmap">◎ Feuille de route</button><button data-page="tasks">✓ Actions</button><button data-page="calendar">▣ Calendrier</button><button data-page="polls">◉ Sondages</button><button data-page="community">♧ Communauté</button><button data-page="budget">€ Budget</button><button data-page="principles">♡ Charte & valeurs</button><button data-page="notes">✎ Notes & décisions</button></nav><small>Données synchronisées avec Firebase</small></aside>
 <main class="main">
 <section id="dashboard" class="section active"><div class="hero"><div><div class="eyebrow">Projet collectif • habitat & entraide</div><h1>Créer une communauté solidaire et harmonieuse pour se soutenir dans nos vieux jours</h1><p>Un cadre de vie épanouissant, durable, <strong>adaptable</strong> et bienveillant, façonné collectivement selon les besoins de chacun.</p></div><span class="pill">🌿 Vision 2035+</span></div>
 <div class="grid"><div class="card kpi"><div class="lab">Progression globale</div><div class="num" id="progressNum">32%</div><div class="progress"><i id="progressBar"></i></div></div><div class="card kpi"><div class="lab">Membres / foyers</div><div class="num" id="memberKpi">6</div></div><div class="card kpi"><div class="lab">Actions ouvertes</div><div class="num" id="taskKpi">4</div></div><div class="card kpi"><div class="lab">Budget estimatif</div><div class="num money" id="budgetKpi">0 €</div></div>
@@ -145,23 +222,55 @@ button,input,select,textarea{font:inherit}.app{display:grid;grid-template-column
   </div>
 </section>
 
-<div id="calendarModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9998;padding:24px;overflow:auto">
-  <div class="card" style="max-width:600px;margin:50px auto;padding:24px">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
-      <h2 style="margin:0">Ajouter au calendrier</h2>
+<div id="calendarModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9998;padding:20px;overflow:auto">
+  <div class="card calendar-dialog">
+    <div class="calendar-dialog-head">
+      <div><h2 id="calendarModalTitle">Ajouter au calendrier</h2><p id="calendarModalSubtitle">Planifiez une réunion ou une action.</p></div>
       <button id="closeCalendarModal" class="btn secondary">Fermer</button>
     </div>
-    <div class="calendar-form-grid" style="margin-top:18px">
-      <label>Type *<select id="calType"><option value="meeting">Réunion</option><option value="action">Action</option></select></label>
-      <label>Date *<input id="calDate" type="date"></label>
-      <label>Heure<input id="calTime" type="time"></label>
-      <label>Responsable<input id="calOwner" placeholder="Nom"></label>
-      <label class="full">Titre *<input id="calTitle" placeholder="Ex. Réunion mensuelle"></label>
-      <label class="full">Description<textarea id="calDescription" rows="3" placeholder="Informations utiles..."></textarea></label>
+    <div class="calendar-dialog-body">
+      <div class="calendar-form-grid">
+        <label>Type *<select id="calType"><option value="meeting">Réunion</option><option value="action">Action</option></select></label>
+        <label>Date *<input id="calDate" type="date"></label>
+        <label>Heure<input id="calTime" type="time"></label>
+        <label>Responsable<input id="calOwner" placeholder="Nom du responsable"></label>
+        <label class="full">Titre *<input id="calTitle" placeholder="Ex. Réunion mensuelle"></label>
+        <label class="full">Description<textarea id="calDescription" placeholder="Ordre du jour, informations utiles, lieu..."></textarea></label>
+      </div>
+      <p id="calError" style="color:#a75f50;font-size:13px;margin-bottom:0"></p>
+      <div class="calendar-actions">
+        <button id="deleteCalendarEvent" class="btn secondary" style="display:none">Supprimer</button>
+        <button id="cancelCalendarEvent" class="btn secondary">Annuler</button>
+        <button id="saveCalendarEvent" class="btn">Enregistrer</button>
+      </div>
     </div>
-    <p id="calError" style="color:#a75f50;font-size:13px"></p>
-    <button id="saveCalendarEvent" class="btn" style="margin-top:8px">Enregistrer</button>
   </div>
+</div>
+</div>
+
+
+<section id="polls" class="section">
+  <div class="polls-head">
+    <div class="charter-head" style="margin:0"><div class="eyebrow">Décisions collectives</div><h1>Sondages</h1><p>Posez une question à la communauté et rassemblez les avis.</p></div>
+    <button id="addPollBtn" class="btn">+ Créer un sondage</button>
+  </div>
+  <div id="pollList" class="poll-list"></div>
+</section>
+
+<div id="pollModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9998;padding:20px;overflow:auto">
+ <div class="card poll-dialog">
+  <div class="calendar-dialog-head"><div><h2 id="pollModalTitle">Créer un sondage</h2><p>Définissez la question et les réponses proposées.</p></div><button id="closePollModal" class="btn secondary">Fermer</button></div>
+  <div class="calendar-dialog-body">
+   <div class="calendar-form-grid">
+    <label class="full">Question *<input id="pollQuestion" placeholder="Ex. Quelle date retenons-nous ?"></label>
+    <label class="full">Description<textarea id="pollDescription" placeholder="Contexte ou précision facultative..."></textarea></label>
+    <label>Date de clôture<input id="pollDeadline" type="date"></label>
+   </div>
+   <div style="margin-top:20px"><label style="font-size:13px;font-weight:700">Réponses proposées *</label><div id="pollOptionsEditor" class="poll-options-editor" style="margin-top:8px"></div><button id="addPollOption" class="btn secondary" style="margin-top:10px">+ Ajouter une réponse</button></div>
+   <p id="pollError" style="color:#a75f50;font-size:13px"></p>
+   <div class="calendar-actions"><button id="deletePollBtn" class="btn secondary" style="display:none;margin-right:auto">Supprimer</button><button id="cancelPollBtn" class="btn secondary">Annuler</button><button id="savePollBtn" class="btn">Enregistrer</button></div>
+  </div>
+ </div>
 </div>
 
 <section id="principles" class="section">
@@ -243,7 +352,8 @@ function renderTasks(){taskList.innerHTML=data.tasks.map((t,i)=>`<div class="tas
 function renderMembers(){memberList.innerHTML=data.members.map((m,i)=>`<div class="member"><div class="avatar">${esc(m.name).charAt(0).toUpperCase()}</div><div><b>${esc(m.name)}</b><br><small>${esc(m.skill)}</small></div><button class="del" style="margin-left:auto" onclick="deleteMember(${i})">×</button></div>`).join('')}
 function renderBudget(){budgetList.innerHTML=data.budget.map((b,i)=>`<div class="budgetrow"><b>${esc(b.label)}</b><span>${esc(b.type)}</span><span class="money">${money(b.amount)}</span><button class="del" onclick="deleteBudget(${i})">×</button></div>`).join('');let total=data.budget.reduce((s,b)=>s+Number(b.amount),0);budgetTotal.textContent=money(total);budgetKpi.textContent=money(total)}
 function renderAll(){renderTasks();renderMembers();renderBudget();notesArea.value=data.notes||'';memberKpi.textContent=data.members.length;taskKpi.textContent=data.tasks.filter(t=>!t.done).length;let p=data.tasks.length?Math.round(data.tasks.filter(t=>t.done).length/data.tasks.length*100):0;progressNum.textContent=p+'%';progressBar.style.width=p+'%'
-renderCalendar();}
+renderCalendar();
+renderPolls();}
 window.addTask=()=>{let n=taskName.value.trim();if(!n)return;data.tasks.push({name:n,owner:taskOwner.value||'À définir',date:taskDate.value,status:taskStatus.value,done:false});taskName.value='';save()};
 window.toggleTask=(i,v)=>{data.tasks[i].done=v;save()}; window.deleteTask=i=>{data.tasks.splice(i,1);save()};
 window.addMember=()=>{let n=memberName.value.trim();if(!n)return;data.members.push({name:n,skill:memberSkill.value||'À définir'});memberName.value='';memberSkill.value='';save()}; window.deleteMember=i=>{data.members.splice(i,1);save()};
@@ -294,7 +404,10 @@ adminBtn.onclick=()=>{
 closeAdmin.onclick=()=>{adminModal.style.display='none';if(adminUnsub){adminUnsub();adminUnsub=null}};
 
 
+
 let calendarCursor=new Date(); calendarCursor.setDate(1);
+let editingCalendarId=null;
+let editingPollId=null;
 
 function calISO(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function renderCalendar(){
@@ -303,46 +416,87 @@ function renderCalendar(){
   calMonthLabel.textContent=new Intl.DateTimeFormat('fr-FR',{month:'long',year:'numeric'}).format(calendarCursor);
   calendarGrid.innerHTML='';
   ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'].forEach(x=>{const e=document.createElement('div');e.className='calendar-weekday';e.textContent=x;calendarGrid.appendChild(e)});
-  const first=new Date(year,month,1), offset=(first.getDay()+6)%7;
-  const start=new Date(year,month,1-offset);
-  const today=calISO(new Date());
+  const first=new Date(year,month,1), offset=(first.getDay()+6)%7, start=new Date(year,month,1-offset), today=calISO(new Date());
   for(let i=0;i<42;i++){
     const d=new Date(start);d.setDate(start.getDate()+i);const iso=calISO(d);
     const cell=document.createElement('div');cell.className='calendar-day'+(d.getMonth()!==month?' outside':'')+(iso===today?' today':'');
     cell.innerHTML='<span class="day-number">'+d.getDate()+'</span>';
     (data.calendarEvents||[]).filter(e=>e.date===iso).sort((a,b)=>(a.time||'').localeCompare(b.time||'')).forEach(ev=>{
-      const x=document.createElement('div');x.className='calendar-event '+(ev.type==='action'?'action':'');x.title=ev.title;x.textContent=(ev.time?ev.time+' ':'')+ev.title;cell.appendChild(x);
+      const x=document.createElement('div');x.className='calendar-event '+(ev.type==='action'?'action':'');x.title='Cliquer pour modifier · '+ev.title;x.textContent=(ev.time?ev.time+' ':'')+ev.title;
+      x.onclick=(event)=>{event.stopPropagation();openCalendarModal(iso,ev.id)};cell.appendChild(x);
     });
     cell.onclick=()=>openCalendarModal(iso);calendarGrid.appendChild(cell);
   }
   renderUpcoming();
 }
 function renderUpcoming(){
-  const now=calISO(new Date());
-  const list=(data.calendarEvents||[]).filter(e=>e.date>=now).sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||''))).slice(0,8);
+  const now=calISO(new Date()), list=(data.calendarEvents||[]).filter(e=>e.date>=now).sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||''))).slice(0,8);
   calendarUpcoming.innerHTML=list.length?'':'<p class="intro">Aucun événement à venir.</p>';
   list.forEach(ev=>{
     const row=document.createElement('div');row.className='calendar-upcoming-item';
     const left=document.createElement('div');left.innerHTML='<strong>'+ev.title+'</strong><br><small>'+new Date(ev.date+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'long'})+(ev.time?' · '+ev.time:'')+' · '+(ev.type==='action'?'Action':'Réunion')+(ev.owner?' · '+ev.owner:'')+'</small>';
-    const del=document.createElement('button');del.className='btn secondary';del.textContent='Supprimer';del.onclick=async()=>{if(confirm('Supprimer cet élément du calendrier ?')){data.calendarEvents=(data.calendarEvents||[]).filter(x=>x.id!==ev.id);await save();renderCalendar()}};
-    row.append(left,del);calendarUpcoming.appendChild(row);
+    const edit=document.createElement('button');edit.className='btn secondary';edit.textContent='Modifier';edit.onclick=()=>openCalendarModal(ev.date,ev.id);
+    row.append(left,edit);calendarUpcoming.appendChild(row);
   });
 }
-function openCalendarModal(date){
-  calError.textContent='';calDate.value=date||calISO(new Date());calTitle.value='';calTime.value='';calOwner.value='';calDescription.value='';calType.value='meeting';calendarModal.style.display='block';
+function openCalendarModal(date,id=null){
+  editingCalendarId=id;calError.textContent='';
+  const ev=id?(data.calendarEvents||[]).find(x=>x.id===id):null;
+  calendarModalTitle.textContent=ev?'Modifier '+(ev.type==='action'?'l’action':'la réunion'):'Ajouter au calendrier';
+  calendarModalSubtitle.textContent=ev?'Mettez à jour les informations ou supprimez cet élément.':'Planifiez une réunion ou une action.';
+  calDate.value=ev?.date||date||calISO(new Date());calTitle.value=ev?.title||'';calTime.value=ev?.time||'';calOwner.value=ev?.owner||'';calDescription.value=ev?.description||'';calType.value=ev?.type||'meeting';
+  deleteCalendarEvent.style.display=ev?'inline-block':'none';calendarModal.style.display='block';
 }
-addCalendarEvent.onclick=()=>openCalendarModal();
-closeCalendarModal.onclick=()=>calendarModal.style.display='none';
-calPrev.onclick=()=>{calendarCursor.setMonth(calendarCursor.getMonth()-1);renderCalendar()};
-calNext.onclick=()=>{calendarCursor.setMonth(calendarCursor.getMonth()+1);renderCalendar()};
-calToday.onclick=()=>{calendarCursor=new Date();calendarCursor.setDate(1);renderCalendar()};
+function closeCal(){calendarModal.style.display='none';editingCalendarId=null}
+addCalendarEvent.onclick=()=>openCalendarModal();closeCalendarModal.onclick=closeCal;cancelCalendarEvent.onclick=closeCal;
+calPrev.onclick=()=>{calendarCursor.setMonth(calendarCursor.getMonth()-1);renderCalendar()};calNext.onclick=()=>{calendarCursor.setMonth(calendarCursor.getMonth()+1);renderCalendar()};calToday.onclick=()=>{calendarCursor=new Date();calendarCursor.setDate(1);renderCalendar()};
 saveCalendarEvent.onclick=async()=>{
   if(!calDate.value||!calTitle.value.trim()){calError.textContent='La date et le titre sont obligatoires.';return}
+  const ev={id:editingCalendarId||crypto.randomUUID(),type:calType.value,date:calDate.value,time:calTime.value,title:calTitle.value.trim(),owner:calOwner.value.trim(),description:calDescription.value.trim()};
   data.calendarEvents=data.calendarEvents||[];
-  data.calendarEvents.push({id:crypto.randomUUID(),type:calType.value,date:calDate.value,time:calTime.value,title:calTitle.value.trim(),owner:calOwner.value.trim(),description:calDescription.value.trim()});
-  await save();calendarModal.style.display='none';renderCalendar();
+  if(editingCalendarId){const i=data.calendarEvents.findIndex(x=>x.id===editingCalendarId);if(i>=0)data.calendarEvents[i]=ev}else data.calendarEvents.push(ev);
+  await save();closeCal();renderCalendar();
 };
+deleteCalendarEvent.onclick=async()=>{if(editingCalendarId&&confirm('Supprimer définitivement cet élément ?')){data.calendarEvents=(data.calendarEvents||[]).filter(x=>x.id!==editingCalendarId);await save();closeCal();renderCalendar()}};
 
+/* Sondages */
+function addPollOptionField(value=''){
+ const row=document.createElement('div');row.className='poll-option-edit';
+ const inp=document.createElement('input');inp.placeholder='Réponse proposée';inp.value=value;
+ const del=document.createElement('button');del.className='btn secondary';del.textContent='×';del.type='button';del.onclick=()=>row.remove();
+ row.append(inp,del);pollOptionsEditor.appendChild(row);
+}
+function openPollModal(id=null){
+ editingPollId=id;pollError.textContent='';pollOptionsEditor.innerHTML='';
+ const p=id?(data.polls||[]).find(x=>x.id===id):null;
+ pollModalTitle.textContent=p?'Modifier le sondage':'Créer un sondage';pollQuestion.value=p?.question||'';pollDescription.value=p?.description||'';pollDeadline.value=p?.deadline||'';
+ (p?.options||['','']).forEach(o=>addPollOptionField(typeof o==='string'?o:o.label));
+ deletePollBtn.style.display=p?'inline-block':'none';pollModal.style.display='block';
+}
+function closePoll(){pollModal.style.display='none';editingPollId=null}
+function renderPolls(){
+ if(!document.getElementById('pollList'))return;data.polls=data.polls||[];pollList.innerHTML=data.polls.length?'':'<div class="card"><p class="intro">Aucun sondage pour le moment. Créez le premier pour recueillir l’avis de la communauté.</p></div>';
+ data.polls.forEach(p=>{
+  const total=(p.options||[]).reduce((s,o)=>s+(o.votes||0),0), card=document.createElement('div');card.className='card poll-card';
+  const deadline=p.deadline?' · Clôture '+new Date(p.deadline+'T12:00:00').toLocaleDateString('fr-FR'):'';
+  card.innerHTML='<h2 style="margin:0">'+p.question+'</h2><div class="poll-meta"><span class="poll-status">Sondage</span><span>'+total+' vote'+(total>1?'s':'')+deadline+'</span></div>'+(p.description?'<p>'+p.description+'</p>':'')+'<div class="poll-options"></div><div class="poll-actions"></div>';
+  const opts=card.querySelector('.poll-options');
+  (p.options||[]).forEach(o=>{const pct=total?Math.round((o.votes||0)*100/total):0;const row=document.createElement('div');row.className='poll-option';row.innerHTML='<span>'+o.label+'</span><div class="poll-bar"><div class="poll-fill" style="width:'+pct+'%"></div></div><strong>'+pct+'%</strong>';opts.appendChild(row)});
+  const actions=card.querySelector('.poll-actions'), edit=document.createElement('button');edit.className='btn secondary';edit.textContent='Modifier';edit.onclick=()=>openPollModal(p.id);actions.appendChild(edit);
+  pollList.appendChild(card);
+ });
+}
+addPollBtn.onclick=()=>openPollModal();closePollModal.onclick=closePoll;cancelPollBtn.onclick=closePoll;addPollOption.onclick=()=>addPollOptionField();
+savePollBtn.onclick=async()=>{
+ const labels=[...pollOptionsEditor.querySelectorAll('input')].map(x=>x.value.trim()).filter(Boolean);
+ if(!pollQuestion.value.trim()||labels.length<2){pollError.textContent='Saisissez une question et au moins deux réponses.';return}
+ data.polls=data.polls||[];const old=editingPollId?data.polls.find(x=>x.id===editingPollId):null;
+ const options=labels.map(label=>{const prev=old?.options?.find(o=>o.label===label);return {label,votes:prev?.votes||0}});
+ const p={id:editingPollId||crypto.randomUUID(),question:pollQuestion.value.trim(),description:pollDescription.value.trim(),deadline:pollDeadline.value,options};
+ if(editingPollId){const i=data.polls.findIndex(x=>x.id===editingPollId);if(i>=0)data.polls[i]=p}else data.polls.push(p);
+ await save();closePoll();renderPolls();
+};
+deletePollBtn.onclick=async()=>{if(editingPollId&&confirm('Supprimer définitivement ce sondage ?')){data.polls=(data.polls||[]).filter(x=>x.id!==editingPollId);await save();closePoll();renderPolls()}};
 onAuthStateChanged(auth,async user=>{
 if(unsub){unsub();unsub=null}
 approvalMessage.style.display='none';
