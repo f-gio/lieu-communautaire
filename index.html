@@ -975,6 +975,38 @@ body{padding-bottom:92px!important}
  #dashboard .home-kpis .kpi{padding:12px 14px!important}
 }
 
+
+/* ===== Gestion du compte dans la navigation ===== */
+#accountActions{display:none!important}
+.account-menu{position:relative;flex:0 0 auto;margin-left:6px}
+.account-menu-btn{border:1px solid rgba(255,255,255,.20);background:rgba(255,255,255,.10);color:#fff;border-radius:9px;padding:9px 12px;display:flex;align-items:center;gap:7px;cursor:pointer;font-weight:700;white-space:nowrap}
+.account-menu-btn:hover,.account-menu-btn[aria-expanded="true"]{background:rgba(255,255,255,.17)}
+.account-menu-btn span{font-size:12px;opacity:.8}
+.account-dropdown{position:absolute;right:0;top:calc(100% + 8px);width:190px;padding:7px;background:#fffdf8;border:1px solid var(--line);border-radius:12px;box-shadow:0 14px 38px rgba(24,44,36,.18);z-index:3000}
+.account-dropdown[hidden]{display:none!important}
+.account-action{display:block;width:100%;border:0;background:transparent;color:var(--ink);text-align:left;padding:10px 11px;border-radius:8px;cursor:pointer;font:inherit;font-size:13px}
+.account-action:hover{background:#f0f3ed}.account-action.logout-action{color:#8d5146;border-top:1px solid var(--line);border-radius:0 0 8px 8px;margin-top:4px;padding-top:11px}
+
+/* Numérotation Charte : même retrait visuel sur mobile que sur desktop */
+@media(max-width:760px){
+ #principles .charter-values{gap:13px!important}
+ #principles .charter-value,#principles .charter-value.foundation{
+   grid-template-columns:42px minmax(0,1fr)!important;
+   gap:12px!important;
+   padding:20px 18px!important;
+ }
+ #principles .charter-value .value-number{padding-left:2px!important}
+ .account-menu{margin-left:auto!important}
+ .account-menu-btn{padding:8px 10px;font-size:12px}
+ .account-dropdown{right:0;left:auto;width:180px}
+}
+@media(max-width:520px){
+ #principles .charter-value,#principles .charter-value.foundation{
+   grid-template-columns:40px minmax(0,1fr)!important;
+   padding:19px 16px!important;
+ }
+}
+
 </style>
 </head>
 <body>
@@ -995,7 +1027,10 @@ body{padding-bottom:92px!important}
 <button data-page="tasks">✓ Actions</button>
 <button data-page="notes">✎ Notes</button>
 <button data-page="budget">€ Budget</button>
-</nav><small>Données synchronisées avec Firebase</small></aside>
+</nav><div id="accountMenu" class="account-menu" style="display:none">
+<button id="accountMenuBtn" class="account-menu-btn" type="button" aria-expanded="false">Compte <span>⌄</span></button>
+<div id="accountDropdown" class="account-dropdown" hidden></div>
+</div><small>Données synchronisées avec Firebase</small></aside>
 <main class="main">
 <section id="dashboard" class="section active">
   <div class="home-hero">
@@ -1282,13 +1317,17 @@ const projectRef=doc(db,'projects','maison-demain');
 const overlay=document.createElement('div'); overlay.id='loginOverlay'; overlay.innerHTML=`<div style="max-width:420px;margin:12vh auto;background:#fffdf8;border:1px solid #ddd8cd;border-radius:16px;padding:28px;box-shadow:0 12px 40px #0002"><h2>Communauté solidaire des Gens de confiance</h2><p></p><input id="loginEmail" type="email" placeholder="E-mail" style="width:100%;margin:7px 0"><input id="loginPassword" type="password" placeholder="Mot de passe" style="width:100%;margin:7px 0"><button id="loginBtn" class="btn" style="width:100%;margin-top:8px">Se connecter</button>
 <button id="signupBtn" type="button" style="width:100%;margin-top:10px;background:transparent;border:0;color:#365d55;cursor:pointer;text-decoration:underline">Créer un compte</button>
 <p id="loginError" style="color:#a75f50;font-size:13px"></p><div id="approvalMessage" style="display:none;margin-top:14px;padding:14px;border-radius:12px;background:#f4efe6;line-height:1.5"></div></div>`; Object.assign(overlay.style,{position:'fixed',inset:'0',background:'#f4f1e9',zIndex:'9999'}); document.body.appendChild(overlay);
-const accountActions=document.createElement('div'); accountActions.id='accountActions'; document.body.appendChild(accountActions);
-const logout=document.createElement('button'); logout.textContent='Se déconnecter'; logout.className='btn secondary'; logout.hidden=true; accountActions.appendChild(logout);
+const accountActions=document.getElementById('accountDropdown');
+const accountMenu=document.getElementById('accountMenu');
+const accountMenuBtn=document.getElementById('accountMenuBtn');
+const logout=document.createElement('button'); logout.textContent='Se déconnecter'; logout.className='account-action logout-action'; logout.hidden=true; if(accountMenu) accountMenu.style.display='none'; accountActions.appendChild(logout);
 const adminBtn=document.createElement('button');
 adminBtn.textContent='Administration';
-adminBtn.className='btn';
+adminBtn.className='account-action';
 adminBtn.style.display='none';
 accountActions.appendChild(adminBtn);
+accountMenuBtn.onclick=(e)=>{e.stopPropagation();const open=accountDropdown.hidden;accountDropdown.hidden=!open;accountMenuBtn.setAttribute('aria-expanded',String(open));};
+document.addEventListener('click',(e)=>{if(accountMenu && !accountMenu.contains(e.target)){accountDropdown.hidden=true;accountMenuBtn.setAttribute('aria-expanded','false');}});
 
 loginBtn.onclick=async()=>{
 loginError.textContent='';approvalMessage.style.display='none';
@@ -1621,7 +1660,7 @@ deletePollBtn.onclick=async()=>{if(!isAdmin())return;if(editingPollId&&confirm('
 onAuthStateChanged(auth,async user=>{
 if(unsub){unsub();unsub=null}
 approvalMessage.style.display='none';
-if(!user){adminBtn.style.display='none';overlay.style.display='block';logout.hidden=true;loginBtn.style.display='';signupBtn.style.display='';loginEmail.style.display='';loginPassword.style.display='';return}
+if(!user){adminBtn.style.display='none';overlay.style.display='block';logout.hidden=true; if(accountMenu) accountMenu.style.display='none';loginBtn.style.display='';signupBtn.style.display='';loginEmail.style.display='';loginPassword.style.display='';return}
 adminBtn.style.display=user.uid===ADMIN_UID?'inline-block':'none';
 const userRef=doc(db,'users',user.uid);
 let profile=await getDoc(userRef);
@@ -1637,14 +1676,14 @@ const status=profile.data()?.status||'pending';
 
 // L'administrateur principal passe toujours directement.
 if(user.uid!==ADMIN_UID && status!=='approved'){
-overlay.style.display='block';logout.hidden=false;loginBtn.style.display='none';signupBtn.style.display='none';loginEmail.style.display='none';loginPassword.style.display='none';approvalMessage.style.display='block';
+overlay.style.display='block';logout.hidden=false; if(accountMenu) accountMenu.style.display='block';loginBtn.style.display='none';signupBtn.style.display='none';loginEmail.style.display='none';loginPassword.style.display='none';approvalMessage.style.display='block';
 approvalMessage.innerHTML=status==='rejected'
 ?'<strong>Demande refusée.</strong><br>Votre compte n’a pas été autorisé à accéder à cet espace.'
 :status==='suspended'
 ?'<strong>Compte suspendu.</strong><br>Votre accès à l’espace communautaire a été temporairement suspendu.'
 :'<strong>Inscription enregistrée.</strong><br>Votre demande est en attente de validation par un administrateur.';
 return}
-overlay.style.display='none';logout.hidden=false;
+overlay.style.display='none';logout.hidden=false; if(accountMenu) accountMenu.style.display='block';
 if(document.getElementById('addPollBtn')) addPollBtn.style.display=user.uid===ADMIN_UID?'inline-block':'none';
 // Affichage explicite des contrôles Ressources dès que l'identité admin est connue.
 if(document.getElementById('addResourceBtn')) addResourceBtn.style.display=user.uid===ADMIN_UID?'inline-block':'none';
