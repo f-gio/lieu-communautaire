@@ -646,6 +646,9 @@ input,select,textarea,button{max-width:100%}
 .resource-dialog{max-width:680px;margin:30px auto}.resource-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 18px}.resource-form-grid .full{grid-column:1/-1}
 @media(max-width:760px){.resource-grid,.resource-form-grid{grid-template-columns:1fr}.resource-form-grid .full{grid-column:auto}.resources-head>button{width:100%}}
 
+
+.resource-dialog{max-width:720px!important}.resource-form-grid{align-items:start}.resource-form-grid label{display:flex;flex-direction:column;gap:7px}.resource-form-grid input,.resource-form-grid select,.resource-form-grid textarea{width:100%!important;box-sizing:border-box}.resource-form-grid textarea{min-height:105px;resize:vertical}.resource-visual-field{display:flex;flex-direction:column;gap:8px}.field-title{font-size:13px;font-weight:650}.resource-visual-row{display:flex;align-items:flex-start;gap:16px;padding:14px;border:1px solid var(--line);border-radius:12px;background:#faf9f5}.resource-visual-preview{width:62px;height:62px;flex:0 0 62px;border-radius:13px;background:#edf3ef;display:grid;place-items:center;font-size:27px;overflow:hidden}.resource-visual-preview img{width:100%;height:100%;object-fit:cover}.resource-visual-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}.resource-visual-controls select{width:auto!important;min-width:180px}.resource-visual-controls small{flex-basis:100%;color:var(--muted);font-size:10px}.resource-upload-btn{display:inline-flex!important;flex-direction:row!important;align-items:center;justify-content:center;padding:9px 12px;border-radius:9px;background:#ece9e1;font-size:12px;font-weight:650;cursor:pointer}.resource-upload-btn input{display:none}.calendar-actions{margin-top:4px}@media(max-width:600px){.resource-visual-row{align-items:center}.resource-visual-controls{flex:1}.resource-visual-controls select,.resource-upload-btn{width:100%!important}.resource-dialog{margin:8px auto!important}.resource-form-grid{gap:13px}}
+
 </style>
 </head>
 <body>
@@ -768,7 +771,7 @@ input,select,textarea,button{max-width:100%}
   <div class="calendar-dialog-body">
    <div class="resource-form-grid">
     <label>Nom *<input id="resourceName" placeholder="Ex. Google Drive"></label>
-    <label>Catégorie *<select id="resourceCategory"><option>Documents</option><option>Collaboration</option><option>Organisation</option><option>Contacts</option><option>Autre</option></select></label>
+    <label>Catégorie *<select id="resourceCategory"><option>Documents</option><option>Collaboration</option><option>Organisation</option><option>Contacts</option><option>Autre</option></select></label><div class="full resource-visual-field"><span class="field-title">Icône ou image</span><div class="resource-visual-row"><div id="resourceVisualPreview" class="resource-visual-preview">↗</div><div class="resource-visual-controls"><select id="resourceIcon"><option value="auto">Icône automatique</option><option value="📁">📁 Dossier</option><option value="📄">📄 Document</option><option value="🔗">🔗 Lien</option><option value="🧩">🧩 Collaboration</option><option value="📌">📌 Important</option><option value="👥">👥 Communauté</option><option value="💬">💬 Discussion</option><option value="🗺️">🗺️ Carte / plan</option></select><label class="resource-upload-btn">Importer une image<input id="resourceImage" type="file" accept="image/*"></label><button id="removeResourceImage" type="button" class="btn secondary" style="display:none">Retirer l’image</button><small>Les images sont automatiquement compressées à 5 Ko maximum.</small></div></div></div>
     <label class="full">Lien *<input id="resourceUrl" type="url" placeholder="https://..."></label>
     <label class="full">Description<textarea id="resourceDescription" placeholder="À quoi sert cette ressource ?"></textarea></label>
    </div>
@@ -965,12 +968,12 @@ saveCalendarEvent.onclick=async()=>{
 deleteCalendarEvent.onclick=async()=>{if(editingCalendarId&&confirm('Supprimer définitivement cet élément ?')){data.calendarEvents=(data.calendarEvents||[]).filter(x=>x.id!==editingCalendarId);await save();closeCal();renderCalendar()}};
 
 /* Ressources */
-let editingResourceId=null, resourceFilter='Toutes';
+let editingResourceId=null, resourceFilter='Toutes', pendingResourceImage='';
 function resourceIcon(c){return ({Documents:'▤',Collaboration:'◎',Organisation:'◇',Contacts:'◉',Autre:'↗'})[c]||'↗'}
 function safeUrl(v){try{const u=new URL(v);return ['http:','https:'].includes(u.protocol)?u.href:'#'}catch{return '#'}}
 function openResourceModal(id=null){
  if(!isAdmin())return;editingResourceId=id;const r=(data.resources||[]).find(x=>x.id===id);
- resourceModalTitle.textContent=r?'Modifier la ressource':'Ajouter une ressource';resourceName.value=r?.name||'';resourceCategory.value=r?.category||'Documents';resourceUrl.value=r?.url||'';resourceDescription.value=r?.description||'';resourceError.textContent='';deleteResourceBtn.style.display=r?'inline-block':'none';resourceModal.style.display='block';
+ resourceModalTitle.textContent=r?'Modifier la ressource':'Ajouter une ressource';resourceName.value=r?.name||'';resourceCategory.value=r?.category||'Documents';resourceUrl.value=r?.url||'';resourceDescription.value=r?.description||'';resourceIcon.value=r?.icon||'auto';pendingResourceImage=r?.image||'';updateResourceVisual();resourceError.textContent='';deleteResourceBtn.style.display=r?'inline-block':'none';resourceModal.style.display='block';
 }
 function closeResource(){resourceModal.style.display='none';editingResourceId=null}
 function renderResources(){
@@ -983,8 +986,30 @@ function renderResources(){
  const a=document.createElement('a');a.className='btn';a.target='_blank';a.rel='noopener noreferrer';a.href=safeUrl(r.url);a.textContent='Ouvrir ↗';card.querySelector('.resource-actions').appendChild(a);
  if(isAdmin()){const e=document.createElement('button');e.className='btn secondary';e.textContent='Modifier';e.onclick=()=>openResourceModal(r.id);card.querySelector('.resource-actions').appendChild(e)}resourceList.appendChild(card)})
 }
+function updateResourceVisual(){
+ const icon=resourceIcon.value==='auto'?resourceIconForCategory(resourceCategory.value):resourceIcon.value;
+ resourceVisualPreview.innerHTML=pendingResourceImage?'<img src="'+pendingResourceImage+'" alt="Aperçu">':esc(icon);
+ removeResourceImage.style.display=pendingResourceImage?'inline-block':'none';
+}
+function resourceIconForCategory(c){return ({Documents:'📁',Collaboration:'🧩',Organisation:'📌',Contacts:'👥',Autre:'🔗'})[c]||'🔗'}
+async function compressResourceImage(file,maxBytes=5120){
+ const img=await new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=no;i.src=URL.createObjectURL(file)});
+ let maxDim=160,quality=.72,best='';
+ for(let pass=0;pass<14;pass++){
+  const scale=Math.min(1,maxDim/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*scale));c.height=Math.max(1,Math.round(img.height*scale));c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+  best=c.toDataURL('image/webp',quality);
+  const bytes=Math.ceil((best.length-best.indexOf(',')-1)*3/4);
+  if(bytes<=maxBytes)return best;
+  if(quality>.28)quality-=.08;else maxDim=Math.round(maxDim*.82);
+ }
+ throw new Error('Image impossible à compresser sous 5 Ko');
+}
+resourceIcon.onchange=()=>{if(!pendingResourceImage)updateResourceVisual()};resourceCategory.onchange=()=>{if(resourceIcon.value==='auto'&&!pendingResourceImage)updateResourceVisual()};
+resourceImage.onchange=async()=>{const f=resourceImage.files?.[0];if(!f)return;resourceError.textContent='Compression de l’image…';try{pendingResourceImage=await compressResourceImage(f);resourceError.textContent='';updateResourceVisual()}catch(e){resourceError.textContent='Cette image ne peut pas être compressée sous 5 Ko.'}finally{resourceImage.value=''}};
+removeResourceImage.onclick=()=>{pendingResourceImage='';updateResourceVisual()};
+
 addResourceBtn.onclick=()=>openResourceModal();closeResourceModal.onclick=closeResource;cancelResourceBtn.onclick=closeResource;
-saveResourceBtn.onclick=async()=>{if(!isAdmin())return;const name=resourceName.value.trim(),url=resourceUrl.value.trim();if(!name||!url){resourceError.textContent='Le nom et le lien sont obligatoires.';return}if(safeUrl(url)==='#'){resourceError.textContent='Saisissez un lien valide commençant par https://';return}data.resources=data.resources||[];const r={id:editingResourceId||crypto.randomUUID(),name,category:resourceCategory.value,url,description:resourceDescription.value.trim()};const i=data.resources.findIndex(x=>x.id===r.id);if(i>=0)data.resources[i]=r;else data.resources.push(r);await save();closeResource();renderResources()};
+saveResourceBtn.onclick=async()=>{if(!isAdmin())return;const name=resourceName.value.trim(),url=resourceUrl.value.trim();if(!name||!url){resourceError.textContent='Le nom et le lien sont obligatoires.';return}if(safeUrl(url)==='#'){resourceError.textContent='Saisissez un lien valide commençant par https://';return}data.resources=data.resources||[];const r={id:editingResourceId||crypto.randomUUID(),name,category:resourceCategory.value,url,description:resourceDescription.value.trim(),icon:resourceIcon.value,image:pendingResourceImage};const i=data.resources.findIndex(x=>x.id===r.id);if(i>=0)data.resources[i]=r;else data.resources.push(r);await save();closeResource();renderResources()};
 deleteResourceBtn.onclick=async()=>{if(!isAdmin()||!editingResourceId)return;if(confirm('Supprimer cette ressource ?')){data.resources=(data.resources||[]).filter(x=>x.id!==editingResourceId);await save();closeResource();renderResources()}};
 
 
