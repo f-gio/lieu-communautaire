@@ -116,6 +116,30 @@ button,input,select,textarea{font:inherit}.app{display:grid;grid-template-column
 #deleteCalendarEvent{margin-right:auto}
 @media(max-width:650px){.calendar-form-grid{grid-template-columns:1fr}.calendar-form-grid .full{grid-column:auto}.calendar-dialog-head,.calendar-dialog-body{padding-left:19px;padding-right:19px}}
 
+
+/* Ressources */
+let editingResourceId=null, resourceFilter='Toutes';
+function resourceIcon(c){return ({Documents:'▤',Collaboration:'◎',Organisation:'◇',Contacts:'◉',Autre:'↗'})[c]||'↗'}
+function safeUrl(v){try{const u=new URL(v);return ['http:','https:'].includes(u.protocol)?u.href:'#'}catch{return '#'}}
+function openResourceModal(id=null){
+ if(!isAdmin())return;editingResourceId=id;const r=(data.resources||[]).find(x=>x.id===id);
+ resourceModalTitle.textContent=r?'Modifier la ressource':'Ajouter une ressource';resourceName.value=r?.name||'';resourceCategory.value=r?.category||'Documents';resourceUrl.value=r?.url||'';resourceDescription.value=r?.description||'';resourceError.textContent='';deleteResourceBtn.style.display=r?'inline-block':'none';resourceModal.style.display='block';
+}
+function closeResource(){resourceModal.style.display='none';editingResourceId=null}
+function renderResources(){
+ if(!document.getElementById('resourceList'))return;data.resources=data.resources||[];addResourceBtn.style.display=isAdmin()?'inline-block':'none';
+ const cats=['Toutes',...new Set(data.resources.map(r=>r.category||'Autre'))];if(!cats.includes(resourceFilter))resourceFilter='Toutes';resourceFilters.innerHTML='';
+ cats.forEach(c=>{const b=document.createElement('button');b.className='resource-filter'+(resourceFilter===c?' active':'');b.textContent=c;b.onclick=()=>{resourceFilter=c;renderResources()};resourceFilters.appendChild(b)});
+ const list=resourceFilter==='Toutes'?data.resources:data.resources.filter(r=>(r.category||'Autre')===resourceFilter);resourceList.innerHTML='';
+ if(!list.length){resourceList.innerHTML='<div class="card" style="grid-column:1/-1"><p class="intro">Aucune ressource pour le moment.</p></div>';return}
+ list.forEach(r=>{const card=document.createElement('article');card.className='resource-card';card.innerHTML='<div class="resource-card-head"><div><div class="resource-category">'+esc(r.category||'Autre')+'</div><h2>'+esc(r.name)+'</h2></div><div class="resource-icon">'+resourceIcon(r.category)+'</div></div><p>'+esc(r.description||'Accéder à cette ressource de la communauté.')+'</p><div class="resource-actions"></div>';
+ const a=document.createElement('a');a.className='btn';a.target='_blank';a.rel='noopener noreferrer';a.href=safeUrl(r.url);a.textContent='Ouvrir ↗';card.querySelector('.resource-actions').appendChild(a);
+ if(isAdmin()){const e=document.createElement('button');e.className='btn secondary';e.textContent='Modifier';e.onclick=()=>openResourceModal(r.id);card.querySelector('.resource-actions').appendChild(e)}resourceList.appendChild(card)})
+}
+addResourceBtn.onclick=()=>openResourceModal();closeResourceModal.onclick=closeResource;cancelResourceBtn.onclick=closeResource;
+saveResourceBtn.onclick=async()=>{if(!isAdmin())return;const name=resourceName.value.trim(),url=resourceUrl.value.trim();if(!name||!url){resourceError.textContent='Le nom et le lien sont obligatoires.';return}if(safeUrl(url)==='#'){resourceError.textContent='Saisissez un lien valide commençant par https://';return}data.resources=data.resources||[];const r={id:editingResourceId||crypto.randomUUID(),name,category:resourceCategory.value,url,description:resourceDescription.value.trim()};const i=data.resources.findIndex(x=>x.id===r.id);if(i>=0)data.resources[i]=r;else data.resources.push(r);await save();closeResource();renderResources()};
+deleteResourceBtn.onclick=async()=>{if(!isAdmin()||!editingResourceId)return;if(confirm('Supprimer cette ressource ?')){data.resources=(data.resources||[]).filter(x=>x.id!==editingResourceId);await save();closeResource();renderResources()}};
+
 /* Sondages */
 .polls-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap;margin-bottom:22px}
 .poll-list{display:grid;gap:16px}.poll-card{padding:22px 24px}.poll-meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;color:var(--muted);font-size:12px;margin:6px 0 17px}
@@ -628,12 +652,28 @@ input,select,textarea,button{max-width:100%}
   }
 }
 
+
+/* Ressources */
+.resources-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap;margin-bottom:20px}
+.resource-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.resource-filter{border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 12px;font:inherit;font-size:12px;cursor:pointer}
+.resource-filter.active{background:#38564b;color:#fff;border-color:#38564b}
+.resource-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.resource-card{display:flex;flex-direction:column;min-width:0;padding:20px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.resource-card-head{display:flex;justify-content:space-between;gap:14px}
+.resource-icon{width:42px;height:42px;flex:0 0 42px;border-radius:11px;background:#edf3ef;display:grid;place-items:center;font-size:18px;color:#38564b}
+.resource-category{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#a15f49}
+.resource-card h2{font-size:17px;margin:5px 0 7px}.resource-card p{font-size:12px;color:var(--muted);line-height:1.55;flex:1}
+.resource-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:auto}.resource-actions a{text-decoration:none}
+.resource-dialog{max-width:680px;margin:30px auto}.resource-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 18px}.resource-form-grid .full{grid-column:1/-1}
+@media(max-width:760px){.resource-grid,.resource-form-grid{grid-template-columns:1fr}.resource-form-grid .full{grid-column:auto}.resources-head>button{width:100%}}
+
 </style>
 </head>
 <body>
 <div class="app">
 <aside class="side"><div class="brand">Maison <span>Demain</span><br><small style="position:static">Projet de vie partagée</small></div><nav class="nav" id="nav">
-<button class="active" data-page="dashboard">⌂ Vue d'ensemble</button><button data-page="roadmap">◎ Feuille de route</button><button data-page="tasks">✓ Actions</button><button data-page="calendar">▣ Calendrier</button><button data-page="polls">◉ Sondages</button><button data-page="community">♧ Communauté</button><button data-page="budget">€ Budget</button><button data-page="principles">♡ Charte & valeurs</button><button data-page="notes">✎ Notes & décisions</button></nav><small>Données synchronisées avec Firebase</small></aside>
+<button class="active" data-page="dashboard">⌂ Vue d'ensemble</button><button data-page="roadmap">◎ Feuille de route</button><button data-page="tasks">✓ Actions</button><button data-page="calendar">▣ Calendrier</button><button data-page="polls">◉ Sondages</button><button data-page="resources">↗ Ressources</button><button data-page="community">♧ Communauté</button><button data-page="budget">€ Budget</button><button data-page="principles">♡ Charte & valeurs</button><button data-page="notes">✎ Notes & décisions</button></nav><small>Données synchronisées avec Firebase</small></aside>
 <main class="main">
 <section id="dashboard" class="section active"><div class="hero"><div><div class="eyebrow">Projet collectif • habitat & entraide</div><h1>Créer une communauté solidaire et harmonieuse pour se soutenir dans nos vieux jours</h1><p>Un cadre de vie épanouissant, durable, <strong>adaptable</strong> et bienveillant, façonné collectivement selon les besoins de chacun.</p></div><span class="pill">🌿 Vision 2035+</span></div>
 <div class="grid"><div class="card kpi"><div class="lab">Progression globale</div><div class="num" id="progressNum">32%</div><div class="progress"><i id="progressBar"></i></div></div><div class="card kpi"><div class="lab">Membres / foyers</div><div class="num" id="memberKpi">6</div></div><div class="card kpi"><div class="lab">Actions ouvertes</div><div class="num" id="taskKpi">4</div></div><div class="card kpi"><div class="lab">Budget estimatif</div><div class="num money" id="budgetKpi">0 €</div></div>
@@ -734,6 +774,31 @@ input,select,textarea,button{max-width:100%}
  </div>
 </div>
 
+
+<section id="resources" class="section">
+  <div class="resources-head">
+    <div><div class="eyebrow">LIENS & INFORMATIONS UTILES</div><h1>Ressources</h1>
+    <p class="intro">Retrouvez rapidement les espaces de travail, documents et liens utiles de la communauté.</p></div>
+    <button id="addResourceBtn" class="btn" style="display:none">+ Ajouter une ressource</button>
+  </div>
+  <div id="resourceFilters" class="resource-filters"></div>
+  <div id="resourceList" class="resource-grid"></div>
+</section>
+<div id="resourceModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9998;padding:20px;overflow:auto">
+ <div class="card resource-dialog">
+  <div class="calendar-dialog-head"><div><div class="eyebrow">RESSOURCE</div><h2 id="resourceModalTitle">Ajouter une ressource</h2></div><button id="closeResourceModal" class="btn secondary">Fermer</button></div>
+  <div class="calendar-dialog-body">
+   <div class="resource-form-grid">
+    <label>Nom *<input id="resourceName" placeholder="Ex. Google Drive"></label>
+    <label>Catégorie *<select id="resourceCategory"><option>Documents</option><option>Collaboration</option><option>Organisation</option><option>Contacts</option><option>Autre</option></select></label>
+    <label class="full">Lien *<input id="resourceUrl" type="url" placeholder="https://..."></label>
+    <label class="full">Description<textarea id="resourceDescription" placeholder="À quoi sert cette ressource ?"></textarea></label>
+   </div>
+   <p id="resourceError" style="color:#a75f50;font-size:13px"></p>
+   <div class="calendar-actions"><button id="deleteResourceBtn" class="btn secondary" style="display:none;margin-right:auto">Supprimer</button><button id="cancelResourceBtn" class="btn secondary">Annuler</button><button id="saveResourceBtn" class="btn">Enregistrer</button></div>
+  </div>
+ </div>
+</div>
 <section id="principles" class="section">
 <div class="charter-head"><div class="eyebrow">Notre cadre commun</div><h1>Charte & valeurs</h1><p>Les principes qui nous rassemblent et guident notre manière de vivre, décider et avancer ensemble.</p></div>
 <div class="card vision-card"><div class="vision-kicker">Notre vision</div><h2>Construire ensemble un lieu où bien vivre et bien vieillir</h2><p>Créer une communauté solidaire et harmonieuse pour se soutenir dans nos vieux jours, où chacun contribue à façonner un cadre de vie épanouissant, durable, adaptable et bienveillant. Ici, nous apprenons à gérer nos conflits avec respect, à partager nos espaces et nos rêves, et à cultiver des liens forts pour que ce projet soit une source de joie et de sérénité pour tous.</p></div>
@@ -814,7 +879,8 @@ function renderMembers(){memberList.innerHTML=data.members.map((m,i)=>`<div clas
 function renderBudget(){budgetList.innerHTML=data.budget.map((b,i)=>`<div class="budgetrow"><b>${esc(b.label)}</b><span>${esc(b.type)}</span><span class="money">${money(b.amount)}</span><button class="del" onclick="deleteBudget(${i})">×</button></div>`).join('');let total=data.budget.reduce((s,b)=>s+Number(b.amount),0);budgetTotal.textContent=money(total);budgetKpi.textContent=money(total)}
 function renderAll(){renderTasks();renderMembers();renderBudget();notesArea.value=data.notes||'';memberKpi.textContent=data.members.length;taskKpi.textContent=data.tasks.filter(t=>!t.done).length;let p=data.tasks.length?Math.round(data.tasks.filter(t=>t.done).length/data.tasks.length*100):0;progressNum.textContent=p+'%';progressBar.style.width=p+'%'
 renderCalendar();
-renderPolls();}
+renderPolls();
+renderResources();}
 window.addTask=()=>{let n=taskName.value.trim();if(!n)return;data.tasks.push({name:n,owner:taskOwner.value||'À définir',date:taskDate.value,status:taskStatus.value,done:false});taskName.value='';save()};
 window.toggleTask=(i,v)=>{data.tasks[i].done=v;save()}; window.deleteTask=i=>{data.tasks.splice(i,1);save()};
 window.addMember=()=>{let n=memberName.value.trim();if(!n)return;data.members.push({name:n,skill:memberSkill.value||'À définir'});memberName.value='';memberSkill.value='';save()}; window.deleteMember=i=>{data.members.splice(i,1);save()};
