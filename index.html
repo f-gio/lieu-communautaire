@@ -117,28 +117,6 @@ button,input,select,textarea{font:inherit}.app{display:grid;grid-template-column
 @media(max-width:650px){.calendar-form-grid{grid-template-columns:1fr}.calendar-form-grid .full{grid-column:auto}.calendar-dialog-head,.calendar-dialog-body{padding-left:19px;padding-right:19px}}
 
 
-/* Ressources */
-let editingResourceId=null, resourceFilter='Toutes';
-function resourceIcon(c){return ({Documents:'▤',Collaboration:'◎',Organisation:'◇',Contacts:'◉',Autre:'↗'})[c]||'↗'}
-function safeUrl(v){try{const u=new URL(v);return ['http:','https:'].includes(u.protocol)?u.href:'#'}catch{return '#'}}
-function openResourceModal(id=null){
- if(!isAdmin())return;editingResourceId=id;const r=(data.resources||[]).find(x=>x.id===id);
- resourceModalTitle.textContent=r?'Modifier la ressource':'Ajouter une ressource';resourceName.value=r?.name||'';resourceCategory.value=r?.category||'Documents';resourceUrl.value=r?.url||'';resourceDescription.value=r?.description||'';resourceError.textContent='';deleteResourceBtn.style.display=r?'inline-block':'none';resourceModal.style.display='block';
-}
-function closeResource(){resourceModal.style.display='none';editingResourceId=null}
-function renderResources(){
- if(!document.getElementById('resourceList'))return;data.resources=data.resources||[];addResourceBtn.style.display=isAdmin()?'inline-block':'none';
- const cats=['Toutes',...new Set(data.resources.map(r=>r.category||'Autre'))];if(!cats.includes(resourceFilter))resourceFilter='Toutes';resourceFilters.innerHTML='';
- cats.forEach(c=>{const b=document.createElement('button');b.className='resource-filter'+(resourceFilter===c?' active':'');b.textContent=c;b.onclick=()=>{resourceFilter=c;renderResources()};resourceFilters.appendChild(b)});
- const list=resourceFilter==='Toutes'?data.resources:data.resources.filter(r=>(r.category||'Autre')===resourceFilter);resourceList.innerHTML='';
- if(!list.length){resourceList.innerHTML='<div class="card" style="grid-column:1/-1"><p class="intro">Aucune ressource pour le moment.</p></div>';return}
- list.forEach(r=>{const card=document.createElement('article');card.className='resource-card';card.innerHTML='<div class="resource-card-head"><div><div class="resource-category">'+esc(r.category||'Autre')+'</div><h2>'+esc(r.name)+'</h2></div><div class="resource-icon">'+resourceIcon(r.category)+'</div></div><p>'+esc(r.description||'Accéder à cette ressource de la communauté.')+'</p><div class="resource-actions"></div>';
- const a=document.createElement('a');a.className='btn';a.target='_blank';a.rel='noopener noreferrer';a.href=safeUrl(r.url);a.textContent='Ouvrir ↗';card.querySelector('.resource-actions').appendChild(a);
- if(isAdmin()){const e=document.createElement('button');e.className='btn secondary';e.textContent='Modifier';e.onclick=()=>openResourceModal(r.id);card.querySelector('.resource-actions').appendChild(e)}resourceList.appendChild(card)})
-}
-addResourceBtn.onclick=()=>openResourceModal();closeResourceModal.onclick=closeResource;cancelResourceBtn.onclick=closeResource;
-saveResourceBtn.onclick=async()=>{if(!isAdmin())return;const name=resourceName.value.trim(),url=resourceUrl.value.trim();if(!name||!url){resourceError.textContent='Le nom et le lien sont obligatoires.';return}if(safeUrl(url)==='#'){resourceError.textContent='Saisissez un lien valide commençant par https://';return}data.resources=data.resources||[];const r={id:editingResourceId||crypto.randomUUID(),name,category:resourceCategory.value,url,description:resourceDescription.value.trim()};const i=data.resources.findIndex(x=>x.id===r.id);if(i>=0)data.resources[i]=r;else data.resources.push(r);await save();closeResource();renderResources()};
-deleteResourceBtn.onclick=async()=>{if(!isAdmin()||!editingResourceId)return;if(confirm('Supprimer cette ressource ?')){data.resources=(data.resources||[]).filter(x=>x.id!==editingResourceId);await save();closeResource();renderResources()}};
 
 /* Sondages */
 .polls-head{display:flex;justify-content:space-between;align-items:flex-end;gap:18px;flex-wrap:wrap;margin-bottom:22px}
@@ -886,7 +864,7 @@ window.toggleTask=(i,v)=>{data.tasks[i].done=v;save()}; window.deleteTask=i=>{da
 window.addMember=()=>{let n=memberName.value.trim();if(!n)return;data.members.push({name:n,skill:memberSkill.value||'À définir'});memberName.value='';memberSkill.value='';save()}; window.deleteMember=i=>{data.members.splice(i,1);save()};
 window.addBudget=()=>{let l=budgetLabel.value.trim(),a=Number(budgetAmount.value);if(!l||!a)return;data.budget.push({label:l,amount:a,type:budgetType.value});budgetLabel.value='';budgetAmount.value='';save()}; window.deleteBudget=i=>{data.budget.splice(i,1);save()};
 window.saveNotes=()=>{data.notes=notesArea.value;save()};
-document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(b.dataset.page).classList.add('active')});
+document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(b.dataset.page).classList.add('active');if(b.dataset.page==='resources')renderResources()});
 
 const ADMIN_UID='CPEGyrjksdMarhLXope92fgLbiq2';
 let adminUsersCache=[];
@@ -985,6 +963,30 @@ saveCalendarEvent.onclick=async()=>{
   await save();closeCal();renderCalendar();
 };
 deleteCalendarEvent.onclick=async()=>{if(editingCalendarId&&confirm('Supprimer définitivement cet élément ?')){data.calendarEvents=(data.calendarEvents||[]).filter(x=>x.id!==editingCalendarId);await save();closeCal();renderCalendar()}};
+
+/* Ressources */
+let editingResourceId=null, resourceFilter='Toutes';
+function resourceIcon(c){return ({Documents:'▤',Collaboration:'◎',Organisation:'◇',Contacts:'◉',Autre:'↗'})[c]||'↗'}
+function safeUrl(v){try{const u=new URL(v);return ['http:','https:'].includes(u.protocol)?u.href:'#'}catch{return '#'}}
+function openResourceModal(id=null){
+ if(!isAdmin())return;editingResourceId=id;const r=(data.resources||[]).find(x=>x.id===id);
+ resourceModalTitle.textContent=r?'Modifier la ressource':'Ajouter une ressource';resourceName.value=r?.name||'';resourceCategory.value=r?.category||'Documents';resourceUrl.value=r?.url||'';resourceDescription.value=r?.description||'';resourceError.textContent='';deleteResourceBtn.style.display=r?'inline-block':'none';resourceModal.style.display='block';
+}
+function closeResource(){resourceModal.style.display='none';editingResourceId=null}
+function renderResources(){
+ if(!document.getElementById('resourceList'))return;data.resources=data.resources||[];addResourceBtn.style.display=isAdmin()?'inline-block':'none';
+ const cats=['Toutes',...new Set(data.resources.map(r=>r.category||'Autre'))];if(!cats.includes(resourceFilter))resourceFilter='Toutes';resourceFilters.innerHTML='';
+ cats.forEach(c=>{const b=document.createElement('button');b.className='resource-filter'+(resourceFilter===c?' active':'');b.textContent=c;b.onclick=()=>{resourceFilter=c;renderResources()};resourceFilters.appendChild(b)});
+ const list=resourceFilter==='Toutes'?data.resources:data.resources.filter(r=>(r.category||'Autre')===resourceFilter);resourceList.innerHTML='';
+ if(!list.length){resourceList.innerHTML='<div class="card" style="grid-column:1/-1"><p class="intro">Aucune ressource pour le moment.</p></div>';return}
+ list.forEach(r=>{const card=document.createElement('article');card.className='resource-card';card.innerHTML='<div class="resource-card-head"><div><div class="resource-category">'+esc(r.category||'Autre')+'</div><h2>'+esc(r.name)+'</h2></div><div class="resource-icon">'+resourceIcon(r.category)+'</div></div><p>'+esc(r.description||'Accéder à cette ressource de la communauté.')+'</p><div class="resource-actions"></div>';
+ const a=document.createElement('a');a.className='btn';a.target='_blank';a.rel='noopener noreferrer';a.href=safeUrl(r.url);a.textContent='Ouvrir ↗';card.querySelector('.resource-actions').appendChild(a);
+ if(isAdmin()){const e=document.createElement('button');e.className='btn secondary';e.textContent='Modifier';e.onclick=()=>openResourceModal(r.id);card.querySelector('.resource-actions').appendChild(e)}resourceList.appendChild(card)})
+}
+addResourceBtn.onclick=()=>openResourceModal();closeResourceModal.onclick=closeResource;cancelResourceBtn.onclick=closeResource;
+saveResourceBtn.onclick=async()=>{if(!isAdmin())return;const name=resourceName.value.trim(),url=resourceUrl.value.trim();if(!name||!url){resourceError.textContent='Le nom et le lien sont obligatoires.';return}if(safeUrl(url)==='#'){resourceError.textContent='Saisissez un lien valide commençant par https://';return}data.resources=data.resources||[];const r={id:editingResourceId||crypto.randomUUID(),name,category:resourceCategory.value,url,description:resourceDescription.value.trim()};const i=data.resources.findIndex(x=>x.id===r.id);if(i>=0)data.resources[i]=r;else data.resources.push(r);await save();closeResource();renderResources()};
+deleteResourceBtn.onclick=async()=>{if(!isAdmin()||!editingResourceId)return;if(confirm('Supprimer cette ressource ?')){data.resources=(data.resources||[]).filter(x=>x.id!==editingResourceId);await save();closeResource();renderResources()}};
+
 
 /* Sondages */
 function isAdmin(){return auth.currentUser?.uid===ADMIN_UID;}
@@ -1126,6 +1128,9 @@ approvalMessage.innerHTML=status==='rejected'
 return}
 overlay.style.display='none';logout.hidden=false;
 if(document.getElementById('addPollBtn')) addPollBtn.style.display=user.uid===ADMIN_UID?'inline-block':'none';
+// Affichage explicite des contrôles Ressources dès que l'identité admin est connue.
+if(document.getElementById('addResourceBtn')) addResourceBtn.style.display=user.uid===ADMIN_UID?'inline-block':'none';
+renderResources();
 const snap=await getDoc(projectRef);if(!snap.exists())await setDoc(projectRef,defaults);
 unsub=onSnapshot(projectRef,s=>{if(s.exists()){data={...structuredClone(defaults),...s.data()};renderAll()}});
 });
