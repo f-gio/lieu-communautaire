@@ -665,6 +665,38 @@ input,select,textarea,button{max-width:100%}
 .note-dialog{max-width:680px;margin:30px auto}.note-form label{display:flex;flex-direction:column;gap:7px;margin-bottom:15px}.note-form input,.note-form textarea{width:100%;box-sizing:border-box}.note-form textarea{min-height:180px;resize:vertical}
 @media(max-width:760px){.taskrow{grid-template-columns:24px 1fr!important;gap:7px 10px}.taskrow>span,.taskrow>.tag{grid-column:2}.taskrow>.del{grid-column:2;justify-self:end}.notes-head>button{width:100%}.comment-form{flex-direction:column}}
 
+
+/* ===== Variante navigation horizontale ===== */
+body{display:block!important;min-height:100vh}
+.sidebar{position:sticky!important;top:0;left:auto!important;width:100%!important;height:auto!important;min-height:0!important;z-index:1000;display:flex!important;align-items:center;gap:22px;padding:13px 28px!important;box-sizing:border-box;background:#24463d!important;box-shadow:0 2px 14px rgba(24,46,40,.12)}
+.sidebar .brand{flex:0 0 auto;margin:0!important;white-space:nowrap;font-size:18px!important;line-height:1.15}
+.sidebar .brand small{display:block!important;margin-top:3px;font-size:9px!important;opacity:.72}
+.sidebar .nav{display:flex!important;align-items:center;gap:4px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none;padding:0!important;margin:0!important}
+.sidebar .nav::-webkit-scrollbar{display:none}
+.sidebar .nav button{flex:0 0 auto!important;width:auto!important;margin:0!important;padding:9px 11px!important;border-radius:8px!important;white-space:nowrap;font-size:11px!important}
+.sidebar .nav button.active{background:rgba(255,255,255,.13)!important}
+.sidebar>small{display:none!important}
+.main{margin-left:0!important;width:100%!important;max-width:none!important;padding:34px clamp(22px,4vw,64px) 26px!important;box-sizing:border-box}
+.section{max-width:1380px;margin:0 auto}
+.footer{max-width:1380px;margin-left:auto!important;margin-right:auto!important}
+.userbar{right:24px!important;bottom:18px!important}
+@media(max-width:980px){
+ .sidebar{padding:11px 16px!important;gap:13px;align-items:flex-start;flex-wrap:wrap}
+ .sidebar .brand{width:100%;display:flex;align-items:baseline;gap:9px}
+ .sidebar .brand small{display:inline!important}
+ .sidebar .nav{width:100%;order:2}
+ .sidebar .nav button{font-size:11px!important;padding:8px 10px!important}
+ .main{padding:25px 16px 22px!important}
+}
+@media(max-width:560px){
+ .sidebar{position:sticky!important;padding:10px 12px!important}
+ .sidebar .brand{font-size:16px!important}
+ .sidebar .brand small{font-size:8px!important}
+ .sidebar .nav{gap:2px}
+ .sidebar .nav button{padding:8px 9px!important}
+ .main{padding:20px 12px 80px!important}
+}
+
 </style>
 </head>
 <body>
