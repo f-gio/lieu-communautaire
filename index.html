@@ -1415,6 +1415,21 @@ body.auth-pending .app{visibility:hidden}
  #profileModal .profile-actions{padding:15px 20px 18px!important}
 }
 
+
+/* ===== Auth boot safety: never show a blank page ===== */
+body.auth-pending::before{
+  content:"";
+  position:fixed;inset:0;z-index:20000;
+  background:#f4f1e9;
+}
+body.auth-pending::after{
+  content:"Chargement…";
+  position:fixed;left:50%;top:50%;z-index:20001;
+  transform:translate(-50%,-50%);
+  color:#294c40;font:600 14px Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Arial;
+  letter-spacing:.01em;
+}
+
 </style>
 </head>
 <body class="auth-pending">
@@ -1737,9 +1752,28 @@ body.auth-pending .app{visibility:hidden}
   </div>
 </div>
 
+
+<script>
+(function(){
+  window.__tinyBootReady=false;
+  window.addEventListener('DOMContentLoaded',function(){
+    setTimeout(function(){
+      if(!window.__tinyBootReady && document.body.classList.contains('auth-pending')){
+        document.body.classList.remove('auth-pending');
+        var box=document.createElement('div');
+        box.id='bootFallback';
+        box.style.cssText='position:fixed;inset:0;z-index:19999;background:#f4f1e9;display:grid;place-items:center;padding:24px;font-family:Inter,system-ui,sans-serif';
+        box.innerHTML='<div style="max-width:440px;background:#fffdf8;border:1px solid #ddd8cd;border-radius:16px;padding:28px;box-shadow:0 12px 40px #0002"><h2 style="margin:0 0 10px;color:#294c40">Tiny Houses</h2><p style="margin:0;color:#5f6f68;line-height:1.55">Le site n’a pas pu terminer son chargement. Actualisez la page. Si le problème persiste, vérifiez que les fichiers Firebase sont accessibles.</p><button onclick="location.reload()" style="margin-top:18px;border:0;border-radius:9px;padding:10px 14px;background:#2f5044;color:white;cursor:pointer">Actualiser</button></div>';
+        document.body.appendChild(box);
+      }
+    },8000);
+  });
+})();
+</script>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updatePassword, signOut, onAuthStateChanged, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updatePassword, signOut, onAuthStateChanged, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -1765,6 +1799,7 @@ const projectRef=doc(db,'projects','maison-demain');
 const overlay=document.createElement('div'); overlay.id='loginOverlay'; overlay.innerHTML=`<div style="max-width:420px;margin:12vh auto;background:#fffdf8;border:1px solid #ddd8cd;border-radius:16px;padding:28px;box-shadow:0 12px 40px #0002"><h2>Communauté solidaire des Gens de confiance</h2><p></p><input id="loginEmail" type="email" placeholder="E-mail" style="width:100%;margin:7px 0"><input id="loginPassword" type="password" placeholder="Mot de passe" style="width:100%;margin:7px 0"><button id="loginBtn" class="btn" style="width:100%;margin-top:8px">Se connecter</button>
 <button id="signupBtn" type="button" style="width:100%;margin-top:10px;background:transparent;border:0;color:#365d55;cursor:pointer;text-decoration:underline">Créer un compte</button>
 <p id="loginError" style="color:#a75f50;font-size:13px"></p><div id="approvalMessage" style="display:none;margin-top:14px;padding:14px;border-radius:12px;background:#f4efe6;line-height:1.5"></div></div>`; Object.assign(overlay.style,{position:'fixed',inset:'0',background:'#f4f1e9',zIndex:'9999'}); document.body.appendChild(overlay);
+window.__tinyBootReady=true;
 const accountActions=document.getElementById('accountDropdown');
 const accountMenu=document.getElementById('accountMenu');
 const accountMenuBtn=document.getElementById('accountMenuBtn');
