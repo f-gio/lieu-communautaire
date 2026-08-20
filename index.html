@@ -1795,6 +1795,40 @@ body.auth-pending::after{
   .main{padding-top:20px!important}
 }
 
+
+.actions-head{display:flex;justify-content:flex-end;margin:0 0 16px}
+.actions-card{padding:8px 20px}
+.taskrow-v2{display:grid;grid-template-columns:34px minmax(280px,1.7fr) minmax(120px,.65fr) 120px 105px 96px;gap:16px;align-items:center;padding:16px 0;border-bottom:1px solid var(--line)}
+.taskrow-v2:last-child{border-bottom:0}
+.task-main{min-width:0}
+.task-main strong{display:block;font-size:14px;line-height:1.35;margin-bottom:5px}
+.task-desc{font-size:12px;line-height:1.45;color:var(--muted);white-space:pre-line}
+.task-meta{font-size:13px}
+.task-done-label{display:flex;align-items:center;gap:7px;font-size:12px;white-space:nowrap}
+.task-actions{display:flex;justify-content:flex-end;gap:5px}
+.task-edit{border:0;background:transparent;color:var(--forest);cursor:pointer;padding:7px;border-radius:7px}
+.task-edit:hover{background:#eef2eb}
+.taskrow-v2.done .task-main strong{text-decoration:line-through;opacity:.65}
+.task-dialog{width:min(680px,calc(100vw - 36px));padding:0!important;border-radius:18px!important;overflow:hidden}
+.task-form{padding:28px 32px 30px;display:grid;gap:20px}
+.task-form label{display:grid;gap:8px;font-size:13px;font-weight:700}
+.task-form input,.task-form textarea,.task-form select{width:100%;box-sizing:border-box}
+.task-form textarea{resize:vertical;min-height:110px}
+.task-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.task-form .modal-actions{padding:22px 0 0;margin-top:4px;border-top:1px solid var(--line)}
+@media(max-width:800px){
+ .taskrow-v2{grid-template-columns:28px minmax(0,1fr) auto;gap:10px}
+ .taskrow-v2 .task-owner,.taskrow-v2 .task-date,.taskrow-v2 .task-status{grid-column:2}
+ .task-actions{grid-column:3;grid-row:1}
+ .task-done-label{grid-column:2}
+}
+@media(max-width:600px){
+ .actions-head{justify-content:stretch}.actions-head .btn{width:100%}
+ .actions-card{padding:4px 16px}
+ .task-grid{grid-template-columns:1fr}
+ .task-form{padding:24px 20px}
+}
+
 </style>
 </head>
 <body class="auth-pending">
@@ -1896,7 +1930,32 @@ body.auth-pending::after{
   <div class="home-manifesto"><span class="leaf">⌁</span><strong>Ensemble, créons un lieu de vie humain, durable et inspirant.</strong></div>
 </section>
 <section id="roadmap" class="section"><h1>Feuille de route</h1><p class="intro">Transformez la vision en étapes concrètes et mesurables.</p><div class="two"><div class="card"><h2>0–6 mois • Cadrer</h2><p>Formaliser la vision, identifier 5–10 membres fondateurs, recueillir les besoins, rédiger une première charte.</p></div><div class="card"><h2>6–18 mois • Concevoir</h2><p>Choisir la zone géographique, étudier les modèles juridiques, établir le financement et définir le programme immobilier.</p></div><div class="card"><h2>18–36 mois • Réaliser</h2><p>Sélectionner le lieu, finaliser les accords, concevoir l'habitat adaptable, obtenir les autorisations et lancer les travaux.</p></div><div class="card"><h2>Après installation • Faire vivre</h2><p>Rituels collectifs, gouvernance légère, fonds de solidarité, évaluation annuelle des besoins et adaptation du cadre de vie.</p></div></div></section>
-<section id="tasks" class="section"><h1>Actions</h1><p class="intro">Suivez les prochaines étapes, les responsables et les échéances.</p><div class="card"><div class="toolbar"><input id="taskName" placeholder="Nouvelle action"><input id="taskOwner" placeholder="Responsable"><input id="taskDate" type="date"><select id="taskStatus"><option>À faire</option><option>En cours</option><option>Bloqué</option></select><button class="btn" onclick="addTask()">Ajouter</button></div><div id="taskList"></div></div></section>
+<section id="tasks" class="section">
+<h1>Actions</h1>
+<p class="intro">Suivez les prochaines étapes, les responsables et les échéances.</p>
+<div class="actions-head"><button class="btn" onclick="openTaskModal()">+ Ajouter une action</button></div>
+<div class="card actions-card"><div id="taskList"></div></div>
+</section>
+
+<div id="taskModal" class="modal-shell" style="display:none">
+ <div class="card task-dialog" role="dialog" aria-modal="true" aria-labelledby="taskModalTitle">
+  <div class="modal-head">
+   <div><div class="eyebrow">ACTION</div><h2 id="taskModalTitle">Ajouter une action</h2></div>
+   <button type="button" class="modal-close-x" onclick="closeTaskModal()" aria-label="Fermer">×</button>
+  </div>
+  <form id="taskForm" class="task-form">
+   <label class="task-full"><span>Titre *</span><input id="taskName" required placeholder="Ex. Préparer le budget prévisionnel"></label>
+   <label class="task-full"><span>Description</span><textarea id="taskDescription" rows="4" placeholder="Décrivez l’action, son objectif et les informations utiles…"></textarea></label>
+   <div class="task-grid">
+    <label><span>Responsable</span><input id="taskOwner" placeholder="Nom du responsable"></label>
+    <label><span>Échéance</span><input id="taskDate" type="date"></label>
+    <label><span>Statut</span><select id="taskStatus"><option>À faire</option><option>En cours</option><option>Bloqué</option><option>Effectuée</option></select></label>
+    <label><span>Réalisation</span><select id="taskDone"><option value="false">Non effectuée</option><option value="true">Effectuée</option></select></label>
+   </div>
+   <div class="modal-actions"><button type="button" class="btn secondary" onclick="closeTaskModal()">Annuler</button><button class="btn" type="submit" id="taskSaveBtn">Ajouter l’action</button></div>
+  </form>
+ </div>
+</div>
 <section id="community" class="section"><h1>Communauté</h1><p class="intro">Cartographiez le groupe fondateur et les compétences disponibles.</p><div class="card"><div class="toolbar"><input id="memberName" placeholder="Nom / foyer"><input id="memberSkill" placeholder="Compétence / contribution"><button class="btn" onclick="addMember()">Ajouter</button></div><div id="memberList"></div></div></section>
 <section id="budget" class="section"><h1>Budget</h1><p class="intro">Première estimation des postes nécessaires au projet.</p><div class="card"><div class="toolbar"><input id="budgetLabel" placeholder="Poste (étude, terrain…)"><input id="budgetAmount" type="number" placeholder="Montant €"><select id="budgetType"><option>Investissement</option><option>Fonctionnement</option><option>Réserve solidaire</option></select><button class="btn" onclick="addBudget()">Ajouter</button></div><div id="budgetList"></div><hr style="border:0;border-top:1px solid #e7e1d7;margin:18px 0"><b>Total : <span id="budgetTotal">0 €</span></b></div></section>
 
@@ -2222,15 +2281,28 @@ logout.onclick=()=>signOut(auth);
 async function save(){await setDoc(projectRef,{...data,updatedAt:new Date().toISOString()});}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function money(n){return new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR',maximumFractionDigits:0}).format(n)}
-function renderTasks(){taskList.innerHTML=data.tasks.map((t,i)=>`<div class="taskrow ${t.done?'done':''}"><input type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${i},this.checked)"><b class="taskname">${esc(t.name)}</b><span>${esc(t.owner)}</span><span>${t.date||'Sans date'}</span><span class="tag">${esc(t.status)}</span><button class="del" onclick="deleteTask(${i})">×</button></div>`).join('')}
+function renderTasks(){taskList.innerHTML=data.tasks.map((t,i)=>`<div class="taskrow-v2 ${t.done?'done':''}">
+<input type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${i},this.checked)" aria-label="Marquer comme effectuée">
+<div class="task-main"><strong>${esc(t.title||t.name||'Sans titre')}</strong>${t.description?`<div class="task-desc">${esc(t.description)}</div>`:''}</div>
+<div class="task-meta task-owner">${esc(t.owner||'À définir')}</div>
+<div class="task-meta task-date">${t.date||'Sans date'}</div>
+<div class="task-status"><span class="tag">${esc(t.done?'Effectuée':(t.status||'À faire'))}</span></div>
+<div class="task-actions"><button class="task-edit" onclick="editTask(${i})" title="Modifier">Modifier</button><button class="del" onclick="deleteTask(${i})" title="Supprimer">×</button></div>
+</div>`).join('')}
 function renderMembers(){memberList.innerHTML=data.members.map((m,i)=>`<div class="member"><div class="avatar">${esc(m.name).charAt(0).toUpperCase()}</div><div><b>${esc(m.name)}</b><br><small>${esc(m.skill)}</small></div><button class="del" style="margin-left:auto" onclick="deleteMember(${i})">×</button></div>`).join('')}
 function renderBudget(){budgetList.innerHTML=data.budget.map((b,i)=>`<div class="budgetrow"><b>${esc(b.label)}</b><span>${esc(b.type)}</span><span class="money">${money(b.amount)}</span><button class="del" onclick="deleteBudget(${i})">×</button></div>`).join('');let total=data.budget.reduce((s,b)=>s+Number(b.amount),0);budgetTotal.textContent=money(total);budgetKpi.textContent=money(total)}
 function renderAll(){renderCharterValues();renderTasks();renderMembers();renderBudget();renderNotes();memberKpi.textContent=data.members.length;taskKpi.textContent=data.tasks.filter(t=>!t.done).length;let p=data.tasks.length?Math.round(data.tasks.filter(t=>t.done).length/data.tasks.length*100):0;progressNum.textContent=p+'%';progressBar.style.width=p+'%'
 renderCalendar();
 renderPolls();
 renderResources();}
-window.addTask=()=>{let n=taskName.value.trim();if(!n)return;data.tasks.push({name:n,owner:taskOwner.value||'À définir',date:taskDate.value,status:taskStatus.value,done:false});taskName.value='';save()};
-window.toggleTask=(i,v)=>{data.tasks[i].done=v;save()}; window.deleteTask=i=>{data.tasks.splice(i,1);save()};
+let editingTaskIndex=null;
+window.openTaskModal=()=>{editingTaskIndex=null;taskModalTitle.textContent='Ajouter une action';taskSaveBtn.textContent='Ajouter l’action';taskForm.reset();taskDone.value='false';taskModal.style.display='grid';setTimeout(()=>taskName.focus(),50)};
+window.closeTaskModal=()=>{taskModal.style.display='none';taskForm.reset();editingTaskIndex=null};
+window.editTask=i=>{const t=data.tasks[i];editingTaskIndex=i;taskModalTitle.textContent='Modifier l’action';taskSaveBtn.textContent='Enregistrer les modifications';taskName.value=t.title||t.name||'';taskDescription.value=t.description||'';taskOwner.value=t.owner||'';taskDate.value=t.date||'';taskStatus.value=t.done?'Effectuée':(t.status||'À faire');taskDone.value=String(!!t.done);taskModal.style.display='grid';};
+taskForm.addEventListener('submit',async e=>{e.preventDefault();const title=taskName.value.trim();if(!title)return;const done=taskDone.value==='true'||taskStatus.value==='Effectuée';const obj={title,name:title,description:taskDescription.value.trim(),owner:taskOwner.value.trim()||'À définir',date:taskDate.value,status:done?'Effectuée':taskStatus.value,done};if(editingTaskIndex===null)data.tasks.push(obj);else data.tasks[editingTaskIndex]={...data.tasks[editingTaskIndex],...obj};closeTaskModal();await save()});
+window.toggleTask=(i,v)=>{data.tasks[i].done=v;if(v)data.tasks[i].status='Effectuée';else if(data.tasks[i].status==='Effectuée')data.tasks[i].status='À faire';save()};
+window.deleteTask=i=>{if(confirm('Supprimer cette action ?')){data.tasks.splice(i,1);save()}};
+taskModal.addEventListener('click',e=>{if(e.target===taskModal)closeTaskModal()});
 window.addMember=()=>{let n=memberName.value.trim();if(!n)return;data.members.push({name:n,skill:memberSkill.value||'À définir'});memberName.value='';memberSkill.value='';save()}; window.deleteMember=i=>{data.members.splice(i,1);save()};
 window.addBudget=()=>{let l=budgetLabel.value.trim(),a=Number(budgetAmount.value);if(!l||!a)return;data.budget.push({label:l,amount:a,type:budgetType.value});budgetLabel.value='';budgetAmount.value='';save()}; window.deleteBudget=i=>{data.budget.splice(i,1);save()};
 
