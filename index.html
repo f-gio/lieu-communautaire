@@ -1657,6 +1657,144 @@ body.auth-pending::after{
   .account-area{position:absolute!important;top:17px!important;right:18px!important;margin:0!important;z-index:5!important;}
 }
 
+
+/* ===== V11 — FIX MOBILE HEADER / ACCOUNT SPACING ===== */
+@media(max-width:720px){
+  .app{display:block!important}
+
+  .side{
+    position:sticky!important;
+    top:0!important;
+    z-index:5000!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    box-sizing:border-box!important;
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
+    grid-template-rows:auto auto!important;
+    align-items:center!important;
+    column-gap:10px!important;
+    row-gap:8px!important;
+    padding:10px 14px 8px!important;
+    background:#fffdf9!important;
+    border-bottom:1px solid var(--line)!important;
+    overflow:visible!important;
+  }
+
+  /* Compact brand */
+  .side .brand{
+    grid-column:1!important;
+    grid-row:1!important;
+    width:auto!important;
+    min-width:0!important;
+    margin:0!important;
+    padding:0!important;
+    display:flex!important;
+    align-items:center!important;
+    gap:8px!important;
+  }
+  .side .brandmark{
+    width:34px!important;
+    height:34px!important;
+    flex:0 0 34px!important;
+  }
+  .side .brandtext strong{
+    font-size:14px!important;
+    line-height:1!important;
+    letter-spacing:.11em!important;
+  }
+  .side .brandtext small{
+    display:block!important;
+    position:static!important;
+    margin:4px 0 0!important;
+    font-size:7px!important;
+    line-height:1!important;
+    letter-spacing:.13em!important;
+  }
+
+  /* Account: same first row, tight around avatar */
+  .side #accountMenu{
+    grid-column:2!important;
+    grid-row:1!important;
+    position:relative!important;
+    width:auto!important;
+    margin:0!important;
+    padding:0!important;
+    justify-self:end!important;
+    align-self:center!important;
+  }
+  .side #accountMenuBtn{
+    width:auto!important;
+    min-width:0!important;
+    min-height:36px!important;
+    margin:0!important;
+    padding:3px 6px!important;
+    gap:4px!important;
+    border:0!important;
+    border-radius:999px!important;
+    background:#eef2eb!important;
+    color:var(--forest)!important;
+    justify-content:center!important;
+  }
+  .side #accountMenuBtn .account-avatar{
+    width:30px!important;
+    height:30px!important;
+    flex:0 0 30px!important;
+  }
+  /* On phone, avatar is enough: remove the large name/caret footprint */
+  .side #accountLabel,
+  .side #accountMenuBtn > span:last-child{
+    display:none!important;
+  }
+  .side #accountDropdown{
+    top:calc(100% + 7px)!important;
+    right:0!important;
+    left:auto!important;
+    width:min(250px,calc(100vw - 28px))!important;
+  }
+
+  /* Navigation: dedicated second row */
+  .side .nav{
+    grid-column:1 / -1!important;
+    grid-row:2!important;
+    width:calc(100% + 28px)!important;
+    margin:0 -14px!important;
+    padding:0 14px 2px!important;
+    box-sizing:border-box!important;
+    display:flex!important;
+    flex-direction:row!important;
+    flex-wrap:nowrap!important;
+    align-items:center!important;
+    justify-content:flex-start!important;
+    gap:4px!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    -webkit-overflow-scrolling:touch!important;
+    scrollbar-width:none!important;
+    white-space:nowrap!important;
+  }
+  .side .nav::-webkit-scrollbar{display:none!important}
+  .side .nav button{
+    flex:0 0 auto!important;
+    width:auto!important;
+    margin:0!important;
+    padding:8px 9px!important;
+    font-size:12px!important;
+    line-height:1.1!important;
+    border-radius:8px!important;
+    white-space:nowrap!important;
+  }
+  .side .nav button.active{
+    background:#e6ece3!important;
+    box-shadow:none!important;
+    border-radius:8px!important;
+  }
+
+  .side > small{display:none!important}
+  .main{padding-top:20px!important}
+}
+
 </style>
 </head>
 <body class="auth-pending">
