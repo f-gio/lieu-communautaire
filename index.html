@@ -2240,7 +2240,8 @@ const profileError=document.getElementById('profileError');
 let currentProfilePhoto='';
 const settingsBtn=document.createElement('button');settingsBtn.textContent='Paramètres du compte';settingsBtn.className='account-action';accountActions.appendChild(settingsBtn);
 function initials(name,email){const v=(name||email||'Compte').trim();return v.split(/\s+/).slice(0,2).map(x=>x[0]?.toUpperCase()||'').join('')||'C'}
-function avatarHTML(photo,name,email){return photo?`<img src="${photo}" alt="Photo de profil">`:initials(name,email)}
+function safeImageDataUrl(v){return typeof v==='string' && /^data:image\/(?:png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/.test(v)?v:''}
+function avatarHTML(photo,name,email){const safe=safeImageDataUrl(photo);return safe?`<img src="${safe}" alt="Photo de profil">`:initials(name,email)}
 function updateAccountUI(profile,user){const name=profile?.displayName||'';const photo=profile?.photo||'';accountAvatar.innerHTML=avatarHTML(photo,name,user?.email);accountLabel.textContent=name||'Compte';}
 function openProfile(profile,user){currentProfilePhoto=profile?.photo||'';profileDisplayName.value=profile?.displayName||'';profileEmail.value=user?.email||'';profilePreview.innerHTML=avatarHTML(currentProfilePhoto,profileDisplayName.value,user?.email);profileError.textContent='';profileModal.style.display='block';accountDropdown.hidden=true;accountMenuBtn.setAttribute('aria-expanded','false')}
 function closeProfile(){profileModal.style.display='none'}
@@ -2285,7 +2286,7 @@ function renderTasks(){taskList.innerHTML=data.tasks.map((t,i)=>`<div class="tas
 <input type="checkbox" ${t.done?'checked':''} onchange="toggleTask(${i},this.checked)" aria-label="Marquer comme effectuée">
 <div class="task-main"><strong>${esc(t.title||t.name||'Sans titre')}</strong>${t.description?`<div class="task-desc">${esc(t.description)}</div>`:''}</div>
 <div class="task-meta task-owner">${esc(t.owner||'À définir')}</div>
-<div class="task-meta task-date">${t.date||'Sans date'}</div>
+<div class="task-meta task-date">${esc(t.date||'Sans date')}</div>
 <div class="task-status"><span class="tag">${esc(t.done?'Effectuée':(t.status||'À faire'))}</span></div>
 <div class="task-actions"><button class="task-edit" onclick="editTask(${i})" title="Modifier">Modifier</button><button class="del" onclick="deleteTask(${i})" title="Supprimer">×</button></div>
 </div>`).join('')}
@@ -2418,7 +2419,7 @@ function renderUpcoming(){
   calendarUpcoming.innerHTML=list.length?'':'<p class="intro">Aucun événement à venir.</p>';
   list.forEach(ev=>{
     const row=document.createElement('div');row.className='calendar-upcoming-item';
-    const left=document.createElement('div');left.innerHTML='<strong>'+ev.title+'</strong><br><small>'+new Date(ev.date+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'long'})+(ev.time?' · '+ev.time:'')+' · '+(ev.type==='action'?'Action':'Réunion')+(ev.owner?' · '+ev.owner:'')+'</small>';
+    const left=document.createElement('div');left.innerHTML='<strong>'+esc(ev.title||'')+'</strong><br><small>'+new Date(ev.date+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'long'})+(ev.time?' · '+ev.time:'')+' · '+(ev.type==='action'?'Action':'Réunion')+(ev.owner?' · '+esc(ev.owner):'')+'</small>';
     const edit=document.createElement('button');edit.className='btn secondary';edit.textContent='Modifier';edit.onclick=()=>openCalendarModal(ev.date,ev.id);
     row.append(left,edit);calendarUpcoming.appendChild(row);
   });
@@ -2458,7 +2459,7 @@ function renderResources(){
  cats.forEach(c=>{const b=document.createElement('button');b.className='resource-filter'+(resourceFilter===c?' active':'');b.textContent=c;b.onclick=()=>{resourceFilter=c;renderResources()};resourceFilters.appendChild(b)});
  const list=resourceFilter==='Toutes'?data.resources:data.resources.filter(r=>(r.category||'Autre')===resourceFilter);resourceList.innerHTML='';
  if(!list.length){resourceList.innerHTML='<div class="card" style="grid-column:1/-1"><p class="intro">Aucune ressource pour le moment.</p></div>';return}
- list.forEach(r=>{const card=document.createElement('article');card.className='resource-card';card.innerHTML='<div class="resource-card-head"><div><div class="resource-category">'+esc(r.category||'Autre')+'</div><h2>'+esc(r.name)+'</h2></div><div class="resource-icon">'+(r.image?'<img src="'+r.image+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:11px">':esc(r.icon&&r.icon!=='auto'?r.icon:resourceIconForCategory(r.category)))+'</div></div><p>'+esc(r.description||'Accéder à cette ressource de la communauté.')+'</p><div class="resource-actions"></div>';
+ list.forEach(r=>{const card=document.createElement('article');card.className='resource-card';card.innerHTML='<div class="resource-card-head"><div><div class="resource-category">'+esc(r.category||'Autre')+'</div><h2>'+esc(r.name)+'</h2></div><div class="resource-icon">'+(safeImageDataUrl(r.image)?'<img src="'+safeImageDataUrl(r.image)+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:11px">':esc(r.icon&&r.icon!=='auto'?r.icon:resourceIconForCategory(r.category)))+'</div></div><p>'+esc(r.description||'Accéder à cette ressource de la communauté.')+'</p><div class="resource-actions"></div>';
  const a=document.createElement('a');a.className='btn';a.target='_blank';a.rel='noopener noreferrer';a.href=safeUrl(r.url);a.textContent='Ouvrir ↗';card.querySelector('.resource-actions').appendChild(a);
  if(isAdmin()){const e=document.createElement('button');e.className='btn secondary';e.textContent='Modifier';e.onclick=()=>openResourceModal(r.id);card.querySelector('.resource-actions').appendChild(e)}resourceList.appendChild(card)})
 }
@@ -2528,9 +2529,9 @@ function renderPolls(){
   const card=document.createElement('div');card.className='card poll-card';
   const deadline=p.deadline?' · Clôture '+new Date(p.deadline+'T12:00:00').toLocaleDateString('fr-FR'):'';
   card.innerHTML=
-    '<h2 style="margin:0">'+p.question+'</h2>'+
+    '<h2 style="margin:0">'+esc(p.question||'')+'</h2>'+
     '<div class="poll-meta"><span class="poll-status">'+(isClosed?'Clôturé':(multiple?'Choix multiples':'Choix unique'))+'</span><span>'+totalVoters+' participant'+(totalVoters>1?'s':'')+deadline+'</span></div>'+
-    (p.description?'<p>'+p.description+'</p>':'')+
+    (p.description?'<p>'+esc(p.description)+'</p>':'')+
     (multiple?'<p class="admin-only-note">Vous pouvez sélectionner plusieurs réponses.</p>':'')+
     '<div class="poll-options"></div>'+
     '<div class="poll-vote-footer"><span class="poll-vote-message"></span><button class="btn poll-submit" '+(isClosed?'disabled':'')+'>Enregistrer mon vote</button></div>'+
