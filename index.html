@@ -2765,10 +2765,25 @@ savePollBtn.onclick=async()=>{
  data.polls=data.polls||[];
  const options=labels.map(label=>{const prev=old?.options?.find(o=>o.label===label);return {label,votes:prev?.votes||0}});
  const p={id:editingPollId||crypto.randomUUID(),question:pollQuestion.value.trim(),description:pollDescription.value.trim(),deadline:pollDeadline.value,multiple:pollMultiple.checked,options,votes:old?.votes||{},createdBy:old?.createdBy||uid,updatedAt:new Date().toISOString()};
- if(editingPollId){const i=data.polls.findIndex(x=>x.id===editingPollId);if(i>=0)data.polls[i]=p}else data.polls.push(p);
- await save();closePoll();renderPolls();
+ try{
+   const pollDoc={
+     question:p.question,
+     description:p.description,
+     deadline:p.deadline,
+     multiple:p.multiple,
+     options:p.options,
+     createdBy:p.createdBy,
+     updatedAt:p.updatedAt
+   };
+   await setDoc(doc(pollsCol,p.id),pollDoc,{merge:!!editingPollId});
+   closePoll();
+   await refreshPolls();
+ }catch(e){
+   console.error('Erreur sauvegarde sondage',e);
+   pollError.textContent="Impossible d'enregistrer le sondage. Vérifiez les règles Firestore.";
+ }
 };
-deletePollBtn.onclick=async()=>{const p=(data.polls||[]).find(x=>x.id===editingPollId);if(!p||!canEditPoll(p))return;if(editingPollId&&confirm('Supprimer définitivement ce sondage ?')){data.polls=(data.polls||[]).filter(x=>x.id!==editingPollId);await save();closePoll();renderPolls()}};
+deletePollBtn.onclick=async()=>{const p=(data.polls||[]).find(x=>x.id===editingPollId);if(!p||!canEditPoll(p))return;if(editingPollId&&confirm('Supprimer définitivement ce sondage ?')){try{await deleteDoc(doc(pollsCol,editingPollId));closePoll();await refreshPolls()}catch(e){console.error('Erreur suppression sondage',e);pollError.textContent="Impossible de supprimer le sondage."}}};
 
 async function hydratePoll(d){
  const p={id:d.id,...d.data(),votes:{}};
