@@ -2559,7 +2559,8 @@ adminSearch.oninput=renderAdminUsers;
 adminBtn.onclick=()=>{
   if(!isAdmin()){
     adminModal.style.display='none';
-    if(accountDropdown) accountDropdown.style.display='none';
+    if(accountDropdown) accountDropdown.hidden=true;
+    if(accountMenuBtn) accountMenuBtn.setAttribute('aria-expanded','false');
     return;
   }
   adminModal.style.display='block';
@@ -3044,7 +3045,9 @@ currentUserProfileUnsub=onSnapshot(userRef,snap=>{
   if(!nowAdmin){
     if(adminModal) adminModal.style.display='none';
     if(adminUnsub){adminUnsub();adminUnsub=null}
-    if(accountDropdown) accountDropdown.style.display='none';
+    // Ferme seulement le menu Compte sans neutraliser son fonctionnement.
+    if(accountDropdown) accountDropdown.hidden=true;
+    if(accountMenuBtn) accountMenuBtn.setAttribute('aria-expanded','false');
   }
   if(wasAdmin!==nowAdmin){
     renderResources();
