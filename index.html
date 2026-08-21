@@ -2649,7 +2649,7 @@ function safeUrl(v){try{const u=new URL(v);return ['http:','https:'].includes(u.
 function openResourceModal(id=null){
  if(!auth.currentUser)return;editingResourceId=id;const r=(data.resources||[]).find(x=>x.id===id);
  resourceModalTitle.textContent=r?'Modifier la ressource':'Ajouter une ressource';resourceName.value=r?.name||'';resourceCategory.value=r?.category||'Documents';resourceUrl.value=r?.url||'';resourceDescription.value=r?.description||'';resourceIcon.value=r?.icon||'auto';pendingResourceImage=r?.image||'';updateResourceVisual();resourceError.textContent='';
-const canDeleteResource=!!r && (isAdmin() || r.createdBy===auth.currentUser?.uid);
+const canDeleteResource=!!r && (isAdmin() || (r.createdBy && String(r.createdBy)===String(auth.currentUser?.uid)));
 deleteResourceBtn.hidden=!canDeleteResource;
 deleteResourceBtn.style.display=canDeleteResource?'inline-block':'none';
 resourceModal.style.display='block';
@@ -2689,11 +2689,24 @@ removeResourceImage.onclick=()=>{pendingResourceImage='';updateResourceVisual()}
 
 addResourceBtn.onclick=()=>openResourceModal();closeResourceModal.onclick=closeResource;cancelResourceBtn.onclick=closeResource;
 saveResourceBtn.onclick=async()=>{if(!auth.currentUser)return;const name=resourceName.value.trim(),url=resourceUrl.value.trim();if(!name||!url){resourceError.textContent='Le nom et le lien sont obligatoires.';return}if(safeUrl(url)==='#'){resourceError.textContent='Saisissez un lien valide commençant par https://';return}const existing=(data.resources||[]).find(x=>x.id===editingResourceId);
-const r={id:editingResourceId||crypto.randomUUID(),name,category:resourceCategory.value,url,description:resourceDescription.value.trim(),icon:resourceIcon.value,image:pendingResourceImage,createdBy:existing?.createdBy||auth.currentUser.uid,updatedAt:new Date().toISOString()};await setDoc(doc(resourcesCol,r.id),r,{merge:true});closeResource()};
+const isNewResource=!editingResourceId;
+const r={id:editingResourceId||crypto.randomUUID(),name,category:resourceCategory.value,url,description:resourceDescription.value.trim(),icon:resourceIcon.value,image:pendingResourceImage,updatedAt:new Date().toISOString()};
+if(isNewResource) r.createdBy=auth.currentUser.uid;
+else if(existing && existing.createdBy) r.createdBy=existing.createdBy;
+try{
+  await setDoc(doc(resourcesCol,r.id),r,{merge:true});
+  closeResource();
+}catch(e){
+  console.error('Enregistrement ressource',e);
+  resourceError.textContent="Impossible d’enregistrer cette ressource. Vérifiez les règles Firestore.";
+}};
 deleteResourceBtn.onclick=async()=>{
  if(!editingResourceId)return;
  const r=(data.resources||[]).find(x=>x.id===editingResourceId);
- if(!r || !(isAdmin() || r.createdBy===auth.currentUser?.uid))return;
+ if(!r || !(isAdmin() || (r.createdBy && String(r.createdBy)===String(auth.currentUser?.uid)))){
+   resourceError.textContent="Vous ne pouvez supprimer que les ressources que vous avez créées.";
+   return;
+ }
  if(confirm('Supprimer cette ressource ?')){
    try{
      await deleteDoc(doc(resourcesCol,editingResourceId));
