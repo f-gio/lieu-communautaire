@@ -1140,6 +1140,7 @@ body.auth-pending .app{visibility:hidden}
   width:100%!important;
   text-align:left!important;
 }
+#adminBtn[hidden]{display:none!important;}
 #accountDropdown .logout-action{
   margin-top:8px!important;
   padding-top:13px!important;
@@ -2376,7 +2377,7 @@ saveProfile.onclick=async()=>{const u=auth.currentUser;if(!u)return;saveProfile.
 const adminBtn=document.createElement('button');
 adminBtn.textContent='Administration';
 adminBtn.className='account-action';
-adminBtn.style.display='none';
+adminBtn.hidden=true;
 accountActions.appendChild(adminBtn);
 accountMenuBtn.onclick=(e)=>{e.stopPropagation();const open=accountDropdown.hidden;accountDropdown.hidden=!open;accountMenuBtn.setAttribute('aria-expanded',String(open));};
 document.addEventListener('click',(e)=>{if(accountMenu && !accountMenu.contains(e.target)){accountDropdown.hidden=true;accountMenuBtn.setAttribute('aria-expanded','false');}});
@@ -2996,7 +2997,7 @@ if(unsub){unsub();unsub=null}
 if(currentUserProfileUnsub){currentUserProfileUnsub();currentUserProfileUnsub=null}
 stopCollaborativeListeners();
 approvalMessage.style.display='none';
-if(!user){currentUserRole='member';adminBtn.style.display='none';overlay.style.display='block';logout.hidden=true; if(accountMenu) accountMenu.style.display='none';loginBtn.style.display='';signupBtn.style.display='';loginEmail.style.display='';loginPassword.style.display='';return}
+if(!user){currentUserRole='member';adminBtn.hidden=true;overlay.style.display='block';logout.hidden=true; if(accountMenu) accountMenu.style.display='none';loginBtn.style.display='';signupBtn.style.display='';loginEmail.style.display='';loginPassword.style.display='';return}
 adminBtn.style.display='none';
 const userRef=doc(db,'users',user.uid);
 let profile=await getDoc(userRef);
@@ -3023,7 +3024,7 @@ approvalMessage.innerHTML=status==='rejected'
 :'<strong>Inscription enregistrée.</strong><br>Votre demande est en attente de validation par un administrateur.';
 return}
 overlay.style.display='none';logout.hidden=false; if(accountMenu) accountMenu.style.display='block';
-adminBtn.style.display=isAdmin()?'inline-block':'none';
+adminBtn.hidden=!isAdmin();
 
 // Réévalue immédiatement les droits lorsque le profil Firestore change.
 currentUserProfileUnsub=onSnapshot(userRef,snap=>{
@@ -3039,7 +3040,7 @@ currentUserProfileUnsub=onSnapshot(userRef,snap=>{
   currentUserRole=user.uid===ADMIN_UID?'admin':(profileData.role==='admin'?'admin':'member');
   const nowAdmin=(user.uid===ADMIN_UID || currentUserRole==='admin');
 
-  adminBtn.style.display=nowAdmin?'inline-block':'none';
+  adminBtn.hidden=!nowAdmin;
   if(document.getElementById('addResourceBtn')) addResourceBtn.style.display=nowAdmin?'inline-block':'none';
 
   if(!nowAdmin){
