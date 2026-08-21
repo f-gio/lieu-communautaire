@@ -2000,7 +2000,7 @@ body.auth-pending::after{
   </div>
 
   <div class="home-kpis">
-    <div class="card kpi"><div class="kpi-icon">♙</div><div><div class="lab">Membres / foyers</div><div class="num" id="memberKpi">6</div></div></div>
+    <div class="card kpi"><div class="kpi-icon">♙</div><div><div class="lab">Membres actifs</div><div class="num" id="memberKpi">—</div></div></div>
     <div class="card kpi"><div class="kpi-icon">✓</div><div><div class="lab">Actions ouvertes</div><div class="num" id="taskKpi">4</div></div></div>
     <div class="card kpi"><div class="kpi-icon">€</div><div><div class="lab">Budget estimatif</div><div class="num money" id="budgetKpi">0 €</div></div></div>
   </div>
@@ -2334,6 +2334,7 @@ const baseCharterValues=[
 ];
 
 const projectRef=doc(db,'projects','maison-demain');
+const communityStatsRef=doc(db,'publicStats','community');
 const calendarCol=collection(projectRef,'calendar');
 const resourcesCol=collection(projectRef,'resources');
 const notesCol=collection(projectRef,'notes');
@@ -2429,7 +2430,7 @@ function renderTasks(){taskList.innerHTML=data.tasks.map((t,i)=>`<div class="tas
 </div>`).join('')}
 function renderMembers(){memberList.innerHTML=data.members.map((m,i)=>`<div class="member"><div class="avatar">${esc(m.name).charAt(0).toUpperCase()}</div><div><b>${esc(m.name)}</b><br><small>${esc(m.skill)}</small></div><button class="del" style="margin-left:auto" onclick="deleteMember(${i})">×</button></div>`).join('')}
 function renderBudget(){budgetList.innerHTML=data.budget.map((b,i)=>`<div class="budgetrow"><b>${esc(b.label)}</b><span>${esc(b.type)}</span><span class="money">${money(b.amount)}</span><button class="del" onclick="deleteBudget(${i})">×</button></div>`).join('');let total=data.budget.reduce((s,b)=>s+Number(b.amount),0);budgetTotal.textContent=money(total);budgetKpi.textContent=money(total)}
-function renderAll(){renderCharterValues();renderTasks();renderMembers();renderBudget();renderNotes();memberKpi.textContent=data.members.length;taskKpi.textContent=data.tasks.filter(t=>!t.done).length;
+function renderAll(){renderCharterValues();renderTasks();renderMembers();renderBudget();renderNotes();taskKpi.textContent=data.tasks.filter(t=>!t.done).length;
 renderCalendar();
 renderPolls();
 renderResources();}
@@ -2502,6 +2503,25 @@ let currentUserRole='member';
 let adminUsersCache=[];
 let adminUnsub=null;
 let currentUserProfileUnsub=null;
+let memberCountUnsub=null;
+
+function startMemberCountListener(){
+  if(memberCountUnsub)memberCountUnsub();
+  memberCountUnsub=onSnapshot(communityStatsRef,snap=>{
+    const total=snap.exists()?Number(snap.data()?.approvedMembers||0):0;
+    memberKpi.textContent=String(total);
+  },err=>{
+    console.error('Compteur des membres actifs',err);
+    memberKpi.textContent='—';
+  });
+}
+
+async function syncApprovedMemberCount(){
+  if(!isAdmin())return;
+  const snap=await getDocs(collection(db,'users'));
+  const approvedMembers=snap.docs.filter(d=>d.id===ADMIN_UID||d.data()?.status==='approved').length;
+  await setDoc(communityStatsRef,{approvedMembers,updatedAt:serverTimestamp()},{merge:true});
+}
 
 function statusLabel(s){
   return ({pending:'En attente',approved:'Actif',suspended:'Suspendu',rejected:'Refusé'})[s]||s;
@@ -2570,6 +2590,9 @@ adminBtn.onclick=()=>{
   adminUnsub=onSnapshot(collection(db,'users'),snap=>{
     adminUsersCache=snap.docs.map(d=>({id:d.id,...d.data()}));
     renderAdminUsers();
+    const approvedMembers=adminUsersCache.filter(u=>u.id===ADMIN_UID||u.status==='approved').length;
+    setDoc(communityStatsRef,{approvedMembers,updatedAt:serverTimestamp()},{merge:true})
+      .catch(err=>console.error('Synchronisation du compteur',err));
   });
 };
 closeAdmin.onclick=()=>{adminModal.style.display='none';if(adminUnsub){adminUnsub();adminUnsub=null}};
@@ -3027,6 +3050,7 @@ onAuthStateChanged(auth,async user=>{
 document.body.classList.remove('auth-pending');
 if(unsub){unsub();unsub=null}
 if(currentUserProfileUnsub){currentUserProfileUnsub();currentUserProfileUnsub=null}
+if(memberCountUnsub){memberCountUnsub();memberCountUnsub=null}
 stopCollaborativeListeners();
 approvalMessage.style.display='none';
 if(!user){currentUserRole='member';adminBtn.hidden=true;overlay.style.display='block';logout.hidden=true; if(accountMenu) accountMenu.style.display='none';loginBtn.style.display='';signupBtn.style.display='';loginEmail.style.display='';loginPassword.style.display='';return}
@@ -3056,6 +3080,7 @@ approvalMessage.innerHTML=status==='rejected'
 :'<strong>Inscription enregistrée.</strong><br>Votre demande est en attente de validation par un administrateur.';
 return}
 overlay.style.display='none';logout.hidden=false; if(accountMenu) accountMenu.style.display='block';
+startMemberCountListener();
 if(isAdmin()){
   if(!adminBtn.isConnected){
     const profileAction=accountActions.querySelector('.account-action:not(.logout-action)');
@@ -3063,6 +3088,7 @@ if(isAdmin()){
     else accountActions.insertBefore(adminBtn,accountActions.firstChild);
   }
   adminBtn.hidden=false;
+  syncApprovedMemberCount().catch(err=>console.error('Initialisation du compteur',err));
 }else if(adminBtn.isConnected){
   adminBtn.remove();
 }
