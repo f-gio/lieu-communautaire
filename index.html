@@ -979,7 +979,9 @@ body{padding-bottom:92px!important}
 
 
 /* ===== Gestion du compte dans la navigation ===== */
-#notificationCenter{position:relative;margin-left:auto}
+.header-actions{display:flex;align-items:center;gap:8px;flex:0 0 auto;margin-left:auto;white-space:nowrap}
+#notificationCenter{position:relative;margin-left:0}
+.header-actions #accountMenu{margin-left:0!important}
 .notification-btn{position:relative;width:40px;height:40px;border:0;border-radius:50%;background:#eef2eb;color:var(--forest);cursor:pointer;font-size:19px;display:grid;place-items:center}
 .notification-btn:hover{background:#e2eadf}
 .notification-badge{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 4px;border-radius:999px;background:#c65f43;color:#fff;font-size:10px;font-weight:800;display:grid;place-items:center;border:2px solid #fff}
@@ -1686,7 +1688,7 @@ body.auth-pending::after{
     min-height:0!important;
     box-sizing:border-box!important;
     display:grid!important;
-    grid-template-columns:minmax(0,1fr) auto auto!important;
+    grid-template-columns:minmax(0,1fr) auto!important;
     grid-template-rows:auto auto!important;
     align-items:center!important;
     column-gap:10px!important;
@@ -1729,15 +1731,16 @@ body.auth-pending::after{
   }
 
   /* Notifications and account: same first row */
-  .side #notificationCenter{
+  .side .header-actions{
     grid-column:2!important;
     grid-row:1!important;
     margin:0!important;
     justify-self:end!important;
+    display:flex!important;
+    align-items:center!important;
+    gap:6px!important;
   }
   .side #accountMenu{
-    grid-column:3!important;
-    grid-row:1!important;
     position:relative!important;
     width:auto!important;
     margin:0!important;
@@ -1983,13 +1986,13 @@ body.auth-pending::after{
 <button data-page="tasks">✓ Actions</button>
 <button data-page="notes">✎ Notes</button>
 <button data-page="budget">€ Budget</button>
-</nav><div id="notificationCenter" style="display:none">
+</nav><div class="header-actions"><div id="notificationCenter" style="display:none">
 <button id="notificationBtn" class="notification-btn" type="button" aria-label="Notifications" aria-expanded="false">🔔<span id="notificationBadge" class="notification-badge" hidden>0</span></button>
 <div id="notificationPanel" class="notification-panel" hidden><div class="notification-head"><strong>Notifications</strong><button id="markAllNotificationsRead" type="button">Tout marquer comme lu</button></div><div id="notificationList"></div></div>
 </div><div id="accountMenu" class="account-menu" style="display:none">
 <button id="accountMenuBtn" class="account-menu-btn" type="button" aria-expanded="false"><span id="accountAvatar" class="account-avatar">C</span><span id="accountLabel">Compte</span><span>⌄</span></button>
 <div id="accountDropdown" class="account-dropdown" hidden></div>
-</div><small>Données synchronisées avec Firebase</small></aside>
+</div></div><small>Données synchronisées avec Firebase</small></aside>
 <main class="main">
 <section id="dashboard" class="section active">
   <div class="home-hero">
