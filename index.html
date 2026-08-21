@@ -2557,6 +2557,11 @@ function renderAdminUsers(){
 }
 adminSearch.oninput=renderAdminUsers;
 adminBtn.onclick=()=>{
+  if(!isAdmin()){
+    adminModal.style.display='none';
+    if(accountDropdown) accountDropdown.style.display='none';
+    return;
+  }
   adminModal.style.display='block';
   if(adminUnsub) adminUnsub();
   adminUnsub=onSnapshot(collection(db,'users'),snap=>{
@@ -3021,27 +3026,27 @@ adminBtn.style.display=isAdmin()?'inline-block':'none';
 
 // Réévalue immédiatement les droits lorsque le profil Firestore change.
 currentUserProfileUnsub=onSnapshot(userRef,snap=>{
+  const wasAdmin=(user.uid===ADMIN_UID || currentUserRole==='admin');
   if(!snap.exists()){
     currentUserRole='member';
     adminBtn.style.display='none';
+    if(adminModal) adminModal.style.display='none';
+    if(adminUnsub){adminUnsub();adminUnsub=null}
     return;
   }
   const profileData=snap.data()||{};
-  const previousAdmin=isAdmin();
-  currentUserRole=user.uid===ADMIN_UID?'admin':(profileData.role||'member');
-  const nowAdmin=isAdmin();
+  currentUserRole=user.uid===ADMIN_UID?'admin':(profileData.role==='admin'?'admin':'member');
+  const nowAdmin=(user.uid===ADMIN_UID || currentUserRole==='admin');
 
   adminBtn.style.display=nowAdmin?'inline-block':'none';
   if(document.getElementById('addResourceBtn')) addResourceBtn.style.display=nowAdmin?'inline-block':'none';
 
-  // Si les droits admin viennent d'être retirés, ferme immédiatement
-  // l'administration et retire les contrôles réservés aux admins.
-  if(previousAdmin && !nowAdmin){
+  if(!nowAdmin){
     if(adminModal) adminModal.style.display='none';
     if(adminUnsub){adminUnsub();adminUnsub=null}
-    renderResources();
-    renderPolls();
-  } else if(previousAdmin!==nowAdmin){
+    if(accountDropdown) accountDropdown.style.display='none';
+  }
+  if(wasAdmin!==nowAdmin){
     renderResources();
     renderPolls();
   }
