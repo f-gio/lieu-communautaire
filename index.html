@@ -2652,6 +2652,10 @@ deleteResourceBtn.onclick=async()=>{if(!isAdmin()||!editingResourceId)return;if(
 
 /* Sondages */
 function isAdmin(){return auth.currentUser?.uid===ADMIN_UID;}
+function canEditPoll(p){
+ const uid=auth.currentUser?.uid;
+ return !!uid && (isAdmin() || p?.createdBy===uid);
+}
 function addPollOptionField(value=''){
  const row=document.createElement('div');row.className='poll-option-edit';
  const inp=document.createElement('input');inp.placeholder='Réponse proposée';inp.value=value;
@@ -2659,17 +2663,17 @@ function addPollOptionField(value=''){
  row.append(inp,del);pollOptionsEditor.appendChild(row);
 }
 function openPollModal(id=null){
- if(!isAdmin()) return;
- editingPollId=id;pollError.textContent='';pollOptionsEditor.innerHTML='';
  const p=id?(data.polls||[]).find(x=>x.id===id):null;
+ if(id && !canEditPoll(p)) return;
+ editingPollId=id;pollError.textContent='';pollOptionsEditor.innerHTML='';
  pollModalTitle.textContent=p?'Modifier le sondage':'Créer un sondage';pollQuestion.value=p?.question||'';pollDescription.value=p?.description||'';pollDeadline.value=p?.deadline||'';pollMultiple.checked=!!p?.multiple;
  (p?.options||['','']).forEach(o=>addPollOptionField(typeof o==='string'?o:o.label));
- deletePollBtn.style.display=p?'inline-block':'none';pollModal.style.display='block';
+ deletePollBtn.style.display=(p&&canEditPoll(p))?'inline-block':'none';pollModal.style.display='block';
 }
 function closePoll(){pollModal.style.display='none';editingPollId=null}
 function renderPolls(){
  if(!document.getElementById('pollList'))return;
- addPollBtn.style.display=isAdmin()?'inline-block':'none';
+ addPollBtn.style.display=auth.currentUser?'inline-block':'none';
  data.polls=data.polls||[];
  pollList.innerHTML=data.polls.length?'':'<div class="card"><p class="intro">Aucun sondage pour le moment.</p></div>';
 
@@ -2742,7 +2746,7 @@ function renderPolls(){
   };
 
   const actions=card.querySelector('.poll-actions');
-  if(isAdmin()){
+  if(canEditPoll(p)){
     const edit=document.createElement('button');edit.className='btn secondary';edit.textContent='Modifier le sondage';edit.onclick=()=>openPollModal(p.id);
     actions.appendChild(edit);
   } else actions.style.display='none';
@@ -2752,16 +2756,19 @@ function renderPolls(){
 }
 addPollBtn.onclick=()=>openPollModal();closePollModal.onclick=closePoll;cancelPollBtn.onclick=closePoll;addPollOption.onclick=()=>addPollOptionField();
 savePollBtn.onclick=async()=>{
- if(!isAdmin()){pollError.textContent='Action réservée à un administrateur.';return}
+ const uid=auth.currentUser?.uid;
+ if(!uid){pollError.textContent='Vous devez être connecté.';return}
+ const old=editingPollId?(data.polls||[]).find(x=>x.id===editingPollId):null;
+ if(old && !canEditPoll(old)){pollError.textContent="Vous ne pouvez modifier que les sondages que vous avez créés.";return}
  const labels=[...pollOptionsEditor.querySelectorAll('input')].map(x=>x.value.trim()).filter(Boolean);
  if(!pollQuestion.value.trim()||labels.length<2){pollError.textContent='Saisissez une question et au moins deux réponses.';return}
- data.polls=data.polls||[];const old=editingPollId?data.polls.find(x=>x.id===editingPollId):null;
+ data.polls=data.polls||[];
  const options=labels.map(label=>{const prev=old?.options?.find(o=>o.label===label);return {label,votes:prev?.votes||0}});
- const p={id:editingPollId||crypto.randomUUID(),question:pollQuestion.value.trim(),description:pollDescription.value.trim(),deadline:pollDeadline.value,multiple:pollMultiple.checked,options,votes:old?.votes||{}};
+ const p={id:editingPollId||crypto.randomUUID(),question:pollQuestion.value.trim(),description:pollDescription.value.trim(),deadline:pollDeadline.value,multiple:pollMultiple.checked,options,votes:old?.votes||{},createdBy:old?.createdBy||uid,updatedAt:new Date().toISOString()};
  if(editingPollId){const i=data.polls.findIndex(x=>x.id===editingPollId);if(i>=0)data.polls[i]=p}else data.polls.push(p);
  await save();closePoll();renderPolls();
 };
-deletePollBtn.onclick=async()=>{if(!isAdmin())return;if(editingPollId&&confirm('Supprimer définitivement ce sondage ?')){data.polls=(data.polls||[]).filter(x=>x.id!==editingPollId);await save();closePoll();renderPolls()}};
+deletePollBtn.onclick=async()=>{const p=(data.polls||[]).find(x=>x.id===editingPollId);if(!p||!canEditPoll(p))return;if(editingPollId&&confirm('Supprimer définitivement ce sondage ?')){data.polls=(data.polls||[]).filter(x=>x.id!==editingPollId);await save();closePoll();renderPolls()}};
 
 async function hydratePoll(d){
  const p={id:d.id,...d.data(),votes:{}};
