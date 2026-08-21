@@ -3025,7 +3025,11 @@ approvalMessage.innerHTML=status==='rejected'
 return}
 overlay.style.display='none';logout.hidden=false; if(accountMenu) accountMenu.style.display='block';
 if(isAdmin()){
-  if(!adminBtn.isConnected) accountActions.appendChild(adminBtn);
+  if(!adminBtn.isConnected){
+    const profileAction=accountActions.querySelector('.account-action:not(.logout-action)');
+    if(profileAction) profileAction.insertAdjacentElement('afterend',adminBtn);
+    else accountActions.insertBefore(adminBtn,accountActions.firstChild);
+  }
   adminBtn.hidden=false;
 }else if(adminBtn.isConnected){
   adminBtn.remove();
@@ -3047,7 +3051,11 @@ currentUserProfileUnsub=onSnapshot(userRef,snap=>{
 
   // Administration n'existe dans le menu que pour un administrateur réel.
   if(nowAdmin){
-    if(!adminBtn.isConnected) accountActions.appendChild(adminBtn);
+    if(!adminBtn.isConnected){
+    const profileAction=accountActions.querySelector('.account-action:not(.logout-action)');
+    if(profileAction) profileAction.insertAdjacentElement('afterend',adminBtn);
+    else accountActions.insertBefore(adminBtn,accountActions.firstChild);
+  }
     adminBtn.hidden=false;
   }else{
     if(adminBtn.isConnected) adminBtn.remove();
