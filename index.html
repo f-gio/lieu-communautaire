@@ -2499,6 +2499,7 @@ const ADMIN_UID='CPEGyrjksdMarhLXope92fgLbiq2';
 let currentUserRole='member';
 let adminUsersCache=[];
 let adminUnsub=null;
+let currentUserProfileUnsub=null;
 
 function statusLabel(s){
   return ({pending:'En attente',approved:'Actif',suspended:'Suspendu',rejected:'Refusé'})[s]||s;
@@ -2541,7 +2542,7 @@ function renderAdminUsers(){
       deleteUserBtn.textContent='Supprimer';
       deleteUserBtn.onclick=async()=>{
         const label=u.email||'cet utilisateur';
-        if(!confirm(`Supprimer ${label} de la communauté ?\n\nPour supprimer un utilisateur proprement et définitivement, il faudra également supprimer son profil dans Firestore et son compte dans Firebase Authentication.\n\nLe bouton actuel supprime son profil Firestore, mais pas automatiquement son compte Firebase Authentication.`))return;
+        if(!confirm(`Supprimer ${label} de la communauté ?\n\nPour supprimer un utilisateur proprement et définitivement, il faudra également supprimer son compte dans Firebase Authentication.`))return;
         try{
           await deleteDoc(doc(db,'users',u.id));
         }catch(e){
@@ -2985,7 +2986,9 @@ async function migrateLegacyDataIfAdmin(projectData){
 
 onAuthStateChanged(auth,async user=>{
 document.body.classList.remove('auth-pending');
-if(unsub){unsub();unsub=null} stopCollaborativeListeners();
+if(unsub){unsub();unsub=null}
+if(currentUserProfileUnsub){currentUserProfileUnsub();currentUserProfileUnsub=null}
+stopCollaborativeListeners();
 approvalMessage.style.display='none';
 if(!user){currentUserRole='member';adminBtn.style.display='none';overlay.style.display='block';logout.hidden=true; if(accountMenu) accountMenu.style.display='none';loginBtn.style.display='';signupBtn.style.display='';loginEmail.style.display='';loginPassword.style.display='';return}
 adminBtn.style.display='none';
@@ -3015,6 +3018,34 @@ approvalMessage.innerHTML=status==='rejected'
 return}
 overlay.style.display='none';logout.hidden=false; if(accountMenu) accountMenu.style.display='block';
 adminBtn.style.display=isAdmin()?'inline-block':'none';
+
+// Réévalue immédiatement les droits lorsque le profil Firestore change.
+currentUserProfileUnsub=onSnapshot(userRef,snap=>{
+  if(!snap.exists()){
+    currentUserRole='member';
+    adminBtn.style.display='none';
+    return;
+  }
+  const profileData=snap.data()||{};
+  const previousAdmin=isAdmin();
+  currentUserRole=user.uid===ADMIN_UID?'admin':(profileData.role||'member');
+  const nowAdmin=isAdmin();
+
+  adminBtn.style.display=nowAdmin?'inline-block':'none';
+  if(document.getElementById('addResourceBtn')) addResourceBtn.style.display=nowAdmin?'inline-block':'none';
+
+  // Si les droits admin viennent d'être retirés, ferme immédiatement
+  // l'administration et retire les contrôles réservés aux admins.
+  if(previousAdmin && !nowAdmin){
+    if(adminModal) adminModal.style.display='none';
+    if(adminUnsub){adminUnsub();adminUnsub=null}
+    renderResources();
+    renderPolls();
+  } else if(previousAdmin!==nowAdmin){
+    renderResources();
+    renderPolls();
+  }
+});
 if(document.getElementById('addPollBtn')) addPollBtn.style.display='inline-block';
 // Affichage explicite des contrôles Ressources dès que l'identité admin est connue.
 if(document.getElementById('addResourceBtn')) addResourceBtn.style.display=isAdmin()?'inline-block':'none';
