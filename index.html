@@ -2651,6 +2651,7 @@ function openResourceModal(id=null){
  resourceModalTitle.textContent=r?'Modifier la ressource':'Ajouter une ressource';resourceName.value=r?.name||'';resourceCategory.value=r?.category||'Documents';resourceUrl.value=r?.url||'';resourceDescription.value=r?.description||'';resourceIcon.value=r?.icon||'auto';pendingResourceImage=r?.image||'';updateResourceVisual();resourceError.textContent='';
 const canDeleteResource=!!r && (isAdmin() || r.createdBy===auth.currentUser?.uid);
 deleteResourceBtn.hidden=!canDeleteResource;
+deleteResourceBtn.style.display=canDeleteResource?'inline-block':'none';
 resourceModal.style.display='block';
 }
 function closeResource(){resourceModal.style.display='none';editingResourceId=null}
@@ -2693,7 +2694,15 @@ deleteResourceBtn.onclick=async()=>{
  if(!editingResourceId)return;
  const r=(data.resources||[]).find(x=>x.id===editingResourceId);
  if(!r || !(isAdmin() || r.createdBy===auth.currentUser?.uid))return;
- if(confirm('Supprimer cette ressource ?')){await deleteDoc(doc(resourcesCol,editingResourceId));closeResource()}
+ if(confirm('Supprimer cette ressource ?')){
+   try{
+     await deleteDoc(doc(resourcesCol,editingResourceId));
+     closeResource();
+   }catch(e){
+     console.error('Suppression ressource',e);
+     resourceError.textContent="Impossible de supprimer cette ressource. Vérifiez les règles Firestore.";
+   }
+ }
 };
 
 
