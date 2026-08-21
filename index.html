@@ -979,6 +979,19 @@ body{padding-bottom:92px!important}
 
 
 /* ===== Gestion du compte dans la navigation ===== */
+#notificationCenter{position:relative;margin-left:auto}
+.notification-btn{position:relative;width:40px;height:40px;border:0;border-radius:50%;background:#eef2eb;color:var(--forest);cursor:pointer;font-size:19px;display:grid;place-items:center}
+.notification-btn:hover{background:#e2eadf}
+.notification-badge{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 4px;border-radius:999px;background:#c65f43;color:#fff;font-size:10px;font-weight:800;display:grid;place-items:center;border:2px solid #fff}
+.notification-panel{position:absolute;top:calc(100% + 9px);right:0;width:min(380px,calc(100vw - 28px));max-height:520px;overflow:auto;background:#fffdf8;border:1px solid #ddd8cd;border-radius:15px;box-shadow:0 18px 45px #263d3530;z-index:1000}
+.notification-head{position:sticky;top:0;background:#fffdf8;padding:14px 16px;border-bottom:1px solid #ebe5da;display:flex;justify-content:space-between;align-items:center;gap:12px;z-index:1}
+.notification-head strong{font-size:15px}.notification-head button{border:0;background:transparent;color:#526d60;font-size:12px;cursor:pointer}
+.notification-item{width:100%;border:0;border-bottom:1px solid #eee8de;background:#fffdf8;text-align:left;padding:13px 16px;cursor:pointer;display:grid;grid-template-columns:9px 1fr;gap:10px}
+.notification-item:hover{background:#f7f5ee}.notification-item.unread{background:#f1f5ef}
+.notification-dot{width:8px;height:8px;border-radius:50%;background:transparent;margin-top:5px}.notification-item.unread .notification-dot{background:#c65f43}
+.notification-item b{display:block;font-size:13px;color:var(--forest);margin-bottom:3px}.notification-item p{margin:0;color:#5f6d66;font-size:12px;line-height:1.4}.notification-item time{display:block;color:#89928d;font-size:10px;margin-top:5px}
+.notification-empty{padding:28px 18px;text-align:center;color:#718078;font-size:13px}
+@media(max-width:900px){#notificationCenter{margin-left:auto}.notification-panel{position:fixed;top:72px;right:14px}}
 #accountActions{display:none!important}
 .account-menu{position:relative;flex:0 0 auto;margin-left:6px}
 .account-menu-btn{border:1px solid rgba(255,255,255,.20);background:rgba(255,255,255,.10);color:#fff;border-radius:9px;padding:9px 12px;display:flex;align-items:center;gap:7px;cursor:pointer;font-weight:700;white-space:nowrap}
@@ -1673,7 +1686,7 @@ body.auth-pending::after{
     min-height:0!important;
     box-sizing:border-box!important;
     display:grid!important;
-    grid-template-columns:minmax(0,1fr) auto!important;
+    grid-template-columns:minmax(0,1fr) auto auto!important;
     grid-template-rows:auto auto!important;
     align-items:center!important;
     column-gap:10px!important;
@@ -1715,9 +1728,15 @@ body.auth-pending::after{
     letter-spacing:.13em!important;
   }
 
-  /* Account: same first row, tight around avatar */
-  .side #accountMenu{
+  /* Notifications and account: same first row */
+  .side #notificationCenter{
     grid-column:2!important;
+    grid-row:1!important;
+    margin:0!important;
+    justify-self:end!important;
+  }
+  .side #accountMenu{
+    grid-column:3!important;
     grid-row:1!important;
     position:relative!important;
     width:auto!important;
@@ -1964,7 +1983,10 @@ body.auth-pending::after{
 <button data-page="tasks">✓ Actions</button>
 <button data-page="notes">✎ Notes</button>
 <button data-page="budget">€ Budget</button>
-</nav><div id="accountMenu" class="account-menu" style="display:none">
+</nav><div id="notificationCenter" style="display:none">
+<button id="notificationBtn" class="notification-btn" type="button" aria-label="Notifications" aria-expanded="false">🔔<span id="notificationBadge" class="notification-badge" hidden>0</span></button>
+<div id="notificationPanel" class="notification-panel" hidden><div class="notification-head"><strong>Notifications</strong><button id="markAllNotificationsRead" type="button">Tout marquer comme lu</button></div><div id="notificationList"></div></div>
+</div><div id="accountMenu" class="account-menu" style="display:none">
 <button id="accountMenuBtn" class="account-menu-btn" type="button" aria-expanded="false"><span id="accountAvatar" class="account-avatar">C</span><span id="accountLabel">Compte</span><span>⌄</span></button>
 <div id="accountDropdown" class="account-dropdown" hidden></div>
 </div><small>Données synchronisées avec Firebase</small></aside>
@@ -2339,6 +2361,7 @@ const calendarCol=collection(projectRef,'calendar');
 const resourcesCol=collection(projectRef,'resources');
 const notesCol=collection(projectRef,'notes');
 const pollsCol=collection(projectRef,'polls');
+const notificationsCol=collection(projectRef,'notifications');
 let collaborativeUnsubs=[];
 let legacyBackup={calendarEvents:[],resources:[],noteItems:[],polls:[]};
 let migrationComplete=false;
@@ -2350,6 +2373,12 @@ window.__tinyBootReady=true;
 const accountActions=document.getElementById('accountDropdown');
 const accountMenu=document.getElementById('accountMenu');
 const accountMenuBtn=document.getElementById('accountMenuBtn');
+const notificationCenter=document.getElementById('notificationCenter');
+const notificationBtn=document.getElementById('notificationBtn');
+const notificationPanel=document.getElementById('notificationPanel');
+const notificationBadge=document.getElementById('notificationBadge');
+const notificationList=document.getElementById('notificationList');
+const markAllNotificationsRead=document.getElementById('markAllNotificationsRead');
 const logout=document.createElement('button'); logout.textContent='Se déconnecter'; logout.className='account-action logout-action'; logout.hidden=true; if(accountMenu) accountMenu.style.display='none'; accountActions.appendChild(logout);
 
 const accountAvatar=document.getElementById('accountAvatar');
@@ -2383,6 +2412,38 @@ adminBtn.hidden=true;
 accountActions.appendChild(adminBtn);
 accountMenuBtn.onclick=(e)=>{e.stopPropagation();const open=accountDropdown.hidden;accountDropdown.hidden=!open;accountMenuBtn.setAttribute('aria-expanded',String(open));};
 document.addEventListener('click',(e)=>{if(accountMenu && !accountMenu.contains(e.target)){accountDropdown.hidden=true;accountMenuBtn.setAttribute('aria-expanded','false');}});
+
+let notificationItems=[];
+let notificationReadIds=new Set();
+let notificationUnsub=null;
+let notificationReadsUnsub=null;
+function notificationDate(value){const d=new Date(value||0);return Number.isNaN(d.getTime())?'':d.toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})}
+function renderNotifications(){
+  const sorted=[...notificationItems].sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||''))).slice(0,30);
+  const unread=sorted.filter(n=>!notificationReadIds.has(n.id)).length;
+  notificationBadge.hidden=!unread;notificationBadge.textContent=unread>99?'99+':String(unread);
+  notificationList.innerHTML='';
+  if(!sorted.length){notificationList.innerHTML='<div class="notification-empty">Aucune notification pour le moment.</div>';return}
+  sorted.forEach(n=>{const b=document.createElement('button');b.type='button';b.className='notification-item'+(notificationReadIds.has(n.id)?'':' unread');b.innerHTML='<span class="notification-dot"></span><span><b>'+esc(n.title||'Nouvelle information')+'</b><p>'+esc(n.message||'')+'</p><time>'+esc(notificationDate(n.createdAt))+'</time></span>';b.onclick=async()=>{await setDoc(doc(db,'users',currentUserId(),'notificationReads',n.id),{readAt:serverTimestamp()},{merge:true});notificationPanel.hidden=true;notificationBtn.setAttribute('aria-expanded','false');const navBtn=document.querySelector('#nav button[data-page="'+(n.page||'dashboard')+'"]');if(navBtn)navBtn.click()};notificationList.appendChild(b)});
+}
+function stopNotificationListeners(){if(notificationUnsub){notificationUnsub();notificationUnsub=null}if(notificationReadsUnsub){notificationReadsUnsub();notificationReadsUnsub=null}notificationItems=[];notificationReadIds=new Set();renderNotifications()}
+function startNotificationListeners(){
+  stopNotificationListeners();notificationCenter.style.display='block';
+  notificationUnsub=onSnapshot(notificationsCol,s=>{notificationItems=s.docs.map(d=>({id:d.id,...d.data()}));renderNotifications()},e=>console.error('Notifications',e));
+  notificationReadsUnsub=onSnapshot(collection(db,'users',currentUserId(),'notificationReads'),s=>{notificationReadIds=new Set(s.docs.map(d=>d.id));renderNotifications()},e=>console.error('Lectures notifications',e));
+}
+async function publishNotification(type,title,message,page){
+  if(!auth.currentUser)return;
+  const id=crypto.randomUUID();
+  try{
+    await setDoc(doc(notificationsCol,id),{type,title,message,page,createdBy:currentUserId(),createdAt:new Date().toISOString()});
+    await setDoc(doc(db,'users',currentUserId(),'notificationReads',id),{readAt:serverTimestamp()},{merge:true});
+  }catch(e){console.error('Publication notification',e)}
+}
+notificationBtn.onclick=e=>{e.stopPropagation();const open=notificationPanel.hidden;notificationPanel.hidden=!open;notificationBtn.setAttribute('aria-expanded',String(open));if(open){accountDropdown.hidden=true;accountMenuBtn.setAttribute('aria-expanded','false')}};
+notificationPanel.onclick=e=>e.stopPropagation();
+document.addEventListener('click',()=>{notificationPanel.hidden=true;notificationBtn.setAttribute('aria-expanded','false')});
+markAllNotificationsRead.onclick=async()=>{const unread=notificationItems.filter(n=>!notificationReadIds.has(n.id));await Promise.all(unread.map(n=>setDoc(doc(db,'users',currentUserId(),'notificationReads',n.id),{readAt:serverTimestamp()},{merge:true})))};
 
 loginBtn.onclick=async()=>{
 loginError.textContent='';approvalMessage.style.display='none';
@@ -2438,7 +2499,7 @@ let editingTaskIndex=null;
 window.openTaskModal=()=>{editingTaskIndex=null;taskModalTitle.textContent='Ajouter une action';taskSaveBtn.textContent='Ajouter l’action';taskForm.reset();taskModal.style.display='grid';setTimeout(()=>taskName.focus(),50)};
 window.closeTaskModal=()=>{taskModal.style.display='none';taskForm.reset();editingTaskIndex=null};
 window.editTask=i=>{const t=data.tasks[i];editingTaskIndex=i;taskModalTitle.textContent='Modifier l’action';taskSaveBtn.textContent='Enregistrer les modifications';taskName.value=t.title||t.name||'';taskDescription.value=t.description||'';taskOwner.value=t.owner||'';taskDate.value=t.date||'';taskStatus.value=t.done?'Effectuée':(t.status||'À faire');taskModal.style.display='grid';};
-taskForm.addEventListener('submit',async e=>{e.preventDefault();const title=taskName.value.trim();if(!title)return;const done=taskStatus.value==='Effectuée';const obj={title,name:title,description:taskDescription.value.trim(),owner:taskOwner.value.trim()||'À définir',date:taskDate.value,status:done?'Effectuée':taskStatus.value,done};if(editingTaskIndex===null)data.tasks.push(obj);else data.tasks[editingTaskIndex]={...data.tasks[editingTaskIndex],...obj};closeTaskModal();await save()});
+taskForm.addEventListener('submit',async e=>{e.preventDefault();const title=taskName.value.trim();if(!title)return;const isNew=editingTaskIndex===null;const done=taskStatus.value==='Effectuée';const obj={title,name:title,description:taskDescription.value.trim(),owner:taskOwner.value.trim()||'À définir',date:taskDate.value,status:done?'Effectuée':taskStatus.value,done};if(isNew)data.tasks.push(obj);else data.tasks[editingTaskIndex]={...data.tasks[editingTaskIndex],...obj};closeTaskModal();await save();if(isNew)await publishNotification('task','Nouvelle action',title,'tasks')});
 window.toggleTask=async(i,v)=>{if(!data.tasks[i])return;data.tasks[i].done=v;if(v)data.tasks[i].status='Effectuée';else if(data.tasks[i].status==='Effectuée')data.tasks[i].status='À faire';renderTasks();await save()};
 window.quickTaskStatus=async(i,status)=>{
  if(!data.tasks[i])return;
@@ -2493,7 +2554,7 @@ function renderNotes(){
  })
 }
 newNoteBtn.onclick=()=>openNoteModal();closeNoteModal.onclick=closeNote;cancelNoteBtn.onclick=closeNote;
-saveNoteBtn.onclick=async()=>{const title=noteTitle.value.trim(),content=noteContent.value.trim();if(!title||!content){noteError.textContent='Le titre et le contenu sont obligatoires.';return}const now=new Date().toISOString();if(editingNoteId){const n=data.noteItems.find(x=>x.id===editingNoteId);if(!n||(n.authorUid!==currentUserId()&&!isAdmin()))return;await setDoc(doc(notesCol,editingNoteId),{title,content,updatedAt:now},{merge:true})}else{const id=crypto.randomUUID();await setDoc(doc(notesCol,id),{title,content,authorUid:currentUserId(),authorEmail:currentUserEmail(),createdAt:now,updatedAt:now})}closeNote();await refreshNotes()};
+saveNoteBtn.onclick=async()=>{const title=noteTitle.value.trim(),content=noteContent.value.trim();if(!title||!content){noteError.textContent='Le titre et le contenu sont obligatoires.';return}const now=new Date().toISOString(),isNew=!editingNoteId;if(editingNoteId){const n=data.noteItems.find(x=>x.id===editingNoteId);if(!n||(n.authorUid!==currentUserId()&&!isAdmin()))return;await setDoc(doc(notesCol,editingNoteId),{title,content,updatedAt:now},{merge:true})}else{const id=crypto.randomUUID();await setDoc(doc(notesCol,id),{title,content,authorUid:currentUserId(),authorEmail:currentUserEmail(),createdAt:now,updatedAt:now})}closeNote();await refreshNotes();if(isNew)await publishNotification('note','Nouvelle note',title,'notes')};
 deleteNoteBtn.onclick=async()=>{const n=(data.noteItems||[]).find(x=>x.id===editingNoteId);if(!n||(n.authorUid!==currentUserId()&&!isAdmin()))return;if(confirm('Supprimer cette note ?')){await deleteDoc(doc(notesCol,editingNoteId));closeNote();await refreshNotes()}};
 
 document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(b.dataset.page).classList.add('active');if(b.dataset.page==='resources')renderResources()});
@@ -2659,8 +2720,9 @@ saveCalendarEvent.onclick=async()=>{
   if(meetingLink&&safeUrl(meetingLink)==='#'){calError.textContent='Saisissez un lien valide commençant par http:// ou https://';return}
   const id=editingCalendarId||crypto.randomUUID();
   const existing=(data.calendarEvents||[]).find(x=>x.id===id);
+  const isNew=!existing;
   const ev={id,type:calType.value,date:calDate.value,time:calTime.value,title:calTitle.value.trim(),owner:calOwner.value.trim(),meetingLink,description:calDescription.value.trim(),createdBy:existing?.createdBy||currentUserId(),updatedAt:new Date().toISOString()};
-  await setDoc(doc(calendarCol,id),ev,{merge:true});closeCal();
+  await setDoc(doc(calendarCol,id),ev,{merge:true});closeCal();if(isNew)await publishNotification('calendar',calType.value==='meeting'?'Nouvelle réunion':'Nouvel événement',ev.title,'calendar');
 };
 deleteCalendarEvent.onclick=async()=>{if(editingCalendarId&&confirm('Supprimer définitivement cet élément ?')){await deleteDoc(doc(calendarCol,editingCalendarId));closeCal()}};
 
@@ -2866,9 +2928,11 @@ savePollBtn.onclick=async()=>{
      createdBy:p.createdBy,
      updatedAt:p.updatedAt
    };
+   const isNew=!editingPollId;
    await setDoc(doc(pollsCol,p.id),pollDoc,{merge:!!editingPollId});
    closePoll();
    await refreshPolls();
+   if(isNew)await publishNotification('poll','Nouveau sondage',p.question,'polls');
  }catch(e){
    console.error('Erreur sauvegarde sondage',e);
    pollError.textContent="Impossible d'enregistrer le sondage. Vérifiez les règles Firestore.";
@@ -3051,9 +3115,10 @@ document.body.classList.remove('auth-pending');
 if(unsub){unsub();unsub=null}
 if(currentUserProfileUnsub){currentUserProfileUnsub();currentUserProfileUnsub=null}
 if(memberCountUnsub){memberCountUnsub();memberCountUnsub=null}
+stopNotificationListeners();
 stopCollaborativeListeners();
 approvalMessage.style.display='none';
-if(!user){currentUserRole='member';adminBtn.hidden=true;overlay.style.display='block';logout.hidden=true; if(accountMenu) accountMenu.style.display='none';loginBtn.style.display='';signupBtn.style.display='';loginEmail.style.display='';loginPassword.style.display='';return}
+if(!user){currentUserRole='member';adminBtn.hidden=true;notificationCenter.style.display='none';overlay.style.display='block';logout.hidden=true; if(accountMenu) accountMenu.style.display='none';loginBtn.style.display='';signupBtn.style.display='';loginEmail.style.display='';loginPassword.style.display='';return}
 adminBtn.remove();
 const userRef=doc(db,'users',user.uid);
 let profile=await getDoc(userRef);
@@ -3081,6 +3146,7 @@ approvalMessage.innerHTML=status==='rejected'
 return}
 overlay.style.display='none';logout.hidden=false; if(accountMenu) accountMenu.style.display='block';
 startMemberCountListener();
+startNotificationListeners();
 if(isAdmin()){
   if(!adminBtn.isConnected){
     const profileAction=accountActions.querySelector('.account-action:not(.logout-action)');
