@@ -840,7 +840,7 @@ input,select,textarea{border-color:#d9d2c5!important;background:#fffefa!importan
 .hero-primary,.hero-secondary{font-size:13px}
 .hero-illustration{display:flex;align-items:flex-end;justify-content:center;overflow:hidden;padding:30px 20px 0 0}
 .hero-illustration svg{width:100%;max-width:700px;height:auto;filter:drop-shadow(0 18px 25px rgba(37,66,54,.08))}
-.home-kpis{position:relative;z-index:4;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:0 36px;margin-bottom:62px}
+.home-kpis{position:relative;z-index:4;display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:0 36px;margin-bottom:62px}
 .home-kpis .kpi{display:grid!important;grid-template-columns:44px 1fr!important;gap:12px;align-items:center;padding:18px!important}
 .home-kpis .kpi-icon{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--sage3);color:#58724e;font-size:19px}
 .home-kpis .num{font-size:27px!important;margin-top:3px!important}
@@ -945,7 +945,7 @@ body{padding-bottom:92px!important}
 /* Dashboard — indicateurs compacts sous le hero */
 #dashboard .home-kpis{
   display:grid!important;
-  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
   gap:12px!important;
   margin:18px 0 34px!important;
   position:relative!important;
@@ -2000,7 +2000,6 @@ body.auth-pending::after{
   </div>
 
   <div class="home-kpis">
-    <div class="card kpi"><div class="kpi-icon">↗</div><div><div class="lab">Progression globale</div><div class="num" id="progressNum">32%</div><div class="progress"><i id="progressBar"></i></div></div></div>
     <div class="card kpi"><div class="kpi-icon">♙</div><div><div class="lab">Membres / foyers</div><div class="num" id="memberKpi">6</div></div></div>
     <div class="card kpi"><div class="kpi-icon">✓</div><div><div class="lab">Actions ouvertes</div><div class="num" id="taskKpi">4</div></div></div>
     <div class="card kpi"><div class="kpi-icon">€</div><div><div class="lab">Budget estimatif</div><div class="num money" id="budgetKpi">0 €</div></div></div>
@@ -2430,7 +2429,7 @@ function renderTasks(){taskList.innerHTML=data.tasks.map((t,i)=>`<div class="tas
 </div>`).join('')}
 function renderMembers(){memberList.innerHTML=data.members.map((m,i)=>`<div class="member"><div class="avatar">${esc(m.name).charAt(0).toUpperCase()}</div><div><b>${esc(m.name)}</b><br><small>${esc(m.skill)}</small></div><button class="del" style="margin-left:auto" onclick="deleteMember(${i})">×</button></div>`).join('')}
 function renderBudget(){budgetList.innerHTML=data.budget.map((b,i)=>`<div class="budgetrow"><b>${esc(b.label)}</b><span>${esc(b.type)}</span><span class="money">${money(b.amount)}</span><button class="del" onclick="deleteBudget(${i})">×</button></div>`).join('');let total=data.budget.reduce((s,b)=>s+Number(b.amount),0);budgetTotal.textContent=money(total);budgetKpi.textContent=money(total)}
-function renderAll(){renderCharterValues();renderTasks();renderMembers();renderBudget();renderNotes();memberKpi.textContent=data.members.length;taskKpi.textContent=data.tasks.filter(t=>!t.done).length;let p=data.tasks.length?Math.round(data.tasks.filter(t=>t.done).length/data.tasks.length*100):0;progressNum.textContent=p+'%';progressBar.style.width=p+'%'
+function renderAll(){renderCharterValues();renderTasks();renderMembers();renderBudget();renderNotes();memberKpi.textContent=data.members.length;taskKpi.textContent=data.tasks.filter(t=>!t.done).length;
 renderCalendar();
 renderPolls();
 renderResources();}
