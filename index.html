@@ -2645,19 +2645,19 @@ let editingResourceId=null, resourceFilter='Toutes', pendingResourceImage='';
 function resourceIcon(c){return ({Documents:'▤',Collaboration:'◎',Organisation:'◇',Contacts:'◉',Autre:'↗'})[c]||'↗'}
 function safeUrl(v){try{const u=new URL(v);return ['http:','https:'].includes(u.protocol)?u.href:'#'}catch{return '#'}}
 function openResourceModal(id=null){
- if(!isAdmin())return;editingResourceId=id;const r=(data.resources||[]).find(x=>x.id===id);
+ if(!auth.currentUser)return;editingResourceId=id;const r=(data.resources||[]).find(x=>x.id===id);
  resourceModalTitle.textContent=r?'Modifier la ressource':'Ajouter une ressource';resourceName.value=r?.name||'';resourceCategory.value=r?.category||'Documents';resourceUrl.value=r?.url||'';resourceDescription.value=r?.description||'';resourceIcon.value=r?.icon||'auto';pendingResourceImage=r?.image||'';updateResourceVisual();resourceError.textContent='';deleteResourceBtn.style.display=r?'inline-block':'none';resourceModal.style.display='block';
 }
 function closeResource(){resourceModal.style.display='none';editingResourceId=null}
 function renderResources(){
- if(!document.getElementById('resourceList'))return;data.resources=data.resources||[];addResourceBtn.style.display=isAdmin()?'inline-block':'none';
+ if(!document.getElementById('resourceList'))return;data.resources=data.resources||[];addResourceBtn.style.display=auth.currentUser?'inline-block':'none';
  const cats=['Toutes',...new Set(data.resources.map(r=>r.category||'Autre'))];if(!cats.includes(resourceFilter))resourceFilter='Toutes';resourceFilters.innerHTML='';
  cats.forEach(c=>{const b=document.createElement('button');b.className='resource-filter'+(resourceFilter===c?' active':'');b.textContent=c;b.onclick=()=>{resourceFilter=c;renderResources()};resourceFilters.appendChild(b)});
  const list=resourceFilter==='Toutes'?data.resources:data.resources.filter(r=>(r.category||'Autre')===resourceFilter);resourceList.innerHTML='';
  if(!list.length){resourceList.innerHTML='<div class="card" style="grid-column:1/-1"><p class="intro">Aucune ressource pour le moment.</p></div>';return}
  list.forEach(r=>{const card=document.createElement('article');card.className='resource-card';card.innerHTML='<div class="resource-card-head"><div><div class="resource-category">'+esc(r.category||'Autre')+'</div><h2>'+esc(r.name)+'</h2></div><div class="resource-icon">'+(safeImageDataUrl(r.image)?'<img src="'+safeImageDataUrl(r.image)+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:11px">':esc(r.icon&&r.icon!=='auto'?r.icon:resourceIconForCategory(r.category)))+'</div></div><p>'+esc(r.description||'Accéder à cette ressource de la communauté.')+'</p><div class="resource-actions"></div>';
  const a=document.createElement('a');a.className='btn';a.target='_blank';a.rel='noopener noreferrer';a.href=safeUrl(r.url);a.textContent='Ouvrir ↗';card.querySelector('.resource-actions').appendChild(a);
- if(isAdmin()){const e=document.createElement('button');e.className='btn secondary';e.textContent='Modifier';e.onclick=()=>openResourceModal(r.id);card.querySelector('.resource-actions').appendChild(e)}resourceList.appendChild(card)})
+ if(auth.currentUser){const e=document.createElement('button');e.className='btn secondary';e.textContent='Modifier';e.onclick=()=>openResourceModal(r.id);card.querySelector('.resource-actions').appendChild(e)}resourceList.appendChild(card)})
 }
 function updateResourceVisual(){
  const icon=resourceIcon.value==='auto'?resourceIconForCategory(resourceCategory.value):resourceIcon.value;
@@ -2682,7 +2682,7 @@ resourceImage.onchange=async()=>{const f=resourceImage.files?.[0];if(!f)return;r
 removeResourceImage.onclick=()=>{pendingResourceImage='';updateResourceVisual()};
 
 addResourceBtn.onclick=()=>openResourceModal();closeResourceModal.onclick=closeResource;cancelResourceBtn.onclick=closeResource;
-saveResourceBtn.onclick=async()=>{if(!isAdmin())return;const name=resourceName.value.trim(),url=resourceUrl.value.trim();if(!name||!url){resourceError.textContent='Le nom et le lien sont obligatoires.';return}if(safeUrl(url)==='#'){resourceError.textContent='Saisissez un lien valide commençant par https://';return}const r={id:editingResourceId||crypto.randomUUID(),name,category:resourceCategory.value,url,description:resourceDescription.value.trim(),icon:resourceIcon.value,image:pendingResourceImage,updatedAt:new Date().toISOString()};await setDoc(doc(resourcesCol,r.id),r,{merge:true});closeResource()};
+saveResourceBtn.onclick=async()=>{if(!auth.currentUser)return;const name=resourceName.value.trim(),url=resourceUrl.value.trim();if(!name||!url){resourceError.textContent='Le nom et le lien sont obligatoires.';return}if(safeUrl(url)==='#'){resourceError.textContent='Saisissez un lien valide commençant par https://';return}const r={id:editingResourceId||crypto.randomUUID(),name,category:resourceCategory.value,url,description:resourceDescription.value.trim(),icon:resourceIcon.value,image:pendingResourceImage,updatedAt:new Date().toISOString()};await setDoc(doc(resourcesCol,r.id),r,{merge:true});closeResource()};
 deleteResourceBtn.onclick=async()=>{if(!isAdmin()||!editingResourceId)return;if(confirm('Supprimer cette ressource ?')){await deleteDoc(doc(resourcesCol,editingResourceId));closeResource()}};
 
 
@@ -3060,7 +3060,7 @@ currentUserProfileUnsub=onSnapshot(userRef,snap=>{
   }else{
     if(adminBtn.isConnected) adminBtn.remove();
   }
-  if(document.getElementById('addResourceBtn')) addResourceBtn.style.display=nowAdmin?'inline-block':'none';
+  if(document.getElementById('addResourceBtn')) addResourceBtn.style.display=auth.currentUser?'inline-block':'none';
 
   if(!nowAdmin){
     if(adminModal) adminModal.style.display='none';
@@ -3075,7 +3075,7 @@ currentUserProfileUnsub=onSnapshot(userRef,snap=>{
 });
 if(document.getElementById('addPollBtn')) addPollBtn.style.display='inline-block';
 // Affichage explicite des contrôles Ressources dès que l'identité admin est connue.
-if(document.getElementById('addResourceBtn')) addResourceBtn.style.display=isAdmin()?'inline-block':'none';
+if(document.getElementById('addResourceBtn')) addResourceBtn.style.display=auth.currentUser?'inline-block':'none';
 renderResources();
 const snap=await getDoc(projectRef);
 if(!snap.exists()){
