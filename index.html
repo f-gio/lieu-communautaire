@@ -2281,7 +2281,7 @@ body.auth-pending::after{
 <div id="adminModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;padding:24px;overflow:auto">
   <div style="max-width:900px;margin:30px auto;background:#fffdf8;border-radius:18px;padding:24px;box-shadow:0 18px 60px rgba(0,0,0,.25)">
     <div style="display:flex;justify-content:space-between;gap:16px;align-items:center">
-      <div><h2 style="margin:0">Administration des utilisateurs</h2><p style="margin:6px 0 0;color:#666">Valider, refuser, suspendre ou réactiver les membres.</p></div>
+      <div><h2 style="margin:0">Administration des utilisateurs</h2><p style="margin:6px 0 0;color:#666">Valider les membres, gérer leur accès et attribuer ou retirer les droits d’administrateur.</p></div>
       <button id="closeAdmin" class="btn modal-close-x" aria-label="Fermer" title="Fermer">×</button>
     </div>
     <input id="adminSearch" placeholder="Rechercher par e-mail..." style="width:100%;box-sizing:border-box;margin:18px 0;padding:11px;border:1px solid #ddd;border-radius:10px">
@@ -2496,6 +2496,7 @@ deleteNoteBtn.onclick=async()=>{const n=(data.noteItems||[]).find(x=>x.id===edit
 document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(b.dataset.page).classList.add('active');if(b.dataset.page==='resources')renderResources()});
 
 const ADMIN_UID='CPEGyrjksdMarhLXope92fgLbiq2';
+let currentUserRole='member';
 let adminUsersCache=[];
 let adminUnsub=null;
 
@@ -2510,7 +2511,8 @@ function renderAdminUsers(){
     const box=document.createElement('div');
     box.style.cssText='border:1px solid #ddd;border-radius:14px;padding:14px;margin:10px 0;display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap';
     const left=document.createElement('div');
-    left.innerHTML=`<strong>${u.email||'Sans e-mail'}</strong><br><small>Statut : ${statusLabel(u.status)}</small>${u.id===ADMIN_UID?'<br><small>Administrateur principal</small>':''}`;
+    const roleLabel=u.id===ADMIN_UID?'Administrateur principal':(u.role==='admin'?'Administrateur':'Membre');
+    left.innerHTML=`<strong>${u.email||'Sans e-mail'}</strong><br><small>Statut : ${statusLabel(u.status)}</small><br><small>Rôle : ${roleLabel}</small>`;
     const actions=document.createElement('div');
     if(u.id!==ADMIN_UID){
       const choices=[];
@@ -2522,6 +2524,17 @@ function renderAdminUsers(){
         b.onclick=async()=>{await updateDoc(doc(db,'users',u.id),{status,updatedAt:serverTimestamp()})};
         actions.appendChild(b);
       });
+      if(u.status==='approved'){
+        const roleBtn=document.createElement('button');
+        roleBtn.className='btn secondary';roleBtn.style.marginLeft='6px';
+        roleBtn.textContent=u.role==='admin'?'Retirer les droits admin':'Nommer administrateur';
+        roleBtn.onclick=async()=>{
+          const becomingAdmin=u.role!=='admin';
+          if(!confirm(becomingAdmin?`Donner les droits d’administrateur à ${u.email||'ce membre'} ?`:`Retirer les droits d’administrateur à ${u.email||'ce membre'} ?`))return;
+          await updateDoc(doc(db,'users',u.id),{role:becomingAdmin?'admin':'member',updatedAt:serverTimestamp()});
+        };
+        actions.appendChild(roleBtn);
+      }
     }
     box.append(left,actions); adminUsers.appendChild(box);
   });
@@ -2651,7 +2664,7 @@ deleteResourceBtn.onclick=async()=>{if(!isAdmin()||!editingResourceId)return;if(
 
 
 /* Sondages */
-function isAdmin(){return auth.currentUser?.uid===ADMIN_UID;}
+function isAdmin(){return auth.currentUser?.uid===ADMIN_UID || currentUserRole==='admin';}
 function canEditPoll(p){
  const uid=auth.currentUser?.uid;
  return !!uid && (isAdmin() || p?.createdBy===uid);
@@ -2959,8 +2972,8 @@ onAuthStateChanged(auth,async user=>{
 document.body.classList.remove('auth-pending');
 if(unsub){unsub();unsub=null} stopCollaborativeListeners();
 approvalMessage.style.display='none';
-if(!user){adminBtn.style.display='none';overlay.style.display='block';logout.hidden=true; if(accountMenu) accountMenu.style.display='none';loginBtn.style.display='';signupBtn.style.display='';loginEmail.style.display='';loginPassword.style.display='';return}
-adminBtn.style.display=user.uid===ADMIN_UID?'inline-block':'none';
+if(!user){currentUserRole='member';adminBtn.style.display='none';overlay.style.display='block';logout.hidden=true; if(accountMenu) accountMenu.style.display='none';loginBtn.style.display='';signupBtn.style.display='';loginEmail.style.display='';loginPassword.style.display='';return}
+adminBtn.style.display='none';
 const userRef=doc(db,'users',user.uid);
 let profile=await getDoc(userRef);
 if(!profile.exists()){
@@ -2972,6 +2985,8 @@ if(!profile.exists()){
   profile=await getDoc(userRef);
 }
 const status=profile.data()?.status||'pending';
+currentUserRole=profile.data()?.role||'member';
+if(user.uid===ADMIN_UID)currentUserRole='admin';
 updateAccountUI(profile.data()||{},user);
 
 // L'administrateur principal passe toujours directement.
@@ -2984,9 +2999,10 @@ approvalMessage.innerHTML=status==='rejected'
 :'<strong>Inscription enregistrée.</strong><br>Votre demande est en attente de validation par un administrateur.';
 return}
 overlay.style.display='none';logout.hidden=false; if(accountMenu) accountMenu.style.display='block';
-if(document.getElementById('addPollBtn')) addPollBtn.style.display=user.uid===ADMIN_UID?'inline-block':'none';
+adminBtn.style.display=isAdmin()?'inline-block':'none';
+if(document.getElementById('addPollBtn')) addPollBtn.style.display='inline-block';
 // Affichage explicite des contrôles Ressources dès que l'identité admin est connue.
-if(document.getElementById('addResourceBtn')) addResourceBtn.style.display=user.uid===ADMIN_UID?'inline-block':'none';
+if(document.getElementById('addResourceBtn')) addResourceBtn.style.display=isAdmin()?'inline-block':'none';
 renderResources();
 const snap=await getDoc(projectRef);
 if(!snap.exists()){
