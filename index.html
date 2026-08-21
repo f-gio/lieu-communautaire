@@ -2998,7 +2998,7 @@ if(currentUserProfileUnsub){currentUserProfileUnsub();currentUserProfileUnsub=nu
 stopCollaborativeListeners();
 approvalMessage.style.display='none';
 if(!user){currentUserRole='member';adminBtn.hidden=true;overlay.style.display='block';logout.hidden=true; if(accountMenu) accountMenu.style.display='none';loginBtn.style.display='';signupBtn.style.display='';loginEmail.style.display='';loginPassword.style.display='';return}
-adminBtn.style.display='none';
+adminBtn.remove();
 const userRef=doc(db,'users',user.uid);
 let profile=await getDoc(userRef);
 if(!profile.exists()){
@@ -3024,14 +3024,19 @@ approvalMessage.innerHTML=status==='rejected'
 :'<strong>Inscription enregistrée.</strong><br>Votre demande est en attente de validation par un administrateur.';
 return}
 overlay.style.display='none';logout.hidden=false; if(accountMenu) accountMenu.style.display='block';
-adminBtn.hidden=!isAdmin();
+if(isAdmin()){
+  if(!adminBtn.isConnected) accountActions.appendChild(adminBtn);
+  adminBtn.hidden=false;
+}else if(adminBtn.isConnected){
+  adminBtn.remove();
+}
 
 // Réévalue immédiatement les droits lorsque le profil Firestore change.
 currentUserProfileUnsub=onSnapshot(userRef,snap=>{
   const wasAdmin=(user.uid===ADMIN_UID || currentUserRole==='admin');
   if(!snap.exists()){
     currentUserRole='member';
-    adminBtn.style.display='none';
+    if(adminBtn.isConnected) adminBtn.remove();
     if(adminModal) adminModal.style.display='none';
     if(adminUnsub){adminUnsub();adminUnsub=null}
     return;
@@ -3040,13 +3045,18 @@ currentUserProfileUnsub=onSnapshot(userRef,snap=>{
   currentUserRole=user.uid===ADMIN_UID?'admin':(profileData.role==='admin'?'admin':'member');
   const nowAdmin=(user.uid===ADMIN_UID || currentUserRole==='admin');
 
-  adminBtn.hidden=!nowAdmin;
+  // Administration n'existe dans le menu que pour un administrateur réel.
+  if(nowAdmin){
+    if(!adminBtn.isConnected) accountActions.appendChild(adminBtn);
+    adminBtn.hidden=false;
+  }else{
+    if(adminBtn.isConnected) adminBtn.remove();
+  }
   if(document.getElementById('addResourceBtn')) addResourceBtn.style.display=nowAdmin?'inline-block':'none';
 
   if(!nowAdmin){
     if(adminModal) adminModal.style.display='none';
     if(adminUnsub){adminUnsub();adminUnsub=null}
-    // Ferme seulement le menu Compte sans neutraliser son fonctionnement.
     if(accountDropdown) accountDropdown.hidden=true;
     if(accountMenuBtn) accountMenuBtn.setAttribute('aria-expanded','false');
   }
