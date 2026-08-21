@@ -1942,6 +1942,8 @@ body.auth-pending::after{
  text-decoration-thickness:1px;
 }
 
+
+#deleteResourceBtn[hidden]{display:none!important;}
 </style>
 </head>
 <body class="auth-pending">
@@ -2646,7 +2648,10 @@ function resourceIcon(c){return ({Documents:'▤',Collaboration:'◎',Organisati
 function safeUrl(v){try{const u=new URL(v);return ['http:','https:'].includes(u.protocol)?u.href:'#'}catch{return '#'}}
 function openResourceModal(id=null){
  if(!auth.currentUser)return;editingResourceId=id;const r=(data.resources||[]).find(x=>x.id===id);
- resourceModalTitle.textContent=r?'Modifier la ressource':'Ajouter une ressource';resourceName.value=r?.name||'';resourceCategory.value=r?.category||'Documents';resourceUrl.value=r?.url||'';resourceDescription.value=r?.description||'';resourceIcon.value=r?.icon||'auto';pendingResourceImage=r?.image||'';updateResourceVisual();resourceError.textContent='';deleteResourceBtn.style.display=r?'inline-block':'none';resourceModal.style.display='block';
+ resourceModalTitle.textContent=r?'Modifier la ressource':'Ajouter une ressource';resourceName.value=r?.name||'';resourceCategory.value=r?.category||'Documents';resourceUrl.value=r?.url||'';resourceDescription.value=r?.description||'';resourceIcon.value=r?.icon||'auto';pendingResourceImage=r?.image||'';updateResourceVisual();resourceError.textContent='';
+const canDeleteResource=!!r && (isAdmin() || r.createdBy===auth.currentUser?.uid);
+deleteResourceBtn.hidden=!canDeleteResource;
+resourceModal.style.display='block';
 }
 function closeResource(){resourceModal.style.display='none';editingResourceId=null}
 function renderResources(){
@@ -2682,8 +2687,14 @@ resourceImage.onchange=async()=>{const f=resourceImage.files?.[0];if(!f)return;r
 removeResourceImage.onclick=()=>{pendingResourceImage='';updateResourceVisual()};
 
 addResourceBtn.onclick=()=>openResourceModal();closeResourceModal.onclick=closeResource;cancelResourceBtn.onclick=closeResource;
-saveResourceBtn.onclick=async()=>{if(!auth.currentUser)return;const name=resourceName.value.trim(),url=resourceUrl.value.trim();if(!name||!url){resourceError.textContent='Le nom et le lien sont obligatoires.';return}if(safeUrl(url)==='#'){resourceError.textContent='Saisissez un lien valide commençant par https://';return}const r={id:editingResourceId||crypto.randomUUID(),name,category:resourceCategory.value,url,description:resourceDescription.value.trim(),icon:resourceIcon.value,image:pendingResourceImage,updatedAt:new Date().toISOString()};await setDoc(doc(resourcesCol,r.id),r,{merge:true});closeResource()};
-deleteResourceBtn.onclick=async()=>{if(!isAdmin()||!editingResourceId)return;if(confirm('Supprimer cette ressource ?')){await deleteDoc(doc(resourcesCol,editingResourceId));closeResource()}};
+saveResourceBtn.onclick=async()=>{if(!auth.currentUser)return;const name=resourceName.value.trim(),url=resourceUrl.value.trim();if(!name||!url){resourceError.textContent='Le nom et le lien sont obligatoires.';return}if(safeUrl(url)==='#'){resourceError.textContent='Saisissez un lien valide commençant par https://';return}const existing=(data.resources||[]).find(x=>x.id===editingResourceId);
+const r={id:editingResourceId||crypto.randomUUID(),name,category:resourceCategory.value,url,description:resourceDescription.value.trim(),icon:resourceIcon.value,image:pendingResourceImage,createdBy:existing?.createdBy||auth.currentUser.uid,updatedAt:new Date().toISOString()};await setDoc(doc(resourcesCol,r.id),r,{merge:true});closeResource()};
+deleteResourceBtn.onclick=async()=>{
+ if(!editingResourceId)return;
+ const r=(data.resources||[]).find(x=>x.id===editingResourceId);
+ if(!r || !(isAdmin() || r.createdBy===auth.currentUser?.uid))return;
+ if(confirm('Supprimer cette ressource ?')){await deleteDoc(doc(resourcesCol,editingResourceId));closeResource()}
+};
 
 
 /* Sondages */
