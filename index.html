@@ -2535,6 +2535,21 @@ function renderAdminUsers(){
         };
         actions.appendChild(roleBtn);
       }
+      const deleteUserBtn=document.createElement('button');
+      deleteUserBtn.className='btn secondary';
+      deleteUserBtn.style.cssText='margin-left:6px;color:#a94f36;border-color:#d8b9ad';
+      deleteUserBtn.textContent='Supprimer';
+      deleteUserBtn.onclick=async()=>{
+        const label=u.email||'cet utilisateur';
+        if(!confirm(`Supprimer ${label} de la communauté ?\n\nPour supprimer un utilisateur proprement et définitivement, il faudra également supprimer son profil dans Firestore et son compte dans Firebase Authentication.\n\nLe bouton actuel supprime son profil Firestore, mais pas automatiquement son compte Firebase Authentication.`))return;
+        try{
+          await deleteDoc(doc(db,'users',u.id));
+        }catch(e){
+          console.error('Suppression utilisateur',e);
+          alert("Impossible de supprimer cet utilisateur.");
+        }
+      };
+      actions.appendChild(deleteUserBtn);
     }
     box.append(left,actions); adminUsers.appendChild(box);
   });
