@@ -994,6 +994,15 @@ body{padding-bottom:92px!important}
 .notification-item b{display:block;font-size:13px;color:var(--forest);margin-bottom:3px}.notification-item p{margin:0;color:#5f6d66;font-size:12px;line-height:1.4}.notification-item time{display:block;color:#89928d;font-size:10px;margin-top:5px}
 .notification-empty{padding:28px 18px;text-align:center;color:#718078;font-size:13px}
 @media(max-width:900px){#notificationCenter{margin-left:auto}.notification-panel{position:fixed;top:72px;right:14px}}
+.history-toolbar{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap}
+.history-list{display:flex;flex-direction:column;gap:10px}
+.history-item{display:grid;grid-template-columns:38px 1fr auto;gap:13px;align-items:start;padding:15px 17px;border:1px solid var(--line);border-radius:13px;background:#fffdf9}
+.history-icon{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--sage3);color:var(--forest);font-weight:800}
+.history-item strong{font-size:13px}.history-item p{margin:4px 0 0;color:var(--muted);font-size:12px;line-height:1.45}.history-item time{font-size:10px;color:#859089;white-space:nowrap}
+.rsvp-block{margin-top:10px;padding-top:10px;border-top:1px solid #ece6dc}
+.rsvp-buttons{display:flex;gap:6px;flex-wrap:wrap}.rsvp-btn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 9px;font-size:11px;cursor:pointer}.rsvp-btn.active{background:#dfeadf;border-color:#8cab8d;color:#24553d;font-weight:700}
+.rsvp-summary{font-size:10px;color:var(--muted);margin-top:7px;line-height:1.4}.rsvp-names{font-size:10px;color:#53675d;margin-top:4px}
+@media(max-width:650px){.history-item{grid-template-columns:36px 1fr}.history-item time{grid-column:2}.calendar-upcoming-item{align-items:flex-start!important}.calendar-upcoming-item>div:last-child{width:100%}}
 #accountActions{display:none!important}
 .account-menu{position:relative;flex:0 0 auto;margin-left:6px}
 .account-menu-btn{border:1px solid rgba(255,255,255,.20);background:rgba(255,255,255,.10);color:#fff;border-radius:9px;padding:9px 12px;display:flex;align-items:center;gap:7px;cursor:pointer;font-weight:700;white-space:nowrap}
@@ -1986,6 +1995,7 @@ body.auth-pending::after{
 <button data-page="tasks">✓ Actions</button>
 <button data-page="notes">✎ Notes</button>
 <button data-page="budget">€ Budget</button>
+<button data-page="history">↺ Historique</button>
 </nav><div class="header-actions"><div id="notificationCenter" style="display:none">
 <button id="notificationBtn" class="notification-btn" type="button" aria-label="Notifications" aria-expanded="false">🔔<span id="notificationBadge" class="notification-badge" hidden>0</span></button>
 <div id="notificationPanel" class="notification-panel" hidden><div class="notification-head"><strong>Notifications</strong><button id="markAllNotificationsRead" type="button">Tout marquer comme lu</button></div><div id="notificationList"></div></div>
@@ -2097,6 +2107,11 @@ body.auth-pending::after{
 </div>
 <section id="community" class="section"><h1>Communauté</h1><p class="intro">Cartographiez le groupe fondateur et les compétences disponibles.</p><div class="card"><div class="toolbar"><input id="memberName" placeholder="Nom / foyer"><input id="memberSkill" placeholder="Compétence / contribution"><button class="btn" onclick="addMember()">Ajouter</button></div><div id="memberList"></div></div></section>
 <section id="budget" class="section"><h1>Budget</h1><p class="intro">Première estimation des postes nécessaires au projet.</p><div class="card"><div class="toolbar"><input id="budgetLabel" placeholder="Poste (étude, terrain…)"><input id="budgetAmount" type="number" placeholder="Montant €"><select id="budgetType"><option>Investissement</option><option>Fonctionnement</option><option>Réserve solidaire</option></select><button class="btn" onclick="addBudget()">Ajouter</button></div><div id="budgetList"></div><hr style="border:0;border-top:1px solid #e7e1d7;margin:18px 0"><b>Total : <span id="budgetTotal">0 €</span></b></div></section>
+
+<section id="history" class="section">
+  <div class="history-toolbar"><div><div class="eyebrow">Traçabilité</div><h1>Historique des modifications</h1><p class="intro">Retrouvez les créations, modifications et suppressions importantes réalisées par les membres.</p></div><select id="historyFilter" aria-label="Filtrer l’historique"><option value="all">Toutes les activités</option><option value="task">Actions</option><option value="calendar">Calendrier</option><option value="note">Notes</option><option value="poll">Sondages</option><option value="resource">Ressources</option></select></div>
+  <div id="historyList" class="history-list"></div>
+</section>
 
 <section id="calendar" class="section">
   <div class="charter-head">
@@ -2365,7 +2380,9 @@ const resourcesCol=collection(projectRef,'resources');
 const notesCol=collection(projectRef,'notes');
 const pollsCol=collection(projectRef,'polls');
 const notificationsCol=collection(projectRef,'notifications');
+const historyCol=collection(projectRef,'history');
 let collaborativeUnsubs=[];
+let calendarParticipantUnsubs=[];
 let legacyBackup={calendarEvents:[],resources:[],noteItems:[],polls:[]};
 let migrationComplete=false;
 
@@ -2421,8 +2438,16 @@ let notificationReadIds=new Set();
 let notificationUnsub=null;
 let notificationReadsUnsub=null;
 function notificationDate(value){const d=new Date(value||0);return Number.isNaN(d.getTime())?'':d.toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})}
+function notificationStillExists(n){
+  if(!n.entityId)return true;
+  if(n.entityType==='task')return (data.tasks||[]).some(x=>x.id===n.entityId);
+  if(n.entityType==='calendar')return (data.calendarEvents||[]).some(x=>x.id===n.entityId);
+  if(n.entityType==='note')return (data.noteItems||[]).some(x=>x.id===n.entityId);
+  if(n.entityType==='poll')return (data.polls||[]).some(x=>x.id===n.entityId);
+  return true;
+}
 function renderNotifications(){
-  const sorted=[...notificationItems].sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||''))).slice(0,30);
+  const sorted=notificationItems.filter(notificationStillExists).sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||''))).slice(0,30);
   const unread=sorted.filter(n=>!notificationReadIds.has(n.id)).length;
   notificationBadge.hidden=!unread;notificationBadge.textContent=unread>99?'99+':String(unread);
   notificationList.innerHTML='';
@@ -2435,11 +2460,11 @@ function startNotificationListeners(){
   notificationUnsub=onSnapshot(notificationsCol,s=>{notificationItems=s.docs.map(d=>({id:d.id,...d.data()}));renderNotifications()},e=>console.error('Notifications',e));
   notificationReadsUnsub=onSnapshot(collection(db,'users',currentUserId(),'notificationReads'),s=>{notificationReadIds=new Set(s.docs.map(d=>d.id));renderNotifications()},e=>console.error('Lectures notifications',e));
 }
-async function publishNotification(type,title,message,page){
+async function publishNotification(type,title,message,page,entityId=''){
   if(!auth.currentUser)return;
   const id=crypto.randomUUID();
   try{
-    await setDoc(doc(notificationsCol,id),{type,title,message,page,createdBy:currentUserId(),createdAt:new Date().toISOString()});
+    await setDoc(doc(notificationsCol,id),{type,title,message,page,entityType:type,entityId,createdBy:currentUserId(),createdAt:new Date().toISOString()});
     await setDoc(doc(db,'users',currentUserId(),'notificationReads',id),{readAt:serverTimestamp()},{merge:true});
   }catch(e){console.error('Publication notification',e)}
 }
@@ -2447,6 +2472,23 @@ notificationBtn.onclick=e=>{e.stopPropagation();const open=notificationPanel.hid
 notificationPanel.onclick=e=>e.stopPropagation();
 document.addEventListener('click',()=>{notificationPanel.hidden=true;notificationBtn.setAttribute('aria-expanded','false')});
 markAllNotificationsRead.onclick=async()=>{const unread=notificationItems.filter(n=>!notificationReadIds.has(n.id));await Promise.all(unread.map(n=>setDoc(doc(db,'users',currentUserId(),'notificationReads',n.id),{readAt:serverTimestamp()},{merge:true})))};
+
+function historyLabel(type){return ({task:'Action',calendar:'Calendrier',note:'Note',poll:'Sondage',resource:'Ressource'})[type]||'Élément'}
+function historyVerb(action){return ({created:'Création',updated:'Modification',deleted:'Suppression'})[action]||'Modification'}
+function historyIcon(action){return ({created:'+',updated:'↺',deleted:'×'})[action]||'•'}
+async function logHistory(action,entityType,entityId,title,details=''){
+  if(!auth.currentUser)return;
+  try{await setDoc(doc(historyCol,crypto.randomUUID()),{action,entityType,entityId,title:String(title||'Sans titre').slice(0,150),details:String(details||'').slice(0,400),actorUid:currentUserId(),actorEmail:currentUserEmail(),createdAt:new Date().toISOString()})}catch(e){console.error('Historique',e)}
+}
+function renderHistory(){
+  if(!document.getElementById('historyList'))return;
+  const filter=historyFilter.value||'all';
+  const items=(data.history||[]).filter(x=>filter==='all'||x.entityType===filter).sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||''))).slice(0,150);
+  historyList.innerHTML='';
+  if(!items.length){historyList.innerHTML='<div class="card"><p class="intro">Aucune modification enregistrée pour le moment.</p></div>';return}
+  items.forEach(x=>{const row=document.createElement('article');row.className='history-item';row.innerHTML='<span class="history-icon">'+esc(historyIcon(x.action))+'</span><div><strong>'+esc(historyVerb(x.action))+' · '+esc(historyLabel(x.entityType))+' — '+esc(x.title||'Sans titre')+'</strong><p>Par '+esc(x.actorEmail||'Membre')+(x.details?' · '+esc(x.details):'')+'</p></div><time>'+esc(notificationDate(x.createdAt))+'</time>';historyList.appendChild(row)});
+}
+historyFilter.onchange=renderHistory;
 
 loginBtn.onclick=async()=>{
 loginError.textContent='';approvalMessage.style.display='none';
@@ -2497,21 +2539,25 @@ function renderBudget(){budgetList.innerHTML=data.budget.map((b,i)=>`<div class=
 function renderAll(){renderCharterValues();renderTasks();renderMembers();renderBudget();renderNotes();taskKpi.textContent=data.tasks.filter(t=>!t.done).length;
 renderCalendar();
 renderPolls();
-renderResources();}
+renderResources();
+renderHistory();
+renderNotifications();}
 let editingTaskIndex=null;
 window.openTaskModal=()=>{editingTaskIndex=null;taskModalTitle.textContent='Ajouter une action';taskSaveBtn.textContent='Ajouter l’action';taskForm.reset();taskModal.style.display='grid';setTimeout(()=>taskName.focus(),50)};
 window.closeTaskModal=()=>{taskModal.style.display='none';taskForm.reset();editingTaskIndex=null};
 window.editTask=i=>{const t=data.tasks[i];editingTaskIndex=i;taskModalTitle.textContent='Modifier l’action';taskSaveBtn.textContent='Enregistrer les modifications';taskName.value=t.title||t.name||'';taskDescription.value=t.description||'';taskOwner.value=t.owner||'';taskDate.value=t.date||'';taskStatus.value=t.done?'Effectuée':(t.status||'À faire');taskModal.style.display='grid';};
-taskForm.addEventListener('submit',async e=>{e.preventDefault();const title=taskName.value.trim();if(!title)return;const isNew=editingTaskIndex===null;const done=taskStatus.value==='Effectuée';const obj={title,name:title,description:taskDescription.value.trim(),owner:taskOwner.value.trim()||'À définir',date:taskDate.value,status:done?'Effectuée':taskStatus.value,done};if(isNew)data.tasks.push(obj);else data.tasks[editingTaskIndex]={...data.tasks[editingTaskIndex],...obj};closeTaskModal();await save();if(isNew)await publishNotification('task','Nouvelle action',title,'tasks')});
-window.toggleTask=async(i,v)=>{if(!data.tasks[i])return;data.tasks[i].done=v;if(v)data.tasks[i].status='Effectuée';else if(data.tasks[i].status==='Effectuée')data.tasks[i].status='À faire';renderTasks();await save()};
+taskForm.addEventListener('submit',async e=>{e.preventDefault();const title=taskName.value.trim();if(!title)return;const isNew=editingTaskIndex===null;const done=taskStatus.value==='Effectuée';const existing=isNew?null:data.tasks[editingTaskIndex];const obj={id:existing?.id||crypto.randomUUID(),title,name:title,description:taskDescription.value.trim(),owner:taskOwner.value.trim()||'À définir',date:taskDate.value,status:done?'Effectuée':taskStatus.value,done};if(isNew)data.tasks.push(obj);else data.tasks[editingTaskIndex]={...existing,...obj};closeTaskModal();await save();await logHistory(isNew?'created':'updated','task',obj.id,title,isNew?'Nouvelle action':'Informations mises à jour');if(isNew)await publishNotification('task','Nouvelle action',title,'tasks',obj.id)});
+window.toggleTask=async(i,v)=>{if(!data.tasks[i])return;const t=data.tasks[i];t.id=t.id||crypto.randomUUID();t.done=v;if(v)t.status='Effectuée';else if(t.status==='Effectuée')t.status='À faire';renderTasks();await save();await logHistory('updated','task',t.id,t.title||t.name,'Statut : '+t.status)};
 window.quickTaskStatus=async(i,status)=>{
  if(!data.tasks[i])return;
- data.tasks[i].status=status;
- data.tasks[i].done=status==='Effectuée';
+ const t=data.tasks[i];t.id=t.id||crypto.randomUUID();
+ t.status=status;
+ t.done=status==='Effectuée';
  renderTasks();
  await save();
+ await logHistory('updated','task',t.id,t.title||t.name,'Statut : '+status);
 };
-window.deleteTask=i=>{if(confirm('Supprimer cette action ?')){data.tasks.splice(i,1);save()}};
+window.deleteTask=async i=>{const t=data.tasks[i];if(t&&confirm('Supprimer cette action ?')){data.tasks.splice(i,1);await save();await logHistory('deleted','task',t.id||'',t.title||t.name,'Action supprimée');renderNotifications()}};
 taskModal.addEventListener('click',e=>{if(e.target===taskModal)closeTaskModal()});
 window.addMember=()=>{let n=memberName.value.trim();if(!n)return;data.members.push({name:n,skill:memberSkill.value||'À définir'});memberName.value='';memberSkill.value='';save()}; window.deleteMember=i=>{data.members.splice(i,1);save()};
 window.addBudget=()=>{let l=budgetLabel.value.trim(),a=Number(budgetAmount.value);if(!l||!a)return;data.budget.push({label:l,amount:a,type:budgetType.value});budgetLabel.value='';budgetAmount.value='';save()}; window.deleteBudget=i=>{data.budget.splice(i,1);save()};
@@ -2557,8 +2603,8 @@ function renderNotes(){
  })
 }
 newNoteBtn.onclick=()=>openNoteModal();closeNoteModal.onclick=closeNote;cancelNoteBtn.onclick=closeNote;
-saveNoteBtn.onclick=async()=>{const title=noteTitle.value.trim(),content=noteContent.value.trim();if(!title||!content){noteError.textContent='Le titre et le contenu sont obligatoires.';return}const now=new Date().toISOString(),isNew=!editingNoteId;if(editingNoteId){const n=data.noteItems.find(x=>x.id===editingNoteId);if(!n||(n.authorUid!==currentUserId()&&!isAdmin()))return;await setDoc(doc(notesCol,editingNoteId),{title,content,updatedAt:now},{merge:true})}else{const id=crypto.randomUUID();await setDoc(doc(notesCol,id),{title,content,authorUid:currentUserId(),authorEmail:currentUserEmail(),createdAt:now,updatedAt:now})}closeNote();await refreshNotes();if(isNew)await publishNotification('note','Nouvelle note',title,'notes')};
-deleteNoteBtn.onclick=async()=>{const n=(data.noteItems||[]).find(x=>x.id===editingNoteId);if(!n||(n.authorUid!==currentUserId()&&!isAdmin()))return;if(confirm('Supprimer cette note ?')){await deleteDoc(doc(notesCol,editingNoteId));closeNote();await refreshNotes()}};
+saveNoteBtn.onclick=async()=>{const title=noteTitle.value.trim(),content=noteContent.value.trim();if(!title||!content){noteError.textContent='Le titre et le contenu sont obligatoires.';return}const now=new Date().toISOString(),isNew=!editingNoteId,id=editingNoteId||crypto.randomUUID();if(editingNoteId){const n=data.noteItems.find(x=>x.id===editingNoteId);if(!n||(n.authorUid!==currentUserId()&&!isAdmin()))return;await setDoc(doc(notesCol,id),{title,content,updatedAt:now},{merge:true})}else{await setDoc(doc(notesCol,id),{title,content,authorUid:currentUserId(),authorEmail:currentUserEmail(),createdAt:now,updatedAt:now})}closeNote();await refreshNotes();await logHistory(isNew?'created':'updated','note',id,title,isNew?'Note publiée':'Contenu mis à jour');if(isNew)await publishNotification('note','Nouvelle note',title,'notes',id)};
+deleteNoteBtn.onclick=async()=>{const id=editingNoteId,n=(data.noteItems||[]).find(x=>x.id===id);if(!n||(n.authorUid!==currentUserId()&&!isAdmin()))return;if(confirm('Supprimer cette note ?')){await deleteDoc(doc(notesCol,id));await logHistory('deleted','note',id,n.title||'Note','Note supprimée');closeNote();await refreshNotes();renderNotifications()}};
 
 document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(b.dataset.page).classList.add('active');if(b.dataset.page==='resources')renderResources()});
 
@@ -2668,6 +2714,15 @@ let editingCalendarId=null;
 let editingPollId=null;
 
 function calISO(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+async function loadEventRsvps(ev){
+  try{const s=await getDocs(collection(calendarCol,ev.id,'participants'));ev.participants=s.docs.map(d=>({uid:d.id,...d.data()}))}catch(e){console.error('Participants événement',e);ev.participants=[]}
+  return ev;
+}
+async function setEventParticipation(eventId,status){
+  const ref=doc(calendarCol,eventId,'participants',currentUserId());
+  if(status==='none')await deleteDoc(ref);else await setDoc(ref,{status,email:currentUserEmail(),updatedAt:serverTimestamp()},{merge:true});
+  const ev=(data.calendarEvents||[]).find(x=>x.id===eventId);if(ev){await loadEventRsvps(ev);renderUpcoming()}
+}
 function renderCalendar(){
   if(!document.getElementById('calendarGrid')) return;
   const month=calendarCursor.getMonth(), year=calendarCursor.getFullYear();
@@ -2700,6 +2755,16 @@ function renderUpcoming(){
       const copy=document.createElement('button');copy.className='btn secondary';copy.type='button';copy.textContent='Copier le lien';copy.onclick=async()=>{try{await navigator.clipboard.writeText(meetingUrl);copy.textContent='Lien copié ✓';setTimeout(()=>copy.textContent='Copier le lien',1500)}catch{window.prompt('Copiez le lien de connexion :',meetingUrl)}};actions.appendChild(copy);
     }
     const edit=document.createElement('button');edit.className='btn secondary';edit.textContent='Modifier';edit.onclick=()=>openCalendarModal(ev.date,ev.id);actions.appendChild(edit);
+    if(ev.type==='meeting'){
+      const people=ev.participants||[],mine=people.find(p=>p.uid===currentUserId());
+      const rsvp=document.createElement('div');rsvp.className='rsvp-block';rsvp.style.flexBasis='100%';
+      const buttons=document.createElement('div');buttons.className='rsvp-buttons';
+      [['yes','Je participe'],['maybe','Peut-être'],['no','Absent']].forEach(([status,label])=>{const b=document.createElement('button');b.type='button';b.className='rsvp-btn'+(mine?.status===status?' active':'');b.textContent=label;b.onclick=()=>setEventParticipation(ev.id,mine?.status===status?'none':status);buttons.appendChild(b)});
+      const yes=people.filter(p=>p.status==='yes'),maybe=people.filter(p=>p.status==='maybe');
+      const summary=document.createElement('div');summary.className='rsvp-summary';summary.textContent=yes.length+' participant'+(yes.length>1?'s':'')+(maybe.length?' · '+maybe.length+' peut-être':'');
+      const names=document.createElement('div');names.className='rsvp-names';names.textContent=yes.length?'Présents : '+yes.map(p=>p.email||'Membre').join(', '):'Aucun participant confirmé.';
+      rsvp.append(buttons,summary,names);actions.appendChild(rsvp);
+    }
     row.append(left,actions);calendarUpcoming.appendChild(row);
   });
 }
@@ -2725,9 +2790,9 @@ saveCalendarEvent.onclick=async()=>{
   const existing=(data.calendarEvents||[]).find(x=>x.id===id);
   const isNew=!existing;
   const ev={id,type:calType.value,date:calDate.value,time:calTime.value,title:calTitle.value.trim(),owner:calOwner.value.trim(),meetingLink,description:calDescription.value.trim(),createdBy:existing?.createdBy||currentUserId(),updatedAt:new Date().toISOString()};
-  await setDoc(doc(calendarCol,id),ev,{merge:true});closeCal();if(isNew)await publishNotification('calendar',calType.value==='meeting'?'Nouvelle réunion':'Nouvel événement',ev.title,'calendar');
+  await setDoc(doc(calendarCol,id),ev,{merge:true});closeCal();await logHistory(isNew?'created':'updated','calendar',id,ev.title,isNew?'Nouvel élément au calendrier':'Informations mises à jour');if(isNew)await publishNotification('calendar',calType.value==='meeting'?'Nouvelle réunion':'Nouvel événement',ev.title,'calendar',id);
 };
-deleteCalendarEvent.onclick=async()=>{if(editingCalendarId&&confirm('Supprimer définitivement cet élément ?')){await deleteDoc(doc(calendarCol,editingCalendarId));closeCal()}};
+deleteCalendarEvent.onclick=async()=>{if(editingCalendarId&&confirm('Supprimer définitivement cet élément ?')){const ev=(data.calendarEvents||[]).find(x=>x.id===editingCalendarId);await deleteDoc(doc(calendarCol,editingCalendarId));await logHistory('deleted','calendar',editingCalendarId,ev?.title||'Événement','Élément supprimé');closeCal();renderNotifications()}};
 
 /* Ressources */
 let editingResourceId=null, resourceFilter='Toutes', pendingResourceImage='';
@@ -2782,6 +2847,7 @@ if(isNewResource) r.createdBy=auth.currentUser.uid;
 else if(existing && existing.createdBy) r.createdBy=existing.createdBy;
 try{
   await setDoc(doc(resourcesCol,r.id),r,{merge:true});
+  await logHistory(isNewResource?'created':'updated','resource',r.id,r.name,isNewResource?'Ressource ajoutée':'Ressource mise à jour');
   closeResource();
 }catch(e){
   console.error('Enregistrement ressource',e);
@@ -2797,6 +2863,7 @@ deleteResourceBtn.onclick=async()=>{
  if(confirm('Supprimer cette ressource ?')){
    try{
      await deleteDoc(doc(resourcesCol,editingResourceId));
+     await logHistory('deleted','resource',editingResourceId,r.name||'Ressource','Ressource supprimée');
      closeResource();
    }catch(e){
      console.error('Suppression ressource',e);
@@ -2935,13 +3002,14 @@ savePollBtn.onclick=async()=>{
    await setDoc(doc(pollsCol,p.id),pollDoc,{merge:!!editingPollId});
    closePoll();
    await refreshPolls();
-   if(isNew)await publishNotification('poll','Nouveau sondage',p.question,'polls');
+   await logHistory(isNew?'created':'updated','poll',p.id,p.question,isNew?'Sondage publié':'Sondage mis à jour');
+   if(isNew)await publishNotification('poll','Nouveau sondage',p.question,'polls',p.id);
  }catch(e){
    console.error('Erreur sauvegarde sondage',e);
    pollError.textContent="Impossible d'enregistrer le sondage. Vérifiez les règles Firestore.";
  }
 };
-deletePollBtn.onclick=async()=>{const p=(data.polls||[]).find(x=>x.id===editingPollId);if(!p||!canEditPoll(p))return;if(editingPollId&&confirm('Supprimer définitivement ce sondage ?')){try{await deleteDoc(doc(pollsCol,editingPollId));closePoll();await refreshPolls()}catch(e){console.error('Erreur suppression sondage',e);pollError.textContent="Impossible de supprimer le sondage."}}};
+deletePollBtn.onclick=async()=>{const id=editingPollId,p=(data.polls||[]).find(x=>x.id===id);if(!p||!canEditPoll(p))return;if(id&&confirm('Supprimer définitivement ce sondage ?')){try{await deleteDoc(doc(pollsCol,id));await logHistory('deleted','poll',id,p.question||'Sondage','Sondage supprimé');closePoll();await refreshPolls();renderNotifications()}catch(e){console.error('Erreur suppression sondage',e);pollError.textContent="Impossible de supprimer le sondage."}}};
 
 async function hydratePoll(d){
  const p={id:d.id,...d.data(),votes:{}};
@@ -2964,14 +3032,26 @@ async function refreshNotes(){
 function stopCollaborativeListeners(){
  collaborativeUnsubs.forEach(f=>{try{f()}catch{}});
  collaborativeUnsubs=[];
+ calendarParticipantUnsubs.forEach(f=>{try{f()}catch{}});
+ calendarParticipantUnsubs=[];
+}
+function startCalendarParticipantListeners(){
+ calendarParticipantUnsubs.forEach(f=>{try{f()}catch{}});calendarParticipantUnsubs=[];
+ (data.calendarEvents||[]).filter(ev=>ev.type==='meeting').forEach(ev=>{
+   calendarParticipantUnsubs.push(onSnapshot(collection(calendarCol,ev.id,'participants'),s=>{
+     ev.participants=s.docs.map(d=>({uid:d.id,...d.data()}));renderUpcoming();
+   },err=>console.error('Participation réunion',err)));
+ });
 }
 function startCollaborativeListeners(){
  stopCollaborativeListeners();
 
- collaborativeUnsubs.push(onSnapshot(calendarCol,s=>{
-   const fresh=s.docs.map(d=>({id:d.id,...d.data()}));
+ collaborativeUnsubs.push(onSnapshot(calendarCol,async s=>{
+   const fresh=await Promise.all(s.docs.map(d=>loadEventRsvps({id:d.id,...d.data()})));
    data.calendarEvents=fresh.length?fresh:structuredClone(legacyBackup.calendarEvents||[]);
+   startCalendarParticipantListeners();
    renderCalendar();
+   renderNotifications();
  },err=>{
    console.error('Calendar listener:',err);
    data.calendarEvents=structuredClone(legacyBackup.calendarEvents||[]);
@@ -2994,6 +3074,7 @@ function startCollaborativeListeners(){
      data.noteItems=structuredClone(legacyBackup.noteItems||[]);
      renderNotes();
    }
+   renderNotifications();
  }));
 
  collaborativeUnsubs.push(onSnapshot(pollsCol,async()=>{
@@ -3002,6 +3083,16 @@ function startCollaborativeListeners(){
      data.polls=structuredClone(legacyBackup.polls||[]);
      renderPolls();
    }
+   renderNotifications();
+ }));
+
+ collaborativeUnsubs.push(onSnapshot(historyCol,s=>{
+   data.history=s.docs.map(d=>({id:d.id,...d.data()}));
+   renderHistory();
+ },err=>{
+   console.error('History listener:',err);
+   data.history=[];
+   renderHistory();
  }));
 }
 function stableLegacyId(prefix,item,index){
