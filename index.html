@@ -2478,8 +2478,15 @@ function notificationStillExists(n){
   if(n.entityType==='poll')return (data.polls||[]).some(x=>x.id===n.entityId);
   return true;
 }
+function notificationForCurrentUser(n){
+  const uid=currentUserId();
+  const recipients=Array.isArray(n.recipientUids)?n.recipientUids:[];
+  const excluded=Array.isArray(n.excludedUids)?n.excludedUids:[];
+  if(recipients.length&&!recipients.includes(uid))return false;
+  return !excluded.includes(uid);
+}
 function renderNotifications(){
-  const sorted=notificationItems.filter(n=>notificationStillExists(n)&&(notificationViewCounts.get(n.id)||0)<5).sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||''))).slice(0,30);
+  const sorted=notificationItems.filter(n=>notificationForCurrentUser(n)&&notificationStillExists(n)&&(notificationViewCounts.get(n.id)||0)<5).sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||''))).slice(0,30);
   const unread=sorted.filter(n=>!notificationReadIds.has(n.id)).length;
   notificationBadge.hidden=!unread;notificationBadge.textContent=unread>99?'99+':String(unread);
   notificationList.innerHTML='';
@@ -2494,21 +2501,23 @@ function startNotificationListeners(){
 }
 async function recordNotificationImpressions(){
   if(!notificationReadsReady)return;
-  const visible=notificationItems.filter(n=>notificationStillExists(n)&&(notificationViewCounts.get(n.id)||0)<5).sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||''))).slice(0,30);
+  const visible=notificationItems.filter(n=>notificationForCurrentUser(n)&&notificationStillExists(n)&&(notificationViewCounts.get(n.id)||0)<5).sort((a,b)=>String(b.createdAt||'').localeCompare(String(a.createdAt||''))).slice(0,30);
   await Promise.all(visible.map(n=>setDoc(doc(db,'users',currentUserId(),'notificationReads',n.id),{viewCount:Math.min(5,(notificationViewCounts.get(n.id)||0)+1),lastViewedAt:serverTimestamp()},{merge:true})));
 }
-async function publishNotification(type,title,message,page,entityId=''){
+async function publishNotification(type,title,message,page,entityId='',options={}){
   if(!auth.currentUser)return;
   const id=crypto.randomUUID();
   try{
-    await setDoc(doc(notificationsCol,id),{type,title,message,page,entityType:type,entityId,createdBy:currentUserId(),createdAt:new Date().toISOString()});
+    const recipientUids=[...new Set(Array.isArray(options.recipientUids)?options.recipientUids.filter(Boolean):[])];
+    const excludedUids=[...new Set(Array.isArray(options.excludedUids)?options.excludedUids.filter(Boolean):[])];
+    await setDoc(doc(notificationsCol,id),{type,title,message,page,entityType:type,entityId,createdBy:currentUserId(),createdAt:new Date().toISOString(),...(recipientUids.length?{recipientUids}:{}),...(excludedUids.length?{excludedUids}:{})});
     await setDoc(doc(db,'users',currentUserId(),'notificationReads',id),{readAt:serverTimestamp()},{merge:true});
   }catch(e){console.error('Publication notification',e)}
 }
 notificationBtn.onclick=e=>{e.stopPropagation();const open=notificationPanel.hidden;notificationPanel.hidden=!open;notificationBtn.setAttribute('aria-expanded',String(open));if(open){accountDropdown.hidden=true;accountMenuBtn.setAttribute('aria-expanded','false');recordNotificationImpressions().catch(err=>console.error('Capping notifications',err))}};
 notificationPanel.onclick=e=>e.stopPropagation();
 document.addEventListener('click',()=>{notificationPanel.hidden=true;notificationBtn.setAttribute('aria-expanded','false')});
-markAllNotificationsRead.onclick=async()=>{const unread=notificationItems.filter(n=>!notificationReadIds.has(n.id));await Promise.all(unread.map(n=>setDoc(doc(db,'users',currentUserId(),'notificationReads',n.id),{readAt:serverTimestamp()},{merge:true})))};
+markAllNotificationsRead.onclick=async()=>{const unread=notificationItems.filter(n=>notificationForCurrentUser(n)&&notificationStillExists(n)&&!notificationReadIds.has(n.id));await Promise.all(unread.map(n=>setDoc(doc(db,'users',currentUserId(),'notificationReads',n.id),{readAt:serverTimestamp()},{merge:true})))};
 
 function historyLabel(type){return ({task:'Action',calendar:'Calendrier',note:'Note',poll:'Sondage',resource:'Ressource'})[type]||'Élément'}
 function historyVerb(action){return ({created:'Création',updated:'Modification',deleted:'Suppression'})[action]||'Modification'}
@@ -2608,7 +2617,7 @@ addTaskAssigneeBtn.onclick=()=>addTaskAssigneeSelect('',true);
 window.openTaskModal=()=>{editingTaskIndex=null;taskModalTitle.textContent='Ajouter une action';taskSaveBtn.textContent='Ajouter l’action';taskForm.reset();renderTaskAssigneePicker([]);taskCommentsSection.hidden=true;taskModal.style.display='grid';setTimeout(()=>taskName.focus(),50)};
 window.closeTaskModal=()=>{taskModal.style.display='none';taskForm.reset();taskCommentsSection.hidden=true;editingTaskIndex=null};
 window.editTask=async i=>{const t=data.tasks[i];editingTaskIndex=i;taskModalTitle.textContent='Modifier l’action';taskSaveBtn.textContent='Enregistrer les modifications';taskName.value=t.title||t.name||'';taskDescription.value=t.description||'';taskDate.value=t.date||'';taskStatus.value=t.done?'Effectuée':(t.status||'À faire');taskPriority.value=t.priority||'Normale';renderTaskAssigneePicker(Array.isArray(t.assigneeIds)?t.assigneeIds:[]);taskCommentsSection.hidden=false;taskModal.style.display='grid';await loadTaskComments(t.id);};
-taskForm.addEventListener('submit',async e=>{e.preventDefault();const title=taskName.value.trim();if(!title)return;const isNew=editingTaskIndex===null,done=taskStatus.value==='Effectuée',existing=isNew?null:data.tasks[editingTaskIndex],assigneeIds=[...new Set([...taskAssignees.querySelectorAll('.task-assignee-select')].map(x=>x.value).filter(Boolean))],{resourceId,...existingWithoutResource}=existing||{};const obj={id:existing?.id||crypto.randomUUID(),title,name:title,description:taskDescription.value.trim(),assigneeIds,owner:assigneeIds.map(publicMemberName).join(', ')||'À définir',date:taskDate.value,status:done?'Effectuée':taskStatus.value,done,priority:taskPriority.value};if(isNew)data.tasks.push(obj);else data.tasks[editingTaskIndex]={...existingWithoutResource,...obj};await save();await logHistory(isNew?'created':'updated','task',obj.id,title,isNew?'Nouvelle action':'Informations mises à jour');if(isNew)await publishNotification('task','Nouvelle action',title,'tasks',obj.id);closeTaskModal()});
+taskForm.addEventListener('submit',async e=>{e.preventDefault();const title=taskName.value.trim();if(!title)return;const isNew=editingTaskIndex===null,done=taskStatus.value==='Effectuée',existing=isNew?null:data.tasks[editingTaskIndex],previousAssigneeIds=Array.isArray(existing?.assigneeIds)?existing.assigneeIds:[],assigneeIds=[...new Set([...taskAssignees.querySelectorAll('.task-assignee-select')].map(x=>x.value).filter(Boolean))],newAssigneeIds=assigneeIds.filter(uid=>!previousAssigneeIds.includes(uid)),{resourceId,...existingWithoutResource}=existing||{};const obj={id:existing?.id||crypto.randomUUID(),title,name:title,description:taskDescription.value.trim(),assigneeIds,owner:assigneeIds.map(publicMemberName).join(', ')||'À définir',date:taskDate.value,status:done?'Effectuée':taskStatus.value,done,priority:taskPriority.value};if(isNew)data.tasks.push(obj);else data.tasks[editingTaskIndex]={...existingWithoutResource,...obj};await save();await logHistory(isNew?'created':'updated','task',obj.id,title,isNew?'Nouvelle action':'Informations mises à jour');if(isNew)await publishNotification('task','Nouvelle action',title,'tasks',obj.id,{excludedUids:newAssigneeIds});if(newAssigneeIds.length)await publishNotification('task','Une action vous a été attribuée','« '+title+' »','tasks',obj.id,{recipientUids:newAssigneeIds});closeTaskModal()});
 window.toggleTask=async(i,v)=>{if(!data.tasks[i])return;const t=data.tasks[i];t.id=t.id||crypto.randomUUID();t.done=v;if(v)t.status='Effectuée';else if(t.status==='Effectuée')t.status='À faire';renderTasks();await save();await logHistory('updated','task',t.id,t.title||t.name,'Statut : '+t.status)};
 window.quickTaskStatus=async(i,status)=>{
  if(!data.tasks[i])return;
