@@ -1988,6 +1988,22 @@ body.auth-pending::after{
 
 
 #deleteResourceBtn[hidden]{display:none!important;}
+
+/* Navigation regroupée */
+.nav-group{position:relative;flex:0 0 auto}
+.nav-group-toggle{display:flex!important;align-items:center;gap:6px}
+.nav-group-toggle .nav-caret{font-size:10px;transition:transform .18s ease}
+.nav-group-toggle[aria-expanded="true"] .nav-caret{transform:rotate(180deg)}
+.nav-submenu{position:absolute;top:calc(100% + 9px);left:0;z-index:1200;width:220px;padding:7px;background:#fffdf9;border:1px solid #ddd8cd;border-radius:13px;box-shadow:0 16px 38px rgba(38,61,53,.16)}
+.nav-submenu[hidden]{display:none!important}
+.side .nav .nav-submenu button{display:flex!important;width:100%!important;margin:0!important;padding:10px 11px!important;border-radius:8px!important;font-size:12px!important;box-shadow:none!important;text-align:left!important}
+.side .nav .nav-submenu button:hover{background:#eef2eb!important}
+.side .nav .nav-submenu button.active{background:#e3ebe0!important;color:var(--forest)!important}
+.side .nav .nav-group:has(.nav-submenu button.active)>.nav-group-toggle{color:var(--forest)!important;box-shadow:inset 0 -2px 0 #5e7654!important;border-radius:0!important}
+.home-history-access{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:17px 20px;margin:0 0 16px;border:1px solid #ddd8cd;border-radius:14px;background:#fffdf9}
+.home-history-copy{display:flex;align-items:center;gap:12px;min-width:0}.home-history-icon{width:35px;height:35px;flex:0 0 35px;display:grid;place-items:center;border-radius:50%;background:var(--sage3);color:#5c7554;font-size:16px}.home-history-copy b{display:block;font-size:13px}.home-history-copy small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
+@media(min-width:901px){.side .nav{overflow:visible!important}}
+@media(max-width:900px){.nav-group{position:static}.nav-submenu{position:fixed;top:112px;left:14px;right:14px;width:auto;max-height:calc(100vh - 132px);overflow:auto}.home-history-access{align-items:flex-start;flex-direction:column;gap:10px}.home-history-access .text-link{padding-top:2px}}
 </style>
 </head>
 <body class="auth-pending">
@@ -2001,15 +2017,24 @@ body.auth-pending::after{
 <div class="brandtext"><strong>Tiny Houses</strong><small>Lieu communautaire</small></div>
 </div><nav class="nav" id="nav">
 <button class="active" data-page="dashboard">⌂ Vue d'ensemble</button>
-<button data-page="principles">♡ Charte & valeurs</button>
-<button data-page="resources">↗ Ressources</button>
-<button data-page="calendar">▣ Calendrier</button>
-<button data-page="polls">◉ Sondages</button>
+<div class="nav-group">
+ <button class="nav-group-toggle" type="button" aria-expanded="false">Le projet <span class="nav-caret">⌄</span></button>
+ <div class="nav-submenu" hidden>
+  <button data-page="principles">♡ Charte & valeurs</button>
+  <button data-page="resources">↗ Ressources</button>
+  <button data-page="budget">€ Budget</button>
+ </div>
+</div>
 <button data-page="tasks">✓ Actions</button>
-<button data-page="notes">✎ Notes</button>
-<button data-page="budget">€ Budget</button>
-<button data-page="community">♙ Membres</button>
-<button data-page="history">↺ Historique</button>
+<button data-page="calendar">▣ Calendrier</button>
+<div class="nav-group">
+ <button class="nav-group-toggle" type="button" aria-expanded="false">Communauté <span class="nav-caret">⌄</span></button>
+ <div class="nav-submenu" hidden>
+  <button data-page="community">♙ Membres</button>
+  <button data-page="polls">◉ Sondages</button>
+  <button data-page="notes">✎ Notes</button>
+ </div>
+</div>
 </nav><div class="header-actions"><div id="notificationCenter" style="display:none">
 <button id="notificationBtn" class="notification-btn" type="button" aria-label="Notifications" aria-expanded="false">🔔<span id="notificationBadge" class="notification-badge" hidden>0</span></button>
 <div id="notificationPanel" class="notification-panel" hidden><div class="notification-head"><strong>Notifications</strong><button id="markAllNotificationsRead" type="button">Tout marquer comme lu</button></div><div id="notificationList"></div></div>
@@ -2089,6 +2114,10 @@ body.auth-pending::after{
       </div>
       <button class="text-link" data-go="calendar">Ouvrir le calendrier →</button>
     </div>
+  </div>
+  <div class="home-history-access">
+    <div class="home-history-copy"><span class="home-history-icon">↺</span><span><b>Activité récente</b><small>Consultez les créations, modifications et suppressions réalisées sur le site.</small></span></div>
+    <button class="text-link" data-go="history">Voir tout l’historique →</button>
   </div>
   <div class="home-manifesto"><span class="leaf">⌁</span><strong>Ensemble, créons un lieu de vie humain, durable et inspirant.</strong></div>
 </section>
@@ -2681,7 +2710,10 @@ newNoteBtn.onclick=()=>openNoteModal();closeNoteModal.onclick=closeNote;cancelNo
 saveNoteBtn.onclick=async()=>{const title=noteTitle.value.trim(),content=noteContent.value.trim();if(!title||!content){noteError.textContent='Le titre et le contenu sont obligatoires.';return}const now=new Date().toISOString(),isNew=!editingNoteId,id=editingNoteId||crypto.randomUUID();if(editingNoteId){const n=data.noteItems.find(x=>x.id===editingNoteId);if(!n||(n.authorUid!==currentUserId()&&!isAdmin()))return;await setDoc(doc(notesCol,id),{title,content,updatedAt:now},{merge:true})}else{await setDoc(doc(notesCol,id),{title,content,authorUid:currentUserId(),authorEmail:currentUserEmail(),createdAt:now,updatedAt:now})}closeNote();await refreshNotes();await logHistory(isNew?'created':'updated','note',id,title,isNew?'Note publiée':'Contenu mis à jour');if(isNew)await publishNotification('note','Nouvelle note',title,'notes',id)};
 deleteNoteBtn.onclick=async()=>{const id=editingNoteId,n=(data.noteItems||[]).find(x=>x.id===id);if(!n||(n.authorUid!==currentUserId()&&!isAdmin()))return;if(confirm('Supprimer cette note ?')){await deleteDoc(doc(notesCol,id));await logHistory('deleted','note',id,n.title||'Note','Note supprimée');closeNote();await refreshNotes();renderNotifications()}};
 
-document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));document.getElementById(b.dataset.page).classList.add('active');if(b.dataset.page==='resources')renderResources()});
+function closeNavSubmenus(except=null){document.querySelectorAll('#nav .nav-group-toggle').forEach(toggle=>{if(toggle===except)return;toggle.setAttribute('aria-expanded','false');const menu=toggle.nextElementSibling;if(menu)menu.hidden=true})}
+document.querySelectorAll('#nav button[data-page]').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav button[data-page]').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));const section=document.getElementById(b.dataset.page);if(section)section.classList.add('active');if(b.dataset.page==='resources')renderResources();closeNavSubmenus()});
+document.querySelectorAll('#nav .nav-group-toggle').forEach(toggle=>toggle.onclick=e=>{e.stopPropagation();const willOpen=toggle.nextElementSibling.hidden;closeNavSubmenus(toggle);toggle.nextElementSibling.hidden=!willOpen;toggle.setAttribute('aria-expanded',String(willOpen))});
+document.addEventListener('click',e=>{if(!e.target.closest('#nav'))closeNavSubmenus()});
 
 const ADMIN_UID='CPEGyrjksdMarhLXope92fgLbiq2';
 let currentUserRole='member';
@@ -3447,7 +3479,13 @@ document.querySelectorAll('[data-go]').forEach(btn=>{
   btn.addEventListener('click',()=>{
     const target=btn.dataset.go;
     const navBtn=document.querySelector(`#nav button[data-page="${target}"]`);
-    if(navBtn) navBtn.click();
+    if(navBtn)navBtn.click();
+    else{
+      document.querySelectorAll('#nav button[data-page]').forEach(x=>x.classList.remove('active'));
+      document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+      const section=document.getElementById(target);if(section)section.classList.add('active');
+      closeNavSubmenus();
+    }
   });
 });
 
