@@ -2004,6 +2004,19 @@ body.auth-pending::after{
 .home-history-copy{display:flex;align-items:center;gap:12px;min-width:0}.home-history-icon{width:35px;height:35px;flex:0 0 35px;display:grid;place-items:center;border-radius:50%;background:var(--sage3);color:#5c7554;font-size:16px}.home-history-copy b{display:block;font-size:13px}.home-history-copy small{display:block;color:var(--muted);font-size:11px;margin-top:3px}
 @media(min-width:901px){.side .nav{overflow:visible!important}}
 @media(max-width:900px){.nav-group{position:static}.nav-submenu{position:fixed;top:112px;left:14px;right:14px;width:auto;max-height:calc(100vh - 132px);overflow:auto}.home-history-access{align-items:flex-start;flex-direction:column;gap:10px}.home-history-access .text-link{padding-top:2px}}
+
+/* En-tête desktop : logo et actions alignés sur les marges du contenu */
+@media(min-width:901px){
+ .side{
+   grid-template-columns:auto minmax(0,1fr) auto!important;
+   column-gap:clamp(14px,2vw,30px)!important;
+   padding-left:max(28px,calc((100vw - 1380px)/2))!important;
+   padding-right:max(28px,calc((100vw - 1380px)/2))!important;
+ }
+ .side .brand{grid-column:1!important;justify-self:start!important}
+ .side .nav{grid-column:2!important;justify-self:stretch!important}
+ .side .header-actions{grid-column:3!important;justify-self:end!important;margin-left:0!important}
+}
 </style>
 </head>
 <body class="auth-pending">
