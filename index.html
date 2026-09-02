@@ -134,6 +134,31 @@
   --control-padding-inline:16px;
   --control-gap:8px;
   --control-transition:background-color .16s ease,border-color .16s ease,color .16s ease,box-shadow .16s ease,transform .16s ease;
+
+  /* Formulaires et filtres */
+  --field-height:var(--control-height-md);
+  --field-padding-inline:var(--space-3);
+  --field-padding-block:10px;
+  --field-gap:var(--space-2);
+  --form-row-gap:var(--space-4);
+  --textarea-min-height:112px;
+  --color-field-placeholder:#7d8983;
+  --color-success-surface:#eef5f1;
+  --color-success-border:#bed2c9;
+
+  /* Cartes, listes et états vides */
+  --card-padding-sm:var(--space-4);
+  --card-padding-md:var(--space-5);
+  --card-padding-lg:var(--space-6);
+  --card-grid-gap:var(--space-4);
+  --card-content-gap:var(--space-4);
+  --list-row-padding-block:var(--space-4);
+  --list-row-padding-inline:var(--space-4);
+  --list-row-gap:var(--space-3);
+  --list-row-min-height:64px;
+  --empty-state-min-height:120px;
+  --shadow-card-hover:0 14px 34px rgba(42,59,49,.11);
+  --surface-transition:background-color .16s ease,border-color .16s ease,box-shadow .16s ease,transform .16s ease;
   --section-eyebrow-size:var(--font-size-caption);
   --section-head-gap:22px;
 
@@ -2665,6 +2690,335 @@ button:disabled.btn{
   .btn,.resource-upload-btn,.text-link,.clear-task-filters,.task-edit,.del,.resource-filter,.react-btn,.rsvp-btn,.account-action,.account-settings-tab,.notification-head button,.password-eye{transition:none!important}
   .btn[aria-busy="true"]::after,.btn.is-loading::after{animation-duration:1.2s}
 }
+
+/* =========================================================
+   DESIGN SYSTEM — LOT 4 : FORMULAIRES & FILTRES
+
+   Anatomie commune : libellé, contrôle, aide facultative,
+   puis message d'état. Les contrôles métier spécialisés
+   conservent leur structure et leur comportement existants.
+   ========================================================= */
+
+/* Champs texte, listes et zones de texte */
+body :is(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+  select:not(.task-status-select),
+  textarea
+){
+  box-sizing:border-box;
+  min-height:var(--field-height);
+  padding:var(--field-padding-block) var(--field-padding-inline);
+  border:1px solid var(--color-border-input);
+  border-radius:var(--radius-control);
+  background-color:var(--color-surface-input)!important;
+  color:var(--color-text);
+  font-family:var(--font-family-base);
+  font-size:var(--font-size-body);
+  line-height:1.4;
+  transition:var(--control-transition);
+}
+body select:not(.task-status-select){
+  padding-right:40px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2323483c' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 9 5 5 5-5'/%3E%3C/svg%3E")!important;
+  background-repeat:no-repeat!important;
+  background-position:right 12px center!important;
+  appearance:none;
+  -webkit-appearance:none;
+}
+body textarea{min-height:var(--textarea-min-height);resize:vertical}
+body :is(input,select,textarea)::placeholder{color:var(--color-field-placeholder);opacity:1}
+
+@media(hover:hover){
+  body :is(
+    input:not([type="checkbox"]):not([type="radio"]):not([type="file"]):not(:disabled):not([readonly]),
+    select:not(.task-status-select):not(:disabled),
+    textarea:not(:disabled):not([readonly])
+  ):hover{border-color:var(--color-sage)}
+}
+body :is(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+  select:not(.task-status-select),
+  textarea
+):focus-visible{
+  outline:0;
+  border-color:var(--color-focus);
+  box-shadow:var(--shadow-focus);
+}
+body :is(input,select,textarea)[aria-invalid="true"],
+body :is(input,select,textarea).is-invalid{
+  border-color:var(--color-danger)!important;
+  box-shadow:0 0 0 3px rgba(167,95,80,.16)!important;
+}
+body :is(input,select,textarea):disabled,
+body :is(input,textarea)[readonly]{
+  border-color:var(--color-secondary-border)!important;
+  background-color:var(--color-disabled-surface)!important;
+  color:var(--color-disabled-text)!important;
+  box-shadow:none!important;
+  cursor:not-allowed;
+  opacity:1;
+}
+
+/* Cases, choix et interrupteurs */
+input[type="checkbox"],input[type="radio"]{accent-color:var(--color-primary)}
+input[type="checkbox"]:focus-visible,input[type="radio"]:focus-visible{
+  outline:2px solid var(--color-focus);
+  outline-offset:2px;
+}
+input[type="checkbox"]:disabled,input[type="radio"]:disabled{cursor:not-allowed;opacity:.62}
+
+/* Libellés et aides */
+.task-form label,
+.calendar-form-grid label,
+.resource-form-grid label:not(.resource-upload-btn),
+.value-form label,
+.note-form label,
+.profile-form>label,
+.password-form label{
+  gap:var(--field-gap)!important;
+  color:var(--color-text)!important;
+  font-size:var(--font-size-label)!important;
+  line-height:var(--line-height-heading)!important;
+  font-weight:var(--font-weight-bold)!important;
+}
+.field-title{
+  color:var(--color-text)!important;
+  font-size:var(--font-size-label)!important;
+  line-height:var(--line-height-heading)!important;
+  font-weight:var(--font-weight-bold)!important;
+}
+.field-help,
+.profile-help,
+.resource-visual-controls small,
+.calendar-form-grid label small{
+  color:var(--color-text-muted)!important;
+  font-size:var(--font-size-meta)!important;
+  line-height:var(--line-height-body)!important;
+  font-weight:var(--font-weight-regular)!important;
+}
+
+/* Messages de validation */
+.error,.form-message.error{
+  margin:var(--space-2) 0 0!important;
+  padding:var(--space-3)!important;
+  border:1px solid var(--color-danger-border)!important;
+  border-radius:var(--radius-sm)!important;
+  background:var(--color-danger-surface)!important;
+  color:var(--color-danger-text)!important;
+  font-size:var(--font-size-meta)!important;
+  line-height:var(--line-height-body)!important;
+}
+.password-success,.form-message.success{
+  margin:var(--space-2) 0 0!important;
+  padding:var(--space-3)!important;
+  border:1px solid var(--color-success-border)!important;
+  border-radius:var(--radius-sm)!important;
+  background:var(--color-success-surface)!important;
+  color:var(--color-success)!important;
+  font-size:var(--font-size-meta)!important;
+  line-height:var(--line-height-body)!important;
+}
+.error:empty,.password-success:empty,.form-message:empty{display:none}
+
+/* Rythme des formulaires et champs composés */
+.task-form,.calendar-form-grid,.resource-form-grid,.value-form,.password-form{row-gap:var(--form-row-gap)!important}
+.note-form label{margin-bottom:var(--form-row-gap)!important}
+.toolbar,.task-comment-form,.comment-form{gap:var(--space-3)!important}
+.toolbar{align-items:center}
+.task-comment-form input,.comment-form input{flex:1;min-width:min(220px,100%)}
+.password-field{gap:var(--space-2)!important}
+.password-field input{flex:1;min-width:0}
+
+/* Filtres */
+.actions-filter-panel{
+  gap:var(--space-4)!important;
+  padding:var(--space-3) var(--space-4)!important;
+  border-color:var(--color-border)!important;
+  border-radius:var(--radius-md)!important;
+  background:var(--color-surface)!important;
+}
+.action-filters{gap:var(--space-3)!important}
+.action-filter-field{gap:var(--space-2)!important}
+.action-filter-field span{
+  color:var(--color-text-muted)!important;
+  font-size:var(--font-size-caption)!important;
+  line-height:var(--line-height-heading)!important;
+  letter-spacing:var(--tracking-label)!important;
+}
+.action-filter-field select{min-width:160px}
+.action-view-toggle{padding:var(--space-1)!important;border-radius:var(--radius-md)!important;background:var(--color-sage-subtle)!important}
+.my-actions-toggle{min-height:var(--control-height-md)!important;padding:0 var(--space-3)!important;font-size:var(--font-size-label)!important}
+.my-actions-toggle:focus-within{box-shadow:var(--shadow-focus)}
+.clear-task-filters{height:var(--control-height-md)!important;font-size:var(--font-size-label)!important}
+.resource-filters{gap:var(--space-2)!important;margin-bottom:var(--space-5)!important}
+#historyFilter{min-width:min(240px,100%)}
+#adminSearch{margin:var(--space-4) 0!important;padding:var(--field-padding-block) var(--field-padding-inline)!important}
+
+@media(max-width:620px){
+  .toolbar>input,.toolbar>select,.toolbar>.btn,#historyFilter{width:100%!important}
+  .action-filter-field select{min-width:0}
+  .task-comment-form input,.comment-form input{min-width:0;width:100%}
+}
+@media(prefers-reduced-motion:reduce){body :is(input,select,textarea){transition:none!important}}
+
+/* =========================================================
+   DESIGN SYSTEM — LOT 5 : CARTES & LISTES DE CONTENU
+
+   Les surfaces informatives restent stables. Seules les cartes
+   entièrement interactives utilisent une élévation au survol.
+   Les lignes de suivi partagent un rythme et des séparateurs communs.
+   ========================================================= */
+
+/* Surfaces principales */
+.card,
+.axis-card,
+.resource-card,
+.note-post{
+  box-sizing:border-box;
+  border:1px solid var(--color-border-card)!important;
+  border-radius:var(--radius-card)!important;
+  background:var(--color-surface-card)!important;
+  box-shadow:var(--shadow-card)!important;
+}
+.axis-card,
+.resource-card,
+.note-post{padding:var(--card-padding-md)!important}
+.poll-card,.home-bottom-grid>.card{padding:var(--card-padding-lg)!important}
+.resource-grid,.member-directory,.poll-list,.notes-feed,.axis-grid{gap:var(--card-grid-gap)!important}
+
+/* Une carte informative ne simule jamais un clic. */
+.axis-card{transition:none!important}
+.axis-card:hover{transform:none!important;box-shadow:var(--shadow-card)!important}
+
+/* Cartes entièrement cliquables */
+.member-profile-card{
+  box-sizing:border-box;
+  min-height:var(--list-row-min-height);
+  padding:var(--card-padding-sm)!important;
+  border:1px solid var(--color-border-card)!important;
+  border-radius:var(--radius-card)!important;
+  background:var(--color-surface-card)!important;
+  box-shadow:none;
+  transition:var(--surface-transition)!important;
+}
+@media(hover:hover){
+  .member-profile-card:hover{
+    border-color:var(--color-sage)!important;
+    box-shadow:var(--shadow-card-hover)!important;
+    transform:translateY(-2px);
+  }
+}
+.member-profile-card:active{transform:translateY(0)}
+
+/* En-têtes et pieds de carte */
+.resource-card-head,.note-post-head{gap:var(--card-content-gap)!important}
+.resource-actions,.poll-actions,.note-tools{
+  gap:var(--space-2)!important;
+  margin-top:var(--space-4)!important;
+  padding-top:var(--space-4)!important;
+  border-top:1px solid var(--color-border)!important;
+}
+.resource-actions{margin-top:auto!important}
+.resource-card>p,.note-body{margin-top:var(--space-4)!important;margin-bottom:0!important}
+
+/* Lignes de contenu */
+.taskrow-v2,
+.budgetrow,
+.calendar-upcoming-item,
+.history-item{
+  box-sizing:border-box;
+  min-height:var(--list-row-min-height);
+  gap:var(--list-row-gap)!important;
+}
+.taskrow-v2,
+.calendar-upcoming-item{
+  padding:var(--list-row-padding-block) var(--list-row-padding-inline)!important;
+  border-bottom:1px solid var(--color-border)!important;
+}
+.taskrow-v2:last-child,.calendar-upcoming-item:last-child{border-bottom:0!important}
+.taskrow-v2:focus-within,.calendar-upcoming-item:focus-within{
+  border-radius:var(--radius-sm);
+  background:var(--color-surface-soft);
+}
+.taskrow-v2.overdue{
+  margin:0!important;
+  padding:var(--list-row-padding-block) var(--list-row-padding-inline)!important;
+  border-left:3px solid var(--color-accent)!important;
+  background:var(--color-danger-surface)!important;
+}
+.actions-card{padding:0 var(--card-padding-sm)!important;overflow:hidden}
+.calendar-upcoming{padding:var(--space-1) var(--card-padding-sm)!important;overflow:hidden}
+.budgetrow{
+  grid-template-columns:minmax(0,2fr) minmax(140px,1fr) minmax(110px,auto) var(--control-height-md)!important;
+  align-items:center;
+  margin:0!important;
+  padding:var(--space-3) 0!important;
+  border-bottom:1px solid var(--color-border);
+}
+.budgetrow:last-child{border-bottom:0}
+.history-item{
+  padding:var(--list-row-padding-block) var(--list-row-padding-inline)!important;
+  border-color:var(--color-border-card)!important;
+  border-radius:var(--radius-md)!important;
+  background:var(--color-surface)!important;
+}
+.history-list{gap:var(--space-3)!important}
+
+/* Lignes imbriquées */
+.note-comments{gap:var(--space-2)!important}
+.note-comment{
+  padding:var(--space-3)!important;
+  border:1px solid var(--color-border);
+  border-radius:var(--radius-sm)!important;
+  background:var(--color-surface-soft)!important;
+  color:var(--color-text);
+  font-size:var(--font-size-meta)!important;
+  line-height:var(--line-height-body);
+}
+.participation-group{
+  padding:var(--space-3)!important;
+  border-color:var(--color-border)!important;
+  border-radius:var(--radius-md)!important;
+  background:var(--color-surface)!important;
+}
+
+/* Notifications : liste compacte interactive */
+.notification-item{
+  min-height:var(--list-row-min-height);
+  padding:var(--space-3) var(--space-4)!important;
+  border-bottom-color:var(--color-border)!important;
+  transition:background-color .16s ease;
+}
+.notification-item:last-child{border-bottom:0}
+.notification-item.unread{background:var(--color-sage-subtle)!important}
+@media(hover:hover){.notification-item:hover{background:var(--color-surface-soft)!important}}
+
+/* État vide commun */
+.empty-state{
+  grid-column:1/-1;
+  width:100%;
+  min-height:var(--empty-state-min-height);
+  padding:var(--card-padding-lg);
+  border:1px dashed var(--color-border);
+  border-radius:var(--radius-card);
+  background:var(--color-surface-soft);
+  color:var(--color-text-muted);
+  display:grid;
+  place-items:center;
+  text-align:center;
+}
+.empty-state.compact{min-height:72px;padding:var(--card-padding-sm)}
+.empty-state p{max-width:var(--text-measure);margin:0!important;font-size:var(--font-size-label)!important;line-height:var(--line-height-body)!important}
+.notification-empty{min-height:88px;display:grid;place-items:center;padding:var(--card-padding-md)!important}
+
+@media(max-width:760px){
+  .axis-card,.resource-card,.note-post,.poll-card{padding:var(--card-padding-sm)!important}
+  .taskrow-v2,.calendar-upcoming-item,.history-item{padding:var(--space-3)!important}
+  .budgetrow{grid-template-columns:minmax(0,1fr) var(--control-height-md)!important;gap:var(--space-2) var(--space-3)!important}
+  .budgetrow>b,.budgetrow>span{grid-column:1}
+  .budgetrow>.del{grid-column:2;grid-row:1/4;align-self:center}
+}
+@media(prefers-reduced-motion:reduce){.member-profile-card,.notification-item{transition:none!important}}
 </style>
 </head>
 <body class="auth-pending">
@@ -2869,14 +3223,14 @@ button:disabled.btn{
     <div class="calendar-dialog-body">
       <div class="calendar-form-grid">
         <label>Type *<select id="calType"><option value="meeting">Réunion</option><option value="action">Action</option></select></label>
-        <label>Date *<input id="calDate" type="date"></label>
+        <label>Date *<input id="calDate" type="date" aria-describedby="calError"></label>
         <label>Heure<input id="calTime" type="time"></label>
         <label>Responsable<input id="calOwner" placeholder="Nom du responsable"></label>
-        <label class="full">Titre *<input id="calTitle" placeholder="Ex. Réunion mensuelle"></label>
+        <label class="full">Titre *<input id="calTitle" aria-describedby="calError" placeholder="Ex. Réunion mensuelle"></label>
         <label id="calMeetingLinkField" class="full">Lien de connexion<input id="calMeetingLink" type="url" inputmode="url" autocomplete="url" placeholder="https://teams.microsoft.com/..."><small style="font-weight:500;color:var(--muted)">Teams, Google Meet, Zoom, Webex…</small></label>
         <label class="full">Description<textarea id="calDescription" placeholder="Ordre du jour, informations utiles, lieu..."></textarea></label>
       </div>
-      <p id="calError" style="color:#a75f50;font-size:13px;margin-bottom:0"></p>
+      <p id="calError" class="error" aria-live="polite"></p>
       <div id="calendarParticipationDetails" class="participation-details" style="display:none"></div>
       <div class="calendar-actions">
         <button id="deleteCalendarEvent" class="btn danger" style="display:none">Supprimer</button>
@@ -2901,7 +3255,7 @@ button:disabled.btn{
   <div class="calendar-dialog-head"><div><h2 id="pollModalTitle">Créer un sondage</h2><p>Définissez la question et les réponses proposées.</p></div><button id="closePollModal" class="btn secondary modal-close-x" aria-label="Fermer" title="Fermer">×</button></div>
   <div class="calendar-dialog-body">
    <div class="calendar-form-grid">
-    <label class="full">Question *<input id="pollQuestion" placeholder="Ex. Quelle date retenons-nous ?"></label>
+    <label class="full">Question *<input id="pollQuestion" aria-describedby="pollError" placeholder="Ex. Quelle date retenons-nous ?"></label>
     <label class="full">Description<textarea id="pollDescription" placeholder="Contexte ou précision facultative..."></textarea></label>
     <label>Date de clôture<input id="pollDeadline" type="date"></label><div class="poll-multiple-setting">
   <div class="poll-multiple-text">
@@ -2919,7 +3273,7 @@ button:disabled.btn{
 </div>
    </div>
    <div style="margin-top:20px"><label style="font-size:13px;font-weight:700">Réponses proposées *</label><div id="pollOptionsEditor" class="poll-options-editor" style="margin-top:8px"></div><button id="addPollOption" class="btn secondary" style="margin-top:10px">+ Ajouter une réponse</button></div>
-   <p id="pollError" style="color:#a75f50;font-size:13px"></p>
+   <p id="pollError" class="error" aria-live="polite"></p>
    <div class="calendar-actions"><button id="deletePollBtn" class="btn danger" style="display:none;margin-right:auto">Supprimer</button><button id="cancelPollBtn" class="btn secondary">Annuler</button><button id="savePollBtn" class="btn">Enregistrer</button></div>
   </div>
  </div>
@@ -2932,7 +3286,7 @@ button:disabled.btn{
     <p class="intro">Retrouvez rapidement les espaces de travail, documents et liens utiles de la communauté.</p></div>
     <button id="addResourceBtn" class="btn" style="display:none">+ Ajouter une ressource</button>
   </div>
-  <div id="resourceFilters" class="resource-filters"></div>
+  <div id="resourceFilters" class="resource-filters" role="group" aria-label="Filtrer les ressources par catégorie"></div>
   <div id="resourceList" class="resource-grid"></div>
 </section>
 <div id="resourceModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9998;padding:20px;overflow:auto">
@@ -2940,12 +3294,12 @@ button:disabled.btn{
   <div class="calendar-dialog-head"><div><div class="eyebrow">RESSOURCE</div><h2 id="resourceModalTitle">Ajouter une ressource</h2></div><button id="closeResourceModal" class="btn secondary modal-close-x" aria-label="Fermer" title="Fermer">×</button></div>
   <div class="calendar-dialog-body">
    <div class="resource-form-grid">
-    <label>Nom *<input id="resourceName" placeholder="Ex. Google Drive"></label>
+    <label>Nom *<input id="resourceName" aria-describedby="resourceError" placeholder="Ex. Google Drive"></label>
     <label>Catégorie *<select id="resourceCategory"><option>Documents</option><option>Collaboration</option><option>Organisation</option><option>Contacts</option><option>Autre</option></select></label><div class="full resource-visual-field"><span class="field-title">Icône ou image</span><div class="resource-visual-row"><div id="resourceVisualPreview" class="resource-visual-preview">↗</div><div class="resource-visual-controls"><select id="resourceIcon"><option value="auto">Icône automatique</option><option value="📁">📁 Dossier</option><option value="📄">📄 Document</option><option value="🔗">🔗 Lien</option><option value="🧩">🧩 Collaboration</option><option value="📌">📌 Important</option><option value="👥">👥 Communauté</option><option value="💬">💬 Discussion</option><option value="🗺️">🗺️ Carte / plan</option></select><label class="btn secondary resource-upload-btn">Importer une image<input id="resourceImage" type="file" accept="image/*"></label><button id="removeResourceImage" type="button" class="btn secondary" style="display:none">Retirer l’image</button><small>Les images sont automatiquement compressées à 5 Ko maximum.</small></div></div></div>
-    <label class="full">Lien *<input id="resourceUrl" type="url" placeholder="https://..."></label>
+    <label class="full">Lien *<input id="resourceUrl" type="url" aria-describedby="resourceError" placeholder="https://..."></label>
     <label class="full">Description<textarea id="resourceDescription" placeholder="À quoi sert cette ressource ?"></textarea></label>
    </div>
-   <p id="resourceError" style="color:#a75f50;font-size:13px"></p>
+   <p id="resourceError" class="error" aria-live="polite"></p>
    <div class="calendar-actions"><button id="deleteResourceBtn" class="btn danger" style="display:none;margin-right:auto">Supprimer</button><button id="cancelResourceBtn" class="btn secondary">Annuler</button><button id="saveResourceBtn" class="btn">Enregistrer</button></div>
   </div>
  </div>
@@ -2969,10 +3323,10 @@ button:disabled.btn{
       <button id="closeValueModal" class="btn secondary modal-close-x" aria-label="Fermer" title="Fermer">×</button>
     </div>
     <div class="value-form">
-      <label><span>Titre *</span><input id="valueTitle" maxlength="80" placeholder="Ex. Liberté & autonomie"></label>
-      <label><span>Description *</span><textarea id="valueDescription" maxlength="400" placeholder="Décrivez simplement ce que cette valeur signifie pour la communauté."></textarea></label>
+      <label><span>Titre *</span><input id="valueTitle" maxlength="80" aria-describedby="valueError" placeholder="Ex. Liberté & autonomie"></label>
+      <label><span>Description *</span><textarea id="valueDescription" maxlength="400" aria-describedby="valueError" placeholder="Décrivez simplement ce que cette valeur signifie pour la communauté."></textarea></label>
       <label><span>Symbole</span><select id="valueIcon"><option value="♡">♡ Cœur</option><option value="◇">◇ Losange</option><option value="◎">◎ Cercle</option><option value="☀">☀ Soleil</option><option value="♧">♧ Nature</option><option value="∞">∞ Lien</option></select></label>
-      <p id="valueError" class="error"></p>
+      <p id="valueError" class="error" aria-live="polite"></p>
       <div class="modal-actions"><button id="cancelValueModal" class="btn secondary">Annuler</button><button id="saveValueBtn" class="btn">Ajouter la valeur</button></div>
     </div>
   </div>
@@ -2990,9 +3344,9 @@ button:disabled.btn{
  <div class="card note-dialog">
   <div class="calendar-dialog-head"><div><div class="eyebrow">NOTE</div><h2 id="noteModalTitle">Nouvelle note</h2></div><button id="closeNoteModal" class="btn secondary modal-close-x" aria-label="Fermer" title="Fermer">×</button></div>
   <div class="calendar-dialog-body note-form">
-   <label>Titre *<input id="noteTitle" placeholder="Donnez un titre à votre note"></label>
-   <label>Contenu *<textarea id="noteContent" placeholder="Écrivez votre note…"></textarea></label>
-   <p id="noteError" class="error"></p>
+   <label>Titre *<input id="noteTitle" aria-describedby="noteError" placeholder="Donnez un titre à votre note"></label>
+   <label>Contenu *<textarea id="noteContent" aria-describedby="noteError" placeholder="Écrivez votre note…"></textarea></label>
+   <p id="noteError" class="error" aria-live="polite"></p>
    <div class="calendar-actions"><button id="deleteNoteBtn" class="btn danger" style="display:none;margin-right:auto">Supprimer</button><button id="cancelNoteBtn" class="btn secondary">Annuler</button><button id="saveNoteBtn" class="btn">Publier</button></div>
   </div>
  </div>
@@ -3014,7 +3368,7 @@ button:disabled.btn{
 
 <div class="profile-form">
    <div class="profile-photo-row"><div id="profilePreview" class="profile-preview">C</div><div><label class="btn secondary" style="display:inline-block;cursor:pointer">Choisir une photo<input id="profilePhotoInput" type="file" accept="image/*" style="display:none"></label><button id="removeProfilePhoto" class="btn danger" hidden type="button" style="margin-left:5px">Supprimer</button><div class="profile-help" style="margin-top:7px">La photo est redimensionnée et compressée automatiquement à 5 Ko maximum.</div></div></div>
-   <label>Nom affiché *<input id="profileDisplayName" maxlength="60" placeholder="Votre nom" required></label>
+   <label>Nom affiché *<input id="profileDisplayName" maxlength="60" placeholder="Votre nom" required aria-describedby="profileError"></label>
    <label>E-mail<input id="profileEmail" type="email" disabled></label>
    
    </section>
@@ -3031,7 +3385,7 @@ button:disabled.btn{
     </div>
    </div>
 
-   <p id="profileError" class="error" style="color:#a75f50"></p>
+   <p id="profileError" class="error" aria-live="polite"></p>
    </section>
    </div>
   </div>
@@ -3045,7 +3399,7 @@ button:disabled.btn{
       <div><h2 style="margin:0">Administration des utilisateurs</h2><p style="margin:6px 0 0;color:#666">Valider les membres, gérer leur accès et attribuer ou retirer les droits d’administrateur.</p></div>
       <button id="closeAdmin" class="btn secondary modal-close-x" aria-label="Fermer" title="Fermer">×</button>
     </div>
-    <input id="adminSearch" placeholder="Rechercher par e-mail..." style="width:100%;box-sizing:border-box;margin:18px 0;padding:11px;border:1px solid #ddd;border-radius:10px">
+    <input id="adminSearch" type="search" aria-label="Rechercher un membre par e-mail" placeholder="Rechercher par e-mail..." style="width:100%;box-sizing:border-box">
     <div id="adminUsers"></div>
   </div>
 </div>
@@ -3108,9 +3462,9 @@ const COLLABORATIVE_MIGRATION_VERSION=1;
 let migrationComplete=false;
 function collaborativeOrLegacy(fresh,legacy){return fresh.length||migrationComplete?fresh:structuredClone(legacy||[])}
 
-const overlay=document.createElement('div'); overlay.id='loginOverlay'; overlay.innerHTML=`<div style="max-width:420px;margin:12vh auto;background:#fffdf8;border:1px solid #ddd8cd;border-radius:16px;padding:28px;box-shadow:0 12px 40px #0002"><h2>Communauté solidaire des Gens de confiance</h2><p></p><input id="loginEmail" type="email" placeholder="E-mail" style="width:100%;margin:7px 0"><input id="loginPassword" type="password" placeholder="Mot de passe" style="width:100%;margin:7px 0"><button id="loginBtn" class="btn" style="width:100%;margin-top:8px">Se connecter</button>
+const overlay=document.createElement('div'); overlay.id='loginOverlay'; overlay.innerHTML=`<div style="max-width:420px;margin:12vh auto;background:#fffdf8;border:1px solid #ddd8cd;border-radius:16px;padding:28px;box-shadow:0 12px 40px #0002"><h2>Communauté solidaire des Gens de confiance</h2><p></p><input id="loginEmail" type="email" autocomplete="email" aria-label="Adresse e-mail" aria-describedby="loginError" placeholder="E-mail" style="width:100%;margin:7px 0"><input id="loginPassword" type="password" autocomplete="current-password" aria-label="Mot de passe" aria-describedby="loginError" placeholder="Mot de passe" style="width:100%;margin:7px 0"><button id="loginBtn" class="btn" style="width:100%;margin-top:8px">Se connecter</button>
 <button id="signupBtn" class="btn secondary" type="button" style="width:100%;margin-top:10px">Créer un compte</button>
-<p id="loginError" style="color:#a75f50;font-size:13px"></p><div id="approvalMessage" style="display:none;margin-top:14px;padding:14px;border-radius:12px;background:#f4efe6;line-height:1.5"></div></div>`; Object.assign(overlay.style,{position:'fixed',inset:'0',background:'#f4f1e9',zIndex:'9999'}); document.body.appendChild(overlay);
+<p id="loginError" class="error" aria-live="polite"></p><div id="approvalMessage" aria-live="polite" style="display:none;margin-top:14px;padding:14px;border-radius:12px;background:#f4efe6;line-height:1.5"></div></div>`; Object.assign(overlay.style,{position:'fixed',inset:'0',background:'#f4f1e9',zIndex:'9999'}); document.body.appendChild(overlay);
 window.__tinyBootReady=true;
 const accountActions=document.getElementById('accountDropdown');
 const accountMenu=document.getElementById('accountMenu');
@@ -3187,7 +3541,7 @@ function renderNotifications(){
   const unread=sorted.filter(n=>!notificationReadIds.has(n.id)).length;
   notificationBadge.hidden=!unread;notificationBadge.textContent=unread>99?'99+':String(unread);
   notificationList.innerHTML='';
-  if(!sorted.length){notificationList.innerHTML='<div class="notification-empty">Aucune notification pour le moment.</div>';return}
+  if(!sorted.length){notificationList.innerHTML='<div class="notification-empty" role="status">Aucune notification pour le moment.</div>';return}
   sorted.forEach(n=>{const b=document.createElement('button');b.type='button';b.className='notification-item'+(notificationReadIds.has(n.id)?'':' unread');b.innerHTML='<span class="notification-dot" aria-hidden="true"></span><span><b>'+esc(n.title||'Nouvelle information')+'</b><p>'+esc(n.message||'')+'</p><time>'+esc(notificationDate(n.createdAt))+'</time></span>';b.onclick=async()=>{await setDoc(doc(db,'users',currentUserId(),'notificationReads',n.id),{readAt:serverTimestamp()},{merge:true});notificationPanel.hidden=true;notificationBtn.setAttribute('aria-expanded','false');const allowedPages=['dashboard','principles','resources','calendar','polls','tasks','notes','budget','community','history'];const target=allowedPages.includes(n.page)?n.page:'dashboard';const navBtn=document.querySelector('#nav button[data-page="'+target+'"]');if(navBtn)navBtn.click()};notificationList.appendChild(b)});
 }
 function stopNotificationListeners(){notificationUnsubs.forEach(unsub=>{try{unsub()}catch{}});notificationUnsubs=[];if(notificationReadsUnsub){notificationReadsUnsub();notificationReadsUnsub=null}notificationItems=[];globalNotificationItems=[];personalNotificationItems=[];notificationReadIds=new Set();notificationViewCounts=new Map();notificationReadsReady=false;renderNotifications()}
@@ -3254,7 +3608,7 @@ function renderHistory(){
   const filter=historyFilter.value||'all';
   const items=(data.history||[]).filter(x=>filter==='all'||x.entityType===filter).sort((a,b)=>dateValue(b.createdAt)-dateValue(a.createdAt)).slice(0,150);
   historyList.innerHTML='';
-  if(!items.length){historyList.innerHTML='<div class="card"><p class="intro">Aucune modification enregistrée pour le moment.</p></div>';return}
+  if(!items.length){historyList.innerHTML='<div class="empty-state" role="status"><p>Aucune modification enregistrée pour le moment.</p></div>';return}
   items.forEach(x=>{const row=document.createElement('article');row.className='history-item';row.innerHTML='<span class="history-icon" aria-hidden="true">'+esc(historyIcon(x.action))+'</span><div><strong>'+esc(historyVerb(x.action))+' · '+esc(historyLabel(x.entityType))+' — '+esc(x.title||'Sans titre')+'</strong><p>Par '+esc(x.actorEmail||'Membre')+(x.details?' · '+esc(x.details):'')+'</p></div><time>'+esc(notificationDate(x.createdAt))+'</time>';historyList.appendChild(row)});
 }
 historyFilter.onchange=renderHistory;
@@ -3316,7 +3670,7 @@ function renderTasks(){
   clearTaskFilters.hidden=taskAssigneeFilter.value==='all'&&taskStatusFilter.value==='all'&&taskDueFilter.value==='all'&&!myTasksOnly.checked;
   const taskItems=Array.isArray(data.tasks)?data.tasks:[];
   const rows=taskItems.map((t,i)=>({t,i})).filter(x=>taskMatchesFilters(x.t));
-  taskList.innerHTML=rows.length?'':'<p class="intro" style="padding:18px 0">Aucune action ne correspond aux filtres.</p>';
+  taskList.innerHTML=rows.length?'':'<div class="empty-state compact" role="status"><p>Aucune action ne correspond aux filtres.</p></div>';
   rows.forEach(({t,i})=>{
     const assigneeIds=Array.isArray(t.assigneeIds)?t.assigneeIds:[],assignees=assigneeIds.length?assigneeIds.map(id=>{const m=publicMember(id);return '<span class="task-person">'+(safeImageDataUrl(m?.photo)?'<img src="'+safeImageDataUrl(m.photo)+'" alt="">':'')+esc(publicMemberName(id))+'</span>'}).join(''):'<span class="task-person">'+esc(t.owner||'Non assignée')+'</span>';
     const allowedPriorities=['Normale','Haute','Basse'];
@@ -3326,19 +3680,19 @@ function renderTasks(){
     const priorityClass=({Normale:'normale',Haute:'haute',Basse:'basse'})[priority];
     const statusClass=({'À faire':'a-faire','En cours':'en-cours','Bloqué':'bloque','Effectuée':'effectuee'})[status];
     const overdue=taskIsOverdue(t);
-    const row=document.createElement('div');row.className='taskrow-v2 '+(t.done?'done ':'')+(overdue?'overdue':'');
+    const row=document.createElement('article');row.className='taskrow-v2 '+(t.done?'done ':'')+(overdue?'overdue':'');
     row.innerHTML='<div class="task-main"><strong>'+esc(t.title||t.name||'Sans titre')+'</strong>'+(t.description?'<div class="task-desc">'+esc(t.description)+'</div>':'')+'</div><div class="task-assignees">'+assignees+'</div><div class="task-meta task-date">'+esc(t.date||'Sans date')+(overdue?'<span class="overdue-label">En retard</span>':'')+'</div><div><span class="priority-badge priority-'+priorityClass+'">'+esc(priority)+'</span></div><div class="task-status"><select class="task-status-select status-'+statusClass+'" onchange="quickTaskStatus('+i+',this.value)" aria-label="Modifier le statut de l’action"><option value="À faire" '+(status==='À faire'?'selected':'')+'>À faire</option><option value="En cours" '+(status==='En cours'?'selected':'')+'>En cours</option><option value="Bloqué" '+(status==='Bloqué'?'selected':'')+'>Bloqué</option><option value="Effectuée" '+(status==='Effectuée'?'selected':'')+'>Effectuée</option></select></div><div class="task-actions"><button class="task-edit" onclick="editTask('+i+')">Ouvrir</button><button class="del" onclick="deleteTask('+i+')" aria-label="Supprimer l’action" title="Supprimer">×</button></div>';
     taskList.appendChild(row);
   });
 }
 function renderMembers(){
  const members=data.publicMembers||[];memberList.innerHTML='';
- if(!members.length){memberList.innerHTML='<div class="card" style="grid-column:1/-1"><p class="intro">Aucun membre actif pour le moment.</p></div>';return}
+ if(!members.length){memberList.innerHTML='<div class="empty-state" role="status"><p>Aucun membre actif pour le moment.</p></div>';return}
  members.sort((a,b)=>(a.displayName||a.email||'').localeCompare(b.displayName||b.email||'')).forEach(m=>{const card=document.createElement('button');card.type='button';card.className='member-profile-card';card.innerHTML=memberAvatarHtml(m)+'<span><strong>'+esc(m.displayName||m.email||'Membre')+'</strong><small>'+esc(m.email||'')+'</small><span class="role-chip">'+esc(m.role==='admin'?'Administrateur':'Membre')+'</span></span>';card.onclick=()=>openMemberProfile(m.id);memberList.appendChild(card)});
 }
 function openMemberProfile(id){const m=publicMember(id);if(!m)return;memberProfileDetail.innerHTML=memberAvatarHtml(m)+'<h2>'+esc(m.displayName||m.email||'Membre')+'</h2><p>'+esc(m.email||'')+'</p><span class="role-chip">'+esc(m.role==='admin'?'Administrateur':'Membre')+'</span>';memberProfileModal.style.display='grid'}
 closeMemberProfile.onclick=()=>memberProfileModal.style.display='none';memberProfileModal.addEventListener('click',e=>{if(e.target===memberProfileModal)memberProfileModal.style.display='none'});
-function renderBudget(){const items=Array.isArray(data.budget)?data.budget:[];budgetList.innerHTML=items.map((b,i)=>`<div class="budgetrow"><b>${esc(b.label)}</b><span>${esc(b.type)}</span><span class="money">${money(b.amount)}</span><button class="del" onclick="deleteBudget(${i})" aria-label="Supprimer la ligne de budget" title="Supprimer">×</button></div>`).join('');let total=items.reduce((s,b)=>s+Number(b.amount),0);budgetTotal.textContent=money(total);budgetKpi.textContent=money(total)}
+function renderBudget(){const items=Array.isArray(data.budget)?data.budget:[];budgetList.innerHTML=items.length?items.map((b,i)=>`<div class="budgetrow"><b>${esc(b.label)}</b><span>${esc(b.type)}</span><span class="money">${money(b.amount)}</span><button class="del" onclick="deleteBudget(${i})" aria-label="Supprimer la ligne de budget" title="Supprimer">×</button></div>`).join(''):'<div class="empty-state compact" role="status"><p>Aucune ligne de budget pour le moment.</p></div>';let total=items.reduce((s,b)=>s+Number(b.amount),0);budgetTotal.textContent=money(total);budgetKpi.textContent=money(total)}
 function renderAll(){renderCharterValues();renderTasks();renderMembers();renderBudget();renderNotes();taskKpi.textContent=(Array.isArray(data.tasks)?data.tasks:[]).filter(t=>!t.done).length;
 renderCalendar();
 renderPolls();
@@ -3432,7 +3786,7 @@ function renderNotes(){
  if(!document.getElementById('notesFeed'))return;data.noteItems=data.noteItems||[];
  const items=[...data.noteItems].sort((a,b)=>(b.updatedAt||b.createdAt||'').localeCompare(a.updatedAt||a.createdAt||''));
  notesFeed.innerHTML='';
- if(!items.length){notesFeed.innerHTML='<div class="card"><p class="intro">Aucune note pour le moment. Soyez le premier à en publier une.</p></div>';return}
+ if(!items.length){notesFeed.innerHTML='<div class="empty-state" role="status"><p>Aucune note pour le moment. Soyez le premier à en publier une.</p></div>';return}
  items.forEach(n=>{
   n.reactions=n.reactions||{};n.comments=n.comments||[];
   const mine=n.authorUid===currentUserId(), post=document.createElement('article');post.className='note-post';
@@ -3628,9 +3982,9 @@ function renderCalendar(){
 }
 function renderUpcoming(){
   const now=calISO(new Date()), list=(data.calendarEvents||[]).filter(e=>e.date>=now).sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||''))).slice(0,8);
-  calendarUpcoming.innerHTML=list.length?'':'<p class="intro">Aucun événement à venir.</p>';
+  calendarUpcoming.innerHTML=list.length?'':'<div class="empty-state compact" role="status"><p>Aucun événement à venir.</p></div>';
   list.forEach(ev=>{
-    const row=document.createElement('div');row.className='calendar-upcoming-item';
+    const row=document.createElement('article');row.className='calendar-upcoming-item';
     const left=document.createElement('div');left.className='upcoming-content';
     const eventTitle=document.createElement('strong');eventTitle.textContent=ev.title||'';
     const eventMeta=document.createElement('small');eventMeta.textContent=new Date(ev.date+'T12:00:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'long'})+(ev.time?' · '+ev.time:'')+' · '+(ev.type==='action'?'Action':'Réunion')+(ev.owner?' · '+ev.owner:'');
@@ -3724,9 +4078,9 @@ function closeResource(){resourceModal.style.display='none';editingResourceId=nu
 function renderResources(){
  if(!document.getElementById('resourceList'))return;data.resources=data.resources||[];addResourceBtn.style.display=auth.currentUser?'inline-block':'none';
  const cats=['Toutes',...new Set(data.resources.map(r=>r.category||'Autre'))];if(!cats.includes(resourceFilter))resourceFilter='Toutes';resourceFilters.innerHTML='';
- cats.forEach(c=>{const b=document.createElement('button');b.className='resource-filter'+(resourceFilter===c?' active':'');b.textContent=c;b.onclick=()=>{resourceFilter=c;renderResources()};resourceFilters.appendChild(b)});
+ cats.forEach(c=>{const b=document.createElement('button');b.type='button';b.className='resource-filter'+(resourceFilter===c?' active':'');b.textContent=c;b.setAttribute('aria-pressed',String(resourceFilter===c));b.onclick=()=>{resourceFilter=c;renderResources()};resourceFilters.appendChild(b)});
  const list=resourceFilter==='Toutes'?data.resources:data.resources.filter(r=>(r.category||'Autre')===resourceFilter);resourceList.innerHTML='';
- if(!list.length){resourceList.innerHTML='<div class="card" style="grid-column:1/-1"><p class="intro">Aucune ressource pour le moment.</p></div>';return}
+ if(!list.length){resourceList.innerHTML='<div class="empty-state" role="status"><p>Aucune ressource pour le moment.</p></div>';return}
  list.forEach(r=>{const card=document.createElement('article');card.className='resource-card';card.innerHTML='<div class="resource-card-head"><div><div class="resource-category">'+esc(r.category||'Autre')+'</div><h2>'+esc(r.name)+'</h2></div><div class="resource-icon">'+(safeImageDataUrl(r.image)?'<img src="'+safeImageDataUrl(r.image)+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:11px">':esc(r.icon&&r.icon!=='auto'?r.icon:resourceIconForCategory(r.category)))+'</div></div><p>'+esc(r.description||'Accéder à cette ressource de la communauté.')+'</p><div class="resource-actions"></div>';
  const a=document.createElement('a');a.className='btn';a.target='_blank';a.rel='noopener noreferrer';a.href=safeUrl(r.url);a.textContent='Ouvrir ↗';card.querySelector('.resource-actions').appendChild(a);
  if(canEditResource(r)){const e=document.createElement('button');e.className='btn secondary';e.textContent='Modifier';e.onclick=()=>openResourceModal(r.id);card.querySelector('.resource-actions').appendChild(e)}resourceList.appendChild(card)})
@@ -3816,7 +4170,7 @@ function renderPolls(){
  if(!document.getElementById('pollList'))return;
  addPollBtn.style.display=auth.currentUser?'inline-block':'none';
  data.polls=data.polls||[];
- pollList.innerHTML=data.polls.length?'':'<div class="card"><p class="intro">Aucun sondage pour le moment.</p></div>';
+ pollList.innerHTML=data.polls.length?'':'<div class="empty-state" role="status"><p>Aucun sondage pour le moment.</p></div>';
 
   data.polls.forEach(p=>{
   p.votes=p.votes||{};
@@ -3832,7 +4186,7 @@ function renderPolls(){
   const totalVoters=Object.keys(p.votes).length;
   const isClosed=p.deadline && p.deadline < calISO(new Date());
 
-  const card=document.createElement('div');card.className='card poll-card';
+  const card=document.createElement('article');card.className='card poll-card';
   const deadline=p.deadline?' · Clôture '+new Date(p.deadline+'T12:00:00').toLocaleDateString('fr-FR'):'';
   card.innerHTML=
     '<h2 style="margin:0">'+esc(p.question||'')+'</h2>'+
@@ -4695,7 +5049,7 @@ renderCharterValues();
       <label>
         <span>Mot de passe actuel *</span>
         <div class="password-field">
-          <input id="currentAccountPassword" type="password" autocomplete="current-password" required placeholder="Votre mot de passe actuel">
+          <input id="currentAccountPassword" type="password" autocomplete="current-password" required aria-describedby="changePasswordError changePasswordSuccess" placeholder="Votre mot de passe actuel">
           <button type="button" class="password-eye" data-target="currentAccountPassword">Afficher</button>
         </div>
       </label>
@@ -4703,14 +5057,14 @@ renderCharterValues();
       <label>
         <span>Nouveau mot de passe *</span>
         <div class="password-field">
-          <input id="newAccountPassword" type="password" autocomplete="new-password" minlength="6" required placeholder="Minimum 6 caractères">
+          <input id="newAccountPassword" type="password" autocomplete="new-password" minlength="6" required aria-describedby="changePasswordError changePasswordSuccess" placeholder="Minimum 6 caractères">
           <button type="button" class="password-eye" data-target="newAccountPassword">Afficher</button>
         </div>
       </label>
       <label>
         <span>Confirmer le nouveau mot de passe *</span>
         <div class="password-field">
-          <input id="confirmAccountPassword" type="password" autocomplete="new-password" minlength="6" required placeholder="Saisissez-le à nouveau">
+          <input id="confirmAccountPassword" type="password" autocomplete="new-password" minlength="6" required aria-describedby="changePasswordError changePasswordSuccess" placeholder="Saisissez-le à nouveau">
           <button type="button" class="password-eye" data-target="confirmAccountPassword">Afficher</button>
         </div>
       </label>
