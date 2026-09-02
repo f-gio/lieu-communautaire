@@ -45,6 +45,17 @@
   --color-border-header:#e7e1d6;
   --color-secondary-surface:#f1ede4;
   --color-secondary-border:#ddd6c9;
+  --color-secondary-hover:#e9e3d8;
+  --color-secondary-active:#dfd7ca;
+  --color-ghost-hover:#edf1e9;
+  --color-primary-active:#1c3b31;
+  --color-primary-text:#fff;
+  --color-danger-surface:#fbefeb;
+  --color-danger-hover:#f4ddd6;
+  --color-danger-border:#e5c4ba;
+  --color-danger-text:#914e40;
+  --color-disabled-surface:#e9e6de;
+  --color-disabled-text:#858d88;
   --color-nav-text:#35473f;
   --color-nav-hover:#f0f2eb;
   --color-focus:#5e7654;
@@ -77,6 +88,8 @@
   --shadow-header:0 4px 20px rgba(41,59,50,.045);
   --shadow-popover:0 14px 38px rgba(24,44,36,.18);
   --shadow-dialog:0 24px 70px rgba(24,44,36,.22);
+  --shadow-control:0 3px 10px rgba(35,72,60,.14);
+  --shadow-focus:0 0 0 3px rgba(94,118,84,.24);
 
   /* Structure globale */
   --container-max:1380px;
@@ -115,6 +128,12 @@
   --icon-size-xl:32px;
   --icon-stroke:1.75;
   --control-target-min:44px;
+  --control-height-sm:36px;
+  --control-height-md:44px;
+  --control-height-lg:48px;
+  --control-padding-inline:16px;
+  --control-gap:8px;
+  --control-transition:background-color .16s ease,border-color .16s ease,color .16s ease,box-shadow .16s ease,transform .16s ease;
   --section-eyebrow-size:var(--font-size-caption);
   --section-head-gap:22px;
 
@@ -2376,6 +2395,276 @@ label,
   .side .nav>button>.ui-icon,
   .side .nav>.nav-group>.nav-group-toggle>.ui-icon{display:none}
 }
+
+/* =========================================================
+   DESIGN SYSTEM — LOT 3 : BOUTONS & ACTIONS
+
+   Primaire = créer, enregistrer, publier ou poursuivre.
+   Secondaire = annuler, modifier, copier ou action auxiliaire.
+   Discret = navigation contextuelle sans concurrence avec le CTA.
+   Destructif = suppression, refus ou suspension.
+   ========================================================= */
+.btn,
+.resource-upload-btn{
+  box-sizing:border-box;
+  display:inline-flex!important;
+  align-items:center;
+  justify-content:center;
+  gap:var(--control-gap);
+  min-height:var(--control-height-md);
+  padding:0 var(--control-padding-inline)!important;
+  border:1px solid transparent!important;
+  border-radius:var(--radius-control)!important;
+  background:var(--color-primary)!important;
+  color:var(--color-primary-text)!important;
+  font-size:var(--font-size-label)!important;
+  line-height:var(--line-height-heading)!important;
+  font-weight:var(--font-weight-bold)!important;
+  text-align:center;
+  text-decoration:none!important;
+  white-space:nowrap;
+  cursor:pointer;
+  transition:var(--control-transition);
+  -webkit-tap-highlight-color:transparent;
+}
+.btn.secondary,
+.resource-upload-btn.secondary{
+  background:var(--color-secondary-surface)!important;
+  color:var(--color-text)!important;
+  border-color:var(--color-secondary-border)!important;
+  box-shadow:none!important;
+}
+.btn.danger{
+  background:var(--color-danger-surface)!important;
+  color:var(--color-danger-text)!important;
+  border-color:var(--color-danger-border)!important;
+  box-shadow:none!important;
+}
+.btn.ghost{
+  background:transparent!important;
+  color:var(--color-primary)!important;
+  border-color:transparent!important;
+  box-shadow:none!important;
+}
+.btn.btn-icon{
+  width:var(--control-height-md)!important;
+  min-width:var(--control-height-md)!important;
+  padding:0!important;
+}
+.btn.large{min-height:var(--control-height-lg);padding-inline:20px!important}
+
+@media(hover:hover){
+  .btn:not(:disabled):not([aria-disabled="true"]):hover,
+  .resource-upload-btn:hover{
+    background:var(--color-primary-hover)!important;
+    box-shadow:var(--shadow-control)!important;
+    transform:translateY(-1px);
+  }
+  .btn.secondary:not(:disabled):not([aria-disabled="true"]):hover,
+  .resource-upload-btn.secondary:hover{
+    background:var(--color-secondary-hover)!important;
+    border-color:var(--color-secondary-border)!important;
+    box-shadow:none!important;
+  }
+  .btn.danger:not(:disabled):not([aria-disabled="true"]):hover{
+    background:var(--color-danger-hover)!important;
+    border-color:var(--color-danger-border)!important;
+    box-shadow:none!important;
+  }
+  .btn.ghost:not(:disabled):not([aria-disabled="true"]):hover{background:var(--color-ghost-hover)!important;box-shadow:none!important}
+}
+.btn:not(:disabled):not([aria-disabled="true"]):active,
+.resource-upload-btn:active{
+  background:var(--color-primary-active)!important;
+  box-shadow:none!important;
+  transform:translateY(0);
+}
+.btn.secondary:not(:disabled):not([aria-disabled="true"]):active,
+.resource-upload-btn.secondary:active{background:var(--color-secondary-active)!important}
+.btn.danger:not(:disabled):not([aria-disabled="true"]):active{background:var(--color-danger-hover)!important}
+
+.btn:focus-visible,
+.resource-upload-btn:focus-within,
+.text-link:focus-visible,
+.clear-task-filters:focus-visible,
+.task-edit:focus-visible,
+.del:focus-visible,
+.resource-filter:focus-visible,
+.react-btn:focus-visible,
+.rsvp-btn:focus-visible,
+.account-action:focus-visible,
+.account-settings-tab:focus-visible,
+.notification-head button:focus-visible,
+.password-eye:focus-visible,
+.member-profile-card:focus-visible,
+.notification-item:focus-visible,
+.modal-close-x:focus-visible,
+.notification-btn:focus-visible,
+.account-menu-btn:focus-visible,
+.side .nav button:focus-visible{
+  outline:0!important;
+  box-shadow:var(--shadow-focus)!important;
+}
+.btn:disabled,
+.btn[aria-disabled="true"],
+button:disabled.btn{
+  background:var(--color-disabled-surface)!important;
+  border-color:var(--color-secondary-border)!important;
+  color:var(--color-disabled-text)!important;
+  box-shadow:none!important;
+  transform:none!important;
+  cursor:not-allowed!important;
+  opacity:1!important;
+}
+.btn[aria-busy="true"],.btn.is-loading{cursor:wait!important}
+.btn[aria-busy="true"]::after,.btn.is-loading::after{
+  content:"";
+  width:var(--icon-size-sm);
+  height:var(--icon-size-sm);
+  border:2px solid currentColor;
+  border-right-color:transparent;
+  border-radius:50%;
+  animation:spin .7s linear infinite;
+}
+
+/* Actions discrètes et contextuelles */
+.text-link,
+.clear-task-filters,
+.task-edit,
+.notification-head button{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:var(--control-height-md);
+  padding:0 var(--space-2)!important;
+  border:0!important;
+  border-radius:var(--radius-sm)!important;
+  background:transparent!important;
+  color:var(--color-primary)!important;
+  font-weight:var(--font-weight-bold)!important;
+  text-decoration:none;
+  cursor:pointer;
+  transition:var(--control-transition);
+}
+.text-link{justify-content:flex-start;padding-top:var(--space-3)!important}
+@media(hover:hover){
+  .text-link:hover,.clear-task-filters:hover,.task-edit:hover,.notification-head button:hover{
+    background:var(--color-ghost-hover)!important;
+    text-decoration:none!important;
+  }
+}
+
+/* Boutons compacts spécialisés */
+.resource-filter,
+.react-btn,
+.rsvp-btn{
+  box-sizing:border-box;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:0 var(--space-3)!important;
+  border:1px solid var(--color-secondary-border)!important;
+  border-radius:var(--radius-pill)!important;
+  background:var(--color-surface)!important;
+  color:var(--color-text)!important;
+  font-size:var(--font-size-label)!important;
+  line-height:var(--line-height-heading)!important;
+  font-weight:var(--font-weight-medium)!important;
+  cursor:pointer;
+  transition:var(--control-transition);
+}
+.resource-filter.active,
+.rsvp-btn.active{
+  background:var(--color-primary)!important;
+  border-color:var(--color-primary)!important;
+  color:var(--color-primary-text)!important;
+  font-weight:var(--font-weight-bold)!important;
+}
+.react-btn.active{
+  background:var(--color-sage-subtle)!important;
+  border-color:var(--color-sage)!important;
+  color:var(--color-primary)!important;
+}
+@media(hover:hover){
+  .resource-filter:hover,.react-btn:hover,.rsvp-btn:hover{background:var(--color-ghost-hover)!important;border-color:var(--color-sage)!important}
+  .resource-filter.active:hover,.rsvp-btn.active:hover{background:var(--color-primary-hover)!important;color:var(--color-primary-text)!important}
+}
+
+/* Menus, onglets et commandes de ligne */
+.account-action,
+.account-settings-tab,
+.password-eye{
+  box-sizing:border-box;
+  min-height:var(--control-height-md)!important;
+  border-radius:var(--radius-sm)!important;
+  transition:var(--control-transition);
+}
+.account-action{display:flex;align-items:center}
+.account-action.logout-action{color:var(--color-danger-text)!important}
+.account-settings-tab.active{background:var(--color-sage-soft)!important;color:var(--color-primary)!important}
+.password-eye{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:0 var(--space-3)!important;
+  border:1px solid var(--color-secondary-border)!important;
+  background:var(--color-secondary-surface)!important;
+  color:var(--color-primary)!important;
+  font-size:var(--font-size-label)!important;
+  font-weight:var(--font-weight-bold)!important;
+  cursor:pointer;
+}
+@media(hover:hover){
+  .account-action:hover,.account-settings-tab:hover,.password-eye:hover{background:var(--color-ghost-hover)!important}
+  .account-action.logout-action:hover{background:var(--color-danger-surface)!important}
+}
+.del,
+.assignee-remove{
+  display:inline-grid!important;
+  place-items:center!important;
+  width:var(--control-height-md)!important;
+  min-width:var(--control-height-md)!important;
+  height:var(--control-height-md)!important;
+  padding:0!important;
+  border:1px solid transparent!important;
+  border-radius:var(--radius-control)!important;
+  background:transparent!important;
+  color:var(--color-danger-text)!important;
+  font-size:var(--icon-size-lg)!important;
+  cursor:pointer;
+  transition:var(--control-transition);
+}
+@media(hover:hover){.del:hover,.assignee-remove:hover{background:var(--color-danger-surface)!important;border-color:var(--color-danger-border)!important}}
+
+/* Les fermetures restent neutres, même lorsqu'elles héritent de .btn. */
+.modal-close-x,
+.btn.modal-close-x,
+.btn.secondary.modal-close-x{
+  width:var(--control-height-md)!important;
+  min-width:var(--control-height-md)!important;
+  height:var(--control-height-md)!important;
+  min-height:var(--control-height-md)!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:50%!important;
+  background:transparent!important;
+  color:var(--color-primary)!important;
+  box-shadow:none!important;
+  transform:none!important;
+}
+@media(hover:hover){
+  .modal-close-x:hover,.btn.modal-close-x:hover,.btn.secondary.modal-close-x:hover{background:var(--color-ghost-hover)!important;box-shadow:none!important;transform:none!important}
+}
+
+@media(max-width:620px){
+  .resource-filter,.react-btn,.rsvp-btn{min-height:var(--control-height-md)}
+  .modal-actions .btn,.calendar-actions .btn,.profile-actions .btn{min-width:0}
+}
+@media(prefers-reduced-motion:reduce){
+  .btn,.resource-upload-btn,.text-link,.clear-task-filters,.task-edit,.del,.resource-filter,.react-btn,.rsvp-btn,.account-action,.account-settings-tab,.notification-head button,.password-eye{transition:none!important}
+  .btn[aria-busy="true"]::after,.btn.is-loading::after{animation-duration:1.2s}
+}
 </style>
 </head>
 <body class="auth-pending">
@@ -2558,9 +2847,9 @@ label,
     <div class="calendar-toolbar">
       <button id="addCalendarEvent" class="btn">+ Ajouter</button>
       <div class="calendar-nav">
-        <button id="calPrev" class="btn secondary" type="button" aria-label="Mois précédent"><svg class="ui-icon icon-sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"></path></svg></button>
+        <button id="calPrev" class="btn secondary btn-icon" type="button" aria-label="Mois précédent"><svg class="ui-icon icon-sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"></path></svg></button>
         <h2 id="calMonthLabel"></h2>
-        <button id="calNext" class="btn secondary" type="button" aria-label="Mois suivant"><svg class="ui-icon icon-sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"></path></svg></button>
+        <button id="calNext" class="btn secondary btn-icon" type="button" aria-label="Mois suivant"><svg class="ui-icon icon-sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"></path></svg></button>
       </div>
       <button id="calToday" class="btn secondary">Aujourd'hui</button>
     </div>
@@ -2590,7 +2879,7 @@ label,
       <p id="calError" style="color:#a75f50;font-size:13px;margin-bottom:0"></p>
       <div id="calendarParticipationDetails" class="participation-details" style="display:none"></div>
       <div class="calendar-actions">
-        <button id="deleteCalendarEvent" class="btn secondary" style="display:none">Supprimer</button>
+        <button id="deleteCalendarEvent" class="btn danger" style="display:none">Supprimer</button>
         <button id="cancelCalendarEvent" class="btn secondary">Annuler</button>
         <button id="saveCalendarEvent" class="btn">Enregistrer</button>
       </div>
@@ -2631,7 +2920,7 @@ label,
    </div>
    <div style="margin-top:20px"><label style="font-size:13px;font-weight:700">Réponses proposées *</label><div id="pollOptionsEditor" class="poll-options-editor" style="margin-top:8px"></div><button id="addPollOption" class="btn secondary" style="margin-top:10px">+ Ajouter une réponse</button></div>
    <p id="pollError" style="color:#a75f50;font-size:13px"></p>
-   <div class="calendar-actions"><button id="deletePollBtn" class="btn secondary" style="display:none;margin-right:auto">Supprimer</button><button id="cancelPollBtn" class="btn secondary">Annuler</button><button id="savePollBtn" class="btn">Enregistrer</button></div>
+   <div class="calendar-actions"><button id="deletePollBtn" class="btn danger" style="display:none;margin-right:auto">Supprimer</button><button id="cancelPollBtn" class="btn secondary">Annuler</button><button id="savePollBtn" class="btn">Enregistrer</button></div>
   </div>
  </div>
 </div>
@@ -2652,12 +2941,12 @@ label,
   <div class="calendar-dialog-body">
    <div class="resource-form-grid">
     <label>Nom *<input id="resourceName" placeholder="Ex. Google Drive"></label>
-    <label>Catégorie *<select id="resourceCategory"><option>Documents</option><option>Collaboration</option><option>Organisation</option><option>Contacts</option><option>Autre</option></select></label><div class="full resource-visual-field"><span class="field-title">Icône ou image</span><div class="resource-visual-row"><div id="resourceVisualPreview" class="resource-visual-preview">↗</div><div class="resource-visual-controls"><select id="resourceIcon"><option value="auto">Icône automatique</option><option value="📁">📁 Dossier</option><option value="📄">📄 Document</option><option value="🔗">🔗 Lien</option><option value="🧩">🧩 Collaboration</option><option value="📌">📌 Important</option><option value="👥">👥 Communauté</option><option value="💬">💬 Discussion</option><option value="🗺️">🗺️ Carte / plan</option></select><label class="resource-upload-btn">Importer une image<input id="resourceImage" type="file" accept="image/*"></label><button id="removeResourceImage" type="button" class="btn secondary" style="display:none">Retirer l’image</button><small>Les images sont automatiquement compressées à 5 Ko maximum.</small></div></div></div>
+    <label>Catégorie *<select id="resourceCategory"><option>Documents</option><option>Collaboration</option><option>Organisation</option><option>Contacts</option><option>Autre</option></select></label><div class="full resource-visual-field"><span class="field-title">Icône ou image</span><div class="resource-visual-row"><div id="resourceVisualPreview" class="resource-visual-preview">↗</div><div class="resource-visual-controls"><select id="resourceIcon"><option value="auto">Icône automatique</option><option value="📁">📁 Dossier</option><option value="📄">📄 Document</option><option value="🔗">🔗 Lien</option><option value="🧩">🧩 Collaboration</option><option value="📌">📌 Important</option><option value="👥">👥 Communauté</option><option value="💬">💬 Discussion</option><option value="🗺️">🗺️ Carte / plan</option></select><label class="btn secondary resource-upload-btn">Importer une image<input id="resourceImage" type="file" accept="image/*"></label><button id="removeResourceImage" type="button" class="btn secondary" style="display:none">Retirer l’image</button><small>Les images sont automatiquement compressées à 5 Ko maximum.</small></div></div></div>
     <label class="full">Lien *<input id="resourceUrl" type="url" placeholder="https://..."></label>
     <label class="full">Description<textarea id="resourceDescription" placeholder="À quoi sert cette ressource ?"></textarea></label>
    </div>
    <p id="resourceError" style="color:#a75f50;font-size:13px"></p>
-   <div class="calendar-actions"><button id="deleteResourceBtn" class="btn secondary" style="display:none;margin-right:auto">Supprimer</button><button id="cancelResourceBtn" class="btn secondary">Annuler</button><button id="saveResourceBtn" class="btn">Enregistrer</button></div>
+   <div class="calendar-actions"><button id="deleteResourceBtn" class="btn danger" style="display:none;margin-right:auto">Supprimer</button><button id="cancelResourceBtn" class="btn secondary">Annuler</button><button id="saveResourceBtn" class="btn">Enregistrer</button></div>
   </div>
  </div>
 </div>
@@ -2704,7 +2993,7 @@ label,
    <label>Titre *<input id="noteTitle" placeholder="Donnez un titre à votre note"></label>
    <label>Contenu *<textarea id="noteContent" placeholder="Écrivez votre note…"></textarea></label>
    <p id="noteError" class="error"></p>
-   <div class="calendar-actions"><button id="deleteNoteBtn" class="btn secondary" style="display:none;margin-right:auto">Supprimer</button><button id="cancelNoteBtn" class="btn secondary">Annuler</button><button id="saveNoteBtn" class="btn">Publier</button></div>
+   <div class="calendar-actions"><button id="deleteNoteBtn" class="btn danger" style="display:none;margin-right:auto">Supprimer</button><button id="cancelNoteBtn" class="btn secondary">Annuler</button><button id="saveNoteBtn" class="btn">Publier</button></div>
   </div>
  </div>
 </div>
@@ -2724,7 +3013,7 @@ label,
     <section class="account-settings-panel active" data-account-content="profile">
 
 <div class="profile-form">
-   <div class="profile-photo-row"><div id="profilePreview" class="profile-preview">C</div><div><label class="btn secondary" style="display:inline-block;cursor:pointer">Choisir une photo<input id="profilePhotoInput" type="file" accept="image/*" style="display:none"></label><button id="removeProfilePhoto" class="btn secondary" hidden type="button" style="margin-left:5px">Supprimer</button><div class="profile-help" style="margin-top:7px">La photo est redimensionnée et compressée automatiquement à 5 Ko maximum.</div></div></div>
+   <div class="profile-photo-row"><div id="profilePreview" class="profile-preview">C</div><div><label class="btn secondary" style="display:inline-block;cursor:pointer">Choisir une photo<input id="profilePhotoInput" type="file" accept="image/*" style="display:none"></label><button id="removeProfilePhoto" class="btn danger" hidden type="button" style="margin-left:5px">Supprimer</button><div class="profile-help" style="margin-top:7px">La photo est redimensionnée et compressée automatiquement à 5 Ko maximum.</div></div></div>
    <label>Nom affiché *<input id="profileDisplayName" maxlength="60" placeholder="Votre nom" required></label>
    <label>E-mail<input id="profileEmail" type="email" disabled></label>
    
@@ -2754,7 +3043,7 @@ label,
   <div style="max-width:900px;margin:30px auto;background:#fffdf8;border-radius:18px;padding:24px;box-shadow:0 18px 60px rgba(0,0,0,.25)">
     <div style="display:flex;justify-content:space-between;gap:16px;align-items:center">
       <div><h2 style="margin:0">Administration des utilisateurs</h2><p style="margin:6px 0 0;color:#666">Valider les membres, gérer leur accès et attribuer ou retirer les droits d’administrateur.</p></div>
-      <button id="closeAdmin" class="btn modal-close-x" aria-label="Fermer" title="Fermer">×</button>
+      <button id="closeAdmin" class="btn secondary modal-close-x" aria-label="Fermer" title="Fermer">×</button>
     </div>
     <input id="adminSearch" placeholder="Rechercher par e-mail..." style="width:100%;box-sizing:border-box;margin:18px 0;padding:11px;border:1px solid #ddd;border-radius:10px">
     <div id="adminUsers"></div>
@@ -2772,7 +3061,7 @@ label,
         var box=document.createElement('div');
         box.id='bootFallback';
         box.style.cssText='position:fixed;inset:0;z-index:19999;background:#f4f1e9;display:grid;place-items:center;padding:24px;font-family:Inter,system-ui,sans-serif';
-        box.innerHTML='<div style="max-width:440px;background:#fffdf8;border:1px solid #ddd8cd;border-radius:16px;padding:28px;box-shadow:0 12px 40px #0002"><h2 style="margin:0 0 10px;color:#294c40">Tiny Houses</h2><p style="margin:0;color:#5f6f68;line-height:1.55">Le site n’a pas pu terminer son chargement. Actualisez la page. Si le problème persiste, vérifiez que les fichiers Firebase sont accessibles.</p><button onclick="location.reload()" style="margin-top:18px;border:0;border-radius:9px;padding:10px 14px;background:#2f5044;color:white;cursor:pointer">Actualiser</button></div>';
+        box.innerHTML='<div style="max-width:440px;background:#fffdf8;border:1px solid #ddd8cd;border-radius:16px;padding:28px;box-shadow:0 12px 40px #0002"><h2 style="margin:0 0 10px;color:#294c40">Tiny Houses</h2><p style="margin:0;color:#5f6f68;line-height:1.55">Le site n’a pas pu terminer son chargement. Actualisez la page. Si le problème persiste, vérifiez que les fichiers Firebase sont accessibles.</p><button class="btn" onclick="location.reload()" style="margin-top:18px">Actualiser</button></div>';
         document.body.appendChild(box);
       }
     },8000);
@@ -2820,7 +3109,7 @@ let migrationComplete=false;
 function collaborativeOrLegacy(fresh,legacy){return fresh.length||migrationComplete?fresh:structuredClone(legacy||[])}
 
 const overlay=document.createElement('div'); overlay.id='loginOverlay'; overlay.innerHTML=`<div style="max-width:420px;margin:12vh auto;background:#fffdf8;border:1px solid #ddd8cd;border-radius:16px;padding:28px;box-shadow:0 12px 40px #0002"><h2>Communauté solidaire des Gens de confiance</h2><p></p><input id="loginEmail" type="email" placeholder="E-mail" style="width:100%;margin:7px 0"><input id="loginPassword" type="password" placeholder="Mot de passe" style="width:100%;margin:7px 0"><button id="loginBtn" class="btn" style="width:100%;margin-top:8px">Se connecter</button>
-<button id="signupBtn" type="button" style="width:100%;margin-top:10px;background:transparent;border:0;color:#365d55;cursor:pointer;text-decoration:underline">Créer un compte</button>
+<button id="signupBtn" class="btn secondary" type="button" style="width:100%;margin-top:10px">Créer un compte</button>
 <p id="loginError" style="color:#a75f50;font-size:13px"></p><div id="approvalMessage" style="display:none;margin-top:14px;padding:14px;border-radius:12px;background:#f4efe6;line-height:1.5"></div></div>`; Object.assign(overlay.style,{position:'fixed',inset:'0',background:'#f4f1e9',zIndex:'9999'}); document.body.appendChild(overlay);
 window.__tinyBootReady=true;
 const accountActions=document.getElementById('accountDropdown');
@@ -3038,7 +3327,7 @@ function renderTasks(){
     const statusClass=({'À faire':'a-faire','En cours':'en-cours','Bloqué':'bloque','Effectuée':'effectuee'})[status];
     const overdue=taskIsOverdue(t);
     const row=document.createElement('div');row.className='taskrow-v2 '+(t.done?'done ':'')+(overdue?'overdue':'');
-    row.innerHTML='<div class="task-main"><strong>'+esc(t.title||t.name||'Sans titre')+'</strong>'+(t.description?'<div class="task-desc">'+esc(t.description)+'</div>':'')+'</div><div class="task-assignees">'+assignees+'</div><div class="task-meta task-date">'+esc(t.date||'Sans date')+(overdue?'<span class="overdue-label">En retard</span>':'')+'</div><div><span class="priority-badge priority-'+priorityClass+'">'+esc(priority)+'</span></div><div class="task-status"><select class="task-status-select status-'+statusClass+'" onchange="quickTaskStatus('+i+',this.value)" aria-label="Modifier le statut de l’action"><option value="À faire" '+(status==='À faire'?'selected':'')+'>À faire</option><option value="En cours" '+(status==='En cours'?'selected':'')+'>En cours</option><option value="Bloqué" '+(status==='Bloqué'?'selected':'')+'>Bloqué</option><option value="Effectuée" '+(status==='Effectuée'?'selected':'')+'>Effectuée</option></select></div><div class="task-actions"><button class="task-edit" onclick="editTask('+i+')">Ouvrir</button><button class="del" onclick="deleteTask('+i+')" title="Supprimer">×</button></div>';
+    row.innerHTML='<div class="task-main"><strong>'+esc(t.title||t.name||'Sans titre')+'</strong>'+(t.description?'<div class="task-desc">'+esc(t.description)+'</div>':'')+'</div><div class="task-assignees">'+assignees+'</div><div class="task-meta task-date">'+esc(t.date||'Sans date')+(overdue?'<span class="overdue-label">En retard</span>':'')+'</div><div><span class="priority-badge priority-'+priorityClass+'">'+esc(priority)+'</span></div><div class="task-status"><select class="task-status-select status-'+statusClass+'" onchange="quickTaskStatus('+i+',this.value)" aria-label="Modifier le statut de l’action"><option value="À faire" '+(status==='À faire'?'selected':'')+'>À faire</option><option value="En cours" '+(status==='En cours'?'selected':'')+'>En cours</option><option value="Bloqué" '+(status==='Bloqué'?'selected':'')+'>Bloqué</option><option value="Effectuée" '+(status==='Effectuée'?'selected':'')+'>Effectuée</option></select></div><div class="task-actions"><button class="task-edit" onclick="editTask('+i+')">Ouvrir</button><button class="del" onclick="deleteTask('+i+')" aria-label="Supprimer l’action" title="Supprimer">×</button></div>';
     taskList.appendChild(row);
   });
 }
@@ -3049,7 +3338,7 @@ function renderMembers(){
 }
 function openMemberProfile(id){const m=publicMember(id);if(!m)return;memberProfileDetail.innerHTML=memberAvatarHtml(m)+'<h2>'+esc(m.displayName||m.email||'Membre')+'</h2><p>'+esc(m.email||'')+'</p><span class="role-chip">'+esc(m.role==='admin'?'Administrateur':'Membre')+'</span>';memberProfileModal.style.display='grid'}
 closeMemberProfile.onclick=()=>memberProfileModal.style.display='none';memberProfileModal.addEventListener('click',e=>{if(e.target===memberProfileModal)memberProfileModal.style.display='none'});
-function renderBudget(){const items=Array.isArray(data.budget)?data.budget:[];budgetList.innerHTML=items.map((b,i)=>`<div class="budgetrow"><b>${esc(b.label)}</b><span>${esc(b.type)}</span><span class="money">${money(b.amount)}</span><button class="del" onclick="deleteBudget(${i})">×</button></div>`).join('');let total=items.reduce((s,b)=>s+Number(b.amount),0);budgetTotal.textContent=money(total);budgetKpi.textContent=money(total)}
+function renderBudget(){const items=Array.isArray(data.budget)?data.budget:[];budgetList.innerHTML=items.map((b,i)=>`<div class="budgetrow"><b>${esc(b.label)}</b><span>${esc(b.type)}</span><span class="money">${money(b.amount)}</span><button class="del" onclick="deleteBudget(${i})" aria-label="Supprimer la ligne de budget" title="Supprimer">×</button></div>`).join('');let total=items.reduce((s,b)=>s+Number(b.amount),0);budgetTotal.textContent=money(total);budgetKpi.textContent=money(total)}
 function renderAll(){renderCharterValues();renderTasks();renderMembers();renderBudget();renderNotes();taskKpi.textContent=(Array.isArray(data.tasks)?data.tasks:[]).filter(t=>!t.done).length;
 renderCalendar();
 renderPolls();
@@ -3057,7 +3346,7 @@ renderResources();
 renderHistory();
 renderNotifications();}
 let editingTaskIndex=null;
-function addTaskAssigneeSelect(value='',removable=true){const row=document.createElement('div');row.className='assignee-select-row';const select=document.createElement('select');select.className='task-assignee-select';select.innerHTML='<option value="">Sélectionner un responsable</option>'+(data.publicMembers||[]).map(m=>'<option value="'+esc(m.id)+'">'+esc(m.displayName||m.email||'Membre')+'</option>').join('');select.value=value||'';row.appendChild(select);if(removable){const remove=document.createElement('button');remove.type='button';remove.className='btn secondary assignee-remove';remove.textContent='×';remove.title='Retirer ce responsable';remove.onclick=()=>row.remove();row.appendChild(remove)}taskAssignees.appendChild(row)}
+function addTaskAssigneeSelect(value='',removable=true){const row=document.createElement('div');row.className='assignee-select-row';const select=document.createElement('select');select.className='task-assignee-select';select.innerHTML='<option value="">Sélectionner un responsable</option>'+(data.publicMembers||[]).map(m=>'<option value="'+esc(m.id)+'">'+esc(m.displayName||m.email||'Membre')+'</option>').join('');select.value=value||'';row.appendChild(select);if(removable){const remove=document.createElement('button');remove.type='button';remove.className='btn secondary btn-icon assignee-remove';remove.textContent='×';remove.title='Retirer ce responsable';remove.setAttribute('aria-label','Retirer ce responsable');remove.onclick=()=>row.remove();row.appendChild(remove)}taskAssignees.appendChild(row)}
 function renderTaskAssigneePicker(selected=[]){taskAssignees.innerHTML='';const ids=[...new Set(selected.filter(Boolean))];if(ids.length)ids.forEach((id,i)=>addTaskAssigneeSelect(id,i>0));else addTaskAssigneeSelect('',false)}
 addTaskAssigneeBtn.onclick=()=>addTaskAssigneeSelect('',true);
 window.openTaskModal=()=>{editingTaskIndex=null;taskModalTitle.textContent='Ajouter une action';taskSaveBtn.textContent='Ajouter l’action';taskForm.reset();renderTaskAssigneePicker([]);taskCommentsSection.hidden=true;taskModal.style.display='grid';setTimeout(()=>taskName.focus(),50)};
@@ -3233,7 +3522,7 @@ function renderAdminUsers(){
       if(u.status==='approved'){choices.push(['Suspendre','suspended']);}
       if(u.status==='suspended'||u.status==='rejected'){choices.push(['Réactiver','approved']);}
       choices.forEach(([label,status])=>{
-        const b=document.createElement('button'); b.className='btn'; b.style.marginLeft='6px'; b.textContent=label;
+        const b=document.createElement('button'); b.className=(status==='rejected'||status==='suspended')?'btn danger':'btn'; b.style.marginLeft='6px'; b.textContent=label;
         b.onclick=async()=>{
           const changes={status,updatedAt:serverTimestamp()};
           // Une première approbation ou la réactivation d'un compte refusé
@@ -3256,8 +3545,8 @@ function renderAdminUsers(){
         actions.appendChild(roleBtn);
       }
       const deleteUserBtn=document.createElement('button');
-      deleteUserBtn.className='btn secondary';
-      deleteUserBtn.style.cssText='margin-left:6px;color:#a94f36;border-color:#d8b9ad';
+      deleteUserBtn.className='btn danger';
+      deleteUserBtn.style.marginLeft='6px';
       deleteUserBtn.textContent='Supprimer';
       deleteUserBtn.onclick=async()=>{
         const label=u.email||'cet utilisateur';
@@ -3511,7 +3800,7 @@ function canEditPoll(p){
 function addPollOptionField(value=''){
  const row=document.createElement('div');row.className='poll-option-edit';
  const inp=document.createElement('input');inp.placeholder='Réponse proposée';inp.value=value;
- const del=document.createElement('button');del.className='btn secondary';del.textContent='×';del.type='button';del.onclick=()=>row.remove();
+ const del=document.createElement('button');del.className='btn secondary btn-icon';del.textContent='×';del.type='button';del.setAttribute('aria-label','Retirer cette réponse');del.title='Retirer cette réponse';del.onclick=()=>row.remove();
  row.append(inp,del);pollOptionsEditor.appendChild(row);
 }
 function openPollModal(id=null){
