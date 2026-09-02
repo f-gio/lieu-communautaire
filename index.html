@@ -82,7 +82,40 @@
   --container-max:1380px;
   --page-gutter:clamp(22px,4vw,64px);
   --font-family-base:Inter,"Segoe UI",Arial,sans-serif;
-  --section-eyebrow-size:11px;
+
+  /* Hiérarchie typographique */
+  --font-size-caption:.75rem;
+  --font-size-meta:.8125rem;
+  --font-size-label:.875rem;
+  --font-size-body:1rem;
+  --font-size-body-lg:1.0625rem;
+  --font-size-card-title:1.125rem;
+  --font-size-section-title:1.375rem;
+  --font-size-page-title:clamp(1.75rem,2.2vw,2rem);
+  --font-size-display:clamp(2.5rem,4.2vw,3.625rem);
+  --font-size-display-subtitle:clamp(1.375rem,2.3vw,1.8125rem);
+  --line-height-tight:1.15;
+  --line-height-heading:1.25;
+  --line-height-body:1.55;
+  --line-height-relaxed:1.65;
+  --font-weight-regular:400;
+  --font-weight-medium:600;
+  --font-weight-bold:700;
+  --font-weight-extra-bold:800;
+  --tracking-tight:-.025em;
+  --tracking-normal:0;
+  --tracking-label:.08em;
+  --tracking-eyebrow:.16em;
+  --text-measure:68ch;
+
+  /* Grille d'icônes fonctionnelles */
+  --icon-size-sm:16px;
+  --icon-size-md:20px;
+  --icon-size-lg:24px;
+  --icon-size-xl:32px;
+  --icon-stroke:1.75;
+  --control-target-min:44px;
+  --section-eyebrow-size:var(--font-size-caption);
   --section-head-gap:22px;
 
   /* Alias historiques — à conserver jusqu'à la fin de la migration */
@@ -2107,6 +2140,242 @@ body.auth-pending::after{
  .side .nav{grid-column:2!important;justify-self:stretch!important}
  .side .header-actions{grid-column:3!important;justify-self:end!important;margin-left:0!important}
 }
+
+/* =========================================================
+   DESIGN SYSTEM — LOT 2 : HIÉRARCHIE TYPOGRAPHIQUE & ICÔNES
+
+   Les règles ci-dessous normalisent la typographie utile et les icônes
+   fonctionnelles. Les symboles éditoriaux des valeurs et illustrations
+   restent volontairement inchangés : ils appartiennent à l'identité.
+   ========================================================= */
+html{font-size:100%;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{
+  font-size:var(--font-size-body)!important;
+  line-height:var(--line-height-body);
+  font-weight:var(--font-weight-regular);
+  letter-spacing:var(--tracking-normal);
+}
+button,input,select,textarea{font-family:var(--font-family-base)}
+p,li{line-height:var(--line-height-body)}
+strong,b{font-weight:var(--font-weight-bold)}
+
+/* Niveaux de titre : affichage, page, section, carte et contenu */
+#dashboard .home-hero h1{
+  font-size:var(--font-size-display)!important;
+  line-height:.98!important;
+  letter-spacing:-.045em!important;
+}
+#dashboard .home-hero h2{
+  font-size:var(--font-size-display-subtitle)!important;
+  line-height:var(--line-height-heading)!important;
+}
+.section>h1,
+.section .charter-head h1,
+.section .history-toolbar h1,
+.section .notes-head h1,
+.section .resources-head h1{
+  font-size:var(--font-size-page-title)!important;
+  line-height:var(--line-height-tight)!important;
+  font-weight:var(--font-weight-extra-bold)!important;
+  letter-spacing:var(--tracking-tight)!important;
+}
+.home-heading h2,
+.values-title h2{
+  font-size:var(--font-size-section-title)!important;
+  line-height:var(--line-height-heading)!important;
+  font-weight:var(--font-weight-bold)!important;
+  letter-spacing:var(--tracking-tight)!important;
+}
+.card h2,
+.resource-card h2,
+.note-card h2,
+.poll-card h2,
+.calendar-nav h2{
+  font-size:var(--font-size-card-title)!important;
+  line-height:var(--line-height-heading)!important;
+  font-weight:var(--font-weight-bold)!important;
+  letter-spacing:var(--tracking-tight)!important;
+}
+.axis-card h3,
+.charter-value h3,
+.participation-details h3,
+.task-comments-section h3{
+  font-size:var(--font-size-body)!important;
+  line-height:var(--line-height-heading)!important;
+  font-weight:var(--font-weight-bold)!important;
+  letter-spacing:var(--tracking-tight)!important;
+}
+#principles .charter-value h3{font-size:var(--font-size-card-title)!important}
+.modal-head h2,
+.calendar-dialog-head h2,
+#profileModal .account-profile-header h2,
+#adminModal h2{
+  font-size:var(--font-size-section-title)!important;
+  line-height:var(--line-height-heading)!important;
+  font-weight:var(--font-weight-bold)!important;
+  letter-spacing:var(--tracking-tight)!important;
+}
+
+/* Texte courant, introductions, libellés et métadonnées */
+.section>.intro,
+.charter-head>p,
+.notes-head .intro,
+.resources-head .intro,
+.home-heading>p,
+.home-hero p,
+.charter-value .value-copy>p,
+.resource-card>p,
+.note-body{
+  font-size:var(--font-size-body)!important;
+  line-height:var(--line-height-relaxed)!important;
+}
+.section>.intro,
+.charter-head>p,
+.notes-head .intro,
+.resources-head .intro{max-width:var(--text-measure)}
+.eyebrow,
+.vision-kicker,
+.foundation-badge,
+.resource-category{
+  font-size:var(--font-size-caption)!important;
+  line-height:1.2!important;
+  font-weight:var(--font-weight-extra-bold)!important;
+  letter-spacing:var(--tracking-eyebrow)!important;
+  text-transform:uppercase!important;
+}
+label,
+.field-title,
+.task-form label,
+.calendar-form-grid label,
+.note-form label,
+.profile-form label,
+.value-form label>span,
+.password-form label>span{
+  font-size:var(--font-size-label)!important;
+  line-height:var(--line-height-heading)!important;
+  font-weight:var(--font-weight-bold)!important;
+}
+.side .nav button,
+.btn,
+.text-link,
+.account-action,
+.account-menu-btn,
+.notification-head button,
+.task-edit,
+.task-done-btn,
+.clear-task-filters{
+  font-size:var(--font-size-label)!important;
+  line-height:var(--line-height-heading)!important;
+}
+.side .nav button{font-weight:var(--font-weight-medium)!important}
+.side .nav .nav-submenu button{font-size:var(--font-size-label)!important}
+.task-main strong,
+.member-profile-card strong,
+.upcoming-content>strong,
+.notification-item b,
+.history-item strong,
+.mini-cal>div:last-child b,
+.value-line b{
+  font-size:var(--font-size-label)!important;
+  line-height:var(--line-height-heading)!important;
+}
+.task-desc,
+.task-meta,
+.task-person,
+.task-comment,
+.member-profile-card small,
+.member-profile-detail p,
+.poll-meta,
+.note-meta,
+.notification-item p,
+.home-history-copy small,
+.mini-cal small,
+.value-line small,
+.home-next .phase small,
+.calendar-legend,
+.participation-group li,
+.profile-help,
+.modal-head p,
+.calendar-dialog-head p{
+  font-size:var(--font-size-meta)!important;
+  line-height:var(--line-height-body)!important;
+}
+.axis-card p{font-size:var(--font-size-label)!important;line-height:var(--line-height-body)!important}
+.home-next .phase{font-size:var(--font-size-label)!important}
+#dashboard .home-kpis .lab{font-size:var(--font-size-meta)!important}
+.tag,
+.poll-status,
+.priority-badge,
+.role-chip,
+.overdue-label,
+.rsvp-label,
+.rsvp-btn,
+.rsvp-count,
+.notification-item time,
+.history-item time,
+.action-filter-field span,
+.calendar-weekday,
+.calendar-event,
+.mini-date span{
+  font-size:var(--font-size-caption)!important;
+  line-height:var(--line-height-heading)!important;
+}
+.notification-badge{font-size:var(--font-size-caption)!important}
+.rsvp-btn{font-size:var(--font-size-label)!important;line-height:var(--line-height-heading)!important}
+.footer{font-size:var(--font-size-meta)!important;line-height:var(--line-height-body)!important}
+
+/* Grille commune des icônes fonctionnelles */
+.ui-icon{
+  display:inline-block;
+  width:var(--icon-size-md);
+  height:var(--icon-size-md);
+  flex:0 0 var(--icon-size-md);
+  fill:none;
+  stroke:currentColor;
+  stroke-width:var(--icon-stroke);
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  vertical-align:-.2em;
+  pointer-events:none;
+}
+.ui-icon.icon-sm{width:var(--icon-size-sm);height:var(--icon-size-sm);flex-basis:var(--icon-size-sm)}
+.ui-icon.icon-lg{width:var(--icon-size-lg);height:var(--icon-size-lg);flex-basis:var(--icon-size-lg)}
+.ui-icon.icon-xl{width:var(--icon-size-xl);height:var(--icon-size-xl);flex-basis:var(--icon-size-xl)}
+.side .nav button{display:inline-flex!important;align-items:center!important;gap:var(--space-2)!important;min-height:var(--control-target-min)!important}
+.side .nav .nav-submenu button{min-height:var(--control-target-min)!important}
+.nav-caret{display:inline-flex;align-items:center;margin-left:1px}
+.nav-caret .ui-icon{transition:transform .18s ease}
+.nav-group-toggle[aria-expanded="true"] .nav-caret{transform:none!important}
+.nav-group-toggle[aria-expanded="true"] .nav-caret .ui-icon{transform:rotate(180deg)}
+.notification-btn{
+  width:var(--control-target-min)!important;
+  height:var(--control-target-min)!important;
+  min-width:var(--control-target-min)!important;
+}
+.account-menu-btn{min-height:var(--control-target-min)!important}
+.modal-close-x{
+  width:var(--control-target-min)!important;
+  min-width:var(--control-target-min)!important;
+  height:var(--control-target-min)!important;
+}
+.kpi-icon,.axis-icon,.value-line>span,.home-history-icon,.history-icon,.resource-icon{
+  line-height:1!important;
+}
+.kpi-icon .ui-icon,.axis-icon .ui-icon,.home-history-icon .ui-icon,.history-icon .ui-icon{width:var(--icon-size-md);height:var(--icon-size-md)}
+
+/* Exceptions de marque : le logotype conserve son dessin et ses proportions. */
+.brandmark{stroke-width:initial}
+.brandtext strong{font-weight:var(--font-weight-extra-bold)}
+
+@media(max-width:720px){
+  .side .nav button{font-size:var(--font-size-label)!important;min-height:var(--control-target-min)!important}
+  .side #accountMenuBtn{min-height:var(--control-target-min)!important}
+  .section>.intro,.charter-head>p,.notes-head .intro,.resources-head .intro{max-width:none}
+}
+@media(min-width:901px) and (max-width:1180px){
+  .side .nav>button>.ui-icon,
+  .side .nav>.nav-group>.nav-group-toggle>.ui-icon{display:none}
+}
 </style>
 </head>
 <body class="auth-pending">
@@ -2119,30 +2388,30 @@ body.auth-pending::after{
 </svg>
 <div class="brandtext"><strong>Tiny Houses</strong><small>Lieu communautaire</small></div>
 </div><nav class="nav" id="nav">
-<button class="active" data-page="dashboard">⌂ Vue d'ensemble</button>
+<button class="active" data-page="dashboard"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m3 11 9-8 9 8"></path><path d="M5 10v10h14V10M9 20v-6h6v6"></path></svg>Vue d'ensemble</button>
 <div class="nav-group">
- <button class="nav-group-toggle" type="button" aria-expanded="false">Le projet <span class="nav-caret">⌄</span></button>
+ <button class="nav-group-toggle" type="button" aria-expanded="false"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 4h6l2 3h8v13H4z"></path></svg>Le projet <span class="nav-caret" aria-hidden="true"><svg class="ui-icon icon-sm" viewBox="0 0 24 24" focusable="false"><path d="m7 9 5 5 5-5"></path></svg></span></button>
  <div class="nav-submenu" hidden>
-  <button data-page="principles">♡ Charte & valeurs</button>
-  <button data-page="resources">↗ Ressources</button>
-  <button data-page="budget">€ Budget</button>
+  <button data-page="principles"><svg class="ui-icon icon-sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"></path></svg>Charte & valeurs</button>
+  <button data-page="resources"><svg class="ui-icon icon-sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14 3h7v7M10 14 21 3"></path><path d="M21 14v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h6"></path></svg>Ressources</button>
+  <button data-page="budget"><svg class="ui-icon icon-sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18 7.5a6 6 0 1 0 0 9"></path><path d="M5 10h9M5 14h8"></path></svg>Budget</button>
  </div>
 </div>
-<button data-page="tasks">✓ Actions</button>
-<button data-page="calendar">▣ Calendrier</button>
+<button data-page="tasks"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="3" width="18" height="18" rx="3"></rect><path d="m8 12 3 3 6-7"></path></svg>Actions</button>
+<button data-page="calendar"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4M8 3v4M3 10h18"></path></svg>Calendrier</button>
 <div class="nav-group">
- <button class="nav-group-toggle" type="button" aria-expanded="false">Communauté <span class="nav-caret">⌄</span></button>
+ <button class="nav-group-toggle" type="button" aria-expanded="false"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"></path></svg>Communauté <span class="nav-caret" aria-hidden="true"><svg class="ui-icon icon-sm" viewBox="0 0 24 24" focusable="false"><path d="m7 9 5 5 5-5"></path></svg></span></button>
  <div class="nav-submenu" hidden>
-  <button data-page="community">♙ Membres</button>
-  <button data-page="polls">◉ Sondages</button>
-  <button data-page="notes">✎ Notes</button>
+  <button data-page="community"><svg class="ui-icon icon-sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><path d="M20 8v6M23 11h-6"></path></svg>Membres</button>
+  <button data-page="polls"><svg class="ui-icon icon-sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 12a9 9 0 1 1-9-9v9z"></path><path d="M12 3a9 9 0 0 1 9 9h-9z"></path></svg>Sondages</button>
+  <button data-page="notes"><svg class="ui-icon icon-sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"></path></svg>Notes</button>
  </div>
 </div>
 </nav><div class="header-actions"><div id="notificationCenter" style="display:none">
-<button id="notificationBtn" class="notification-btn" type="button" aria-label="Notifications" aria-expanded="false">🔔<span id="notificationBadge" class="notification-badge" hidden>0</span></button>
+<button id="notificationBtn" class="notification-btn" type="button" aria-label="Notifications" aria-expanded="false"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg><span id="notificationBadge" class="notification-badge" hidden>0</span></button>
 <div id="notificationPanel" class="notification-panel" hidden><div class="notification-head"><strong>Notifications</strong><button id="markAllNotificationsRead" type="button">Tout marquer comme lu</button></div><div id="notificationList"></div></div>
 </div><div id="accountMenu" class="account-menu" style="display:none">
-<button id="accountMenuBtn" class="account-menu-btn" type="button" aria-expanded="false"><span id="accountAvatar" class="account-avatar">C</span><span id="accountLabel">Compte</span><span>⌄</span></button>
+<button id="accountMenuBtn" class="account-menu-btn" type="button" aria-expanded="false"><span id="accountAvatar" class="account-avatar">C</span><span id="accountLabel">Compte</span><span aria-hidden="true"><svg class="ui-icon icon-sm" viewBox="0 0 24 24" focusable="false"><path d="m7 9 5 5 5-5"></path></svg></span></button>
 <div id="accountDropdown" class="account-dropdown" hidden></div>
 </div></div><small>Données synchronisées avec Firebase</small></aside>
 <main class="main">
@@ -2177,27 +2446,27 @@ body.auth-pending::after{
   </div>
 
   <div class="home-kpis">
-    <div class="card kpi"><div class="kpi-icon">♙</div><div><div class="lab">Membres actifs</div><div class="num" id="memberKpi">—</div></div></div>
-    <div class="card kpi"><div class="kpi-icon">✓</div><div><div class="lab">Actions ouvertes</div><div class="num" id="taskKpi">4</div></div></div>
-    <div class="card kpi"><div class="kpi-icon">€</div><div><div class="lab">Budget estimatif</div><div class="num money" id="budgetKpi">0 €</div></div></div>
+    <div class="card kpi"><div class="kpi-icon" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" focusable="false"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><path d="M20 8v6M23 11h-6"></path></svg></div><div><div class="lab">Membres actifs</div><div class="num" id="memberKpi">—</div></div></div>
+    <div class="card kpi"><div class="kpi-icon" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" focusable="false"><rect x="3" y="3" width="18" height="18" rx="3"></rect><path d="m8 12 3 3 6-7"></path></svg></div><div><div class="lab">Actions ouvertes</div><div class="num" id="taskKpi">4</div></div></div>
+    <div class="card kpi"><div class="kpi-icon" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" focusable="false"><circle cx="12" cy="12" r="9"></circle><path d="M16 8.5a5 5 0 1 0 0 7M7 10h7M7 14h6"></path></svg></div><div><div class="lab">Budget estimatif</div><div class="num money" id="budgetKpi">0 €</div></div></div>
   </div>
 
   <div class="home-heading"><div><span class="eyebrow">NOTRE PROJET</span><h2>Un habitat à taille humaine</h2></div><p></p></div>
   <div class="axis-grid">
-    <article class="axis-card"><span class="axis-icon">⌂</span><h3>Habitat à taille humaine</h3><p>Des maisons individuelles écologiques et abordables, intégrées à leur environnement.</p></article>
-    <article class="axis-card"><span class="axis-icon">◎</span><h3>Vie en communauté</h3><p>Partage, entraide et convivialité au cœur de notre quotidien.</p></article>
-    <article class="axis-card"><span class="axis-icon">♧</span><h3>Autonomie & dignité</h3><p>Permettre à chacun de vivre dignement et d’être acteur de sa vie.</p></article>
-    <article class="axis-card"><span class="axis-icon">↔</span><h3>Partage des ressources</h3><p>Mutualiser pour mieux consommer et réduire notre impact.</p></article>
-    <article class="axis-card"><span class="axis-icon">♡</span><h3>Inclusion</h3><p>Un lieu ouvert, accueillant et respectueux de chaque parcours.</p></article>
-    <article class="axis-card"><span class="axis-icon">↗</span><h3>Projection vers l’avenir</h3><p>Construire ensemble un projet durable pour les générations futures.</p></article>
+    <article class="axis-card"><span class="axis-icon" aria-hidden="true">⌂</span><h3>Habitat à taille humaine</h3><p>Des maisons individuelles écologiques et abordables, intégrées à leur environnement.</p></article>
+    <article class="axis-card"><span class="axis-icon" aria-hidden="true">◎</span><h3>Vie en communauté</h3><p>Partage, entraide et convivialité au cœur de notre quotidien.</p></article>
+    <article class="axis-card"><span class="axis-icon" aria-hidden="true">♧</span><h3>Autonomie & dignité</h3><p>Permettre à chacun de vivre dignement et d’être acteur de sa vie.</p></article>
+    <article class="axis-card"><span class="axis-icon" aria-hidden="true">↔</span><h3>Partage des ressources</h3><p>Mutualiser pour mieux consommer et réduire notre impact.</p></article>
+    <article class="axis-card"><span class="axis-icon" aria-hidden="true">♡</span><h3>Inclusion</h3><p>Un lieu ouvert, accueillant et respectueux de chaque parcours.</p></article>
+    <article class="axis-card"><span class="axis-icon" aria-hidden="true">↗</span><h3>Projection vers l’avenir</h3><p>Construire ensemble un projet durable pour les générations futures.</p></article>
   </div>
 
   <div class="home-bottom-grid">
     <div class="card home-values">
       <div class="eyebrow">NOS VALEURS</div><h2>Ce qui nous rassemble</h2>
-      <div class="value-line"><span>♡</span><div><b>Respect & bienveillance</b><small>Écouter et prendre en compte chacun dans ses différences.</small></div></div>
-      <div class="value-line"><span>∞</span><div><b>Solidarité & entraide</b><small>Créer des liens fiables et une communauté attentive.</small></div></div>
-      <div class="value-line"><span>○</span><div><b>Intégrité & responsabilité</b><small>Agir avec franchise, fiabilité et cohérence.</small></div></div>
+      <div class="value-line"><span aria-hidden="true">♡</span><div><b>Respect & bienveillance</b><small>Écouter et prendre en compte chacun dans ses différences.</small></div></div>
+      <div class="value-line"><span aria-hidden="true">∞</span><div><b>Solidarité & entraide</b><small>Créer des liens fiables et une communauté attentive.</small></div></div>
+      <div class="value-line"><span aria-hidden="true">○</span><div><b>Intégrité & responsabilité</b><small>Agir avec franchise, fiabilité et cohérence.</small></div></div>
       <button class="text-link" data-go="principles">Découvrir la charte →</button>
     </div>
     <div class="card home-next">
@@ -2219,10 +2488,10 @@ body.auth-pending::after{
     </div>
   </div>
   <div class="home-history-access">
-    <div class="home-history-copy"><span class="home-history-icon">↺</span><span><b>Activité récente</b><small>Consultez les créations, modifications et suppressions réalisées sur le site.</small></span></div>
+    <div class="home-history-copy"><span class="home-history-icon" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" focusable="false"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"></path><path d="M3 3v5h5"></path></svg></span><span><b>Activité récente</b><small>Consultez les créations, modifications et suppressions réalisées sur le site.</small></span></div>
     <button class="text-link" data-go="history">Voir tout l’historique →</button>
   </div>
-  <div class="home-manifesto"><span class="leaf">⌁</span><strong>Ensemble, créons un lieu de vie humain, durable et inspirant.</strong></div>
+  <div class="home-manifesto"><span class="leaf" aria-hidden="true">⌁</span><strong>Ensemble, créons un lieu de vie humain, durable et inspirant.</strong></div>
 </section>
 <section id="roadmap" class="section"><h1>Feuille de route</h1><p class="intro">Transformez la vision en étapes concrètes et mesurables.</p><div class="two"><div class="card"><h2>0–6 mois • Cadrer</h2><p>Formaliser la vision, identifier 5–10 membres fondateurs, recueillir les besoins, rédiger une première charte.</p></div><div class="card"><h2>6–18 mois • Concevoir</h2><p>Choisir la zone géographique, étudier les modèles juridiques, établir le financement et définir le programme immobilier.</p></div><div class="card"><h2>18–36 mois • Réaliser</h2><p>Sélectionner le lieu, finaliser les accords, concevoir l'habitat adaptable, obtenir les autorisations et lancer les travaux.</p></div><div class="card"><h2>Après installation • Faire vivre</h2><p>Rituels collectifs, gouvernance légère, fonds de solidarité, évaluation annuelle des besoins et adaptation du cadre de vie.</p></div></div></section>
 <section id="tasks" class="section">
@@ -2289,9 +2558,9 @@ body.auth-pending::after{
     <div class="calendar-toolbar">
       <button id="addCalendarEvent" class="btn">+ Ajouter</button>
       <div class="calendar-nav">
-        <button id="calPrev" class="btn secondary">‹</button>
+        <button id="calPrev" class="btn secondary" type="button" aria-label="Mois précédent"><svg class="ui-icon icon-sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m15 18-6-6 6-6"></path></svg></button>
         <h2 id="calMonthLabel"></h2>
-        <button id="calNext" class="btn secondary">›</button>
+        <button id="calNext" class="btn secondary" type="button" aria-label="Mois suivant"><svg class="ui-icon icon-sm" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="m9 18 6-6-6-6"></path></svg></button>
       </div>
       <button id="calToday" class="btn secondary">Aujourd'hui</button>
     </div>
@@ -2397,10 +2666,10 @@ body.auth-pending::after{
 <div class="card vision-card"><div class="vision-kicker">Notre vision</div><h2>Construire ensemble un lieu où bien vivre et bien vieillir</h2><p>Créer une communauté solidaire et harmonieuse pour se soutenir dans nos vieux jours, où chacun contribue à façonner un cadre de vie épanouissant, durable, adaptable et bienveillant. Ici, nous apprenons à gérer nos conflits avec respect, à partager nos espaces et nos rêves, et à cultiver des liens forts pour que ce projet soit une source de joie et de sérénité pour tous.</p></div>
 <div class="values-title values-title-row"><div><h2>Nos valeurs fondatrices</h2><p>Des repères pour orienter nos comportements, nos choix et nos décisions collectives.</p></div><button id="addValueBtn" class="btn" style="display:none">+ Ajouter une valeur</button></div>
 <div class="charter-values" id="charterValues">
-<div class="card charter-value foundation"><div class="value-top"><div class="value-icon">♡</div><div class="value-number">00</div></div><div class="value-copy"><span class="foundation-badge">VALEUR SOCLE</span><h3>Respect & bienveillance</h3><p>Écouter et prendre en compte chacun et chacune dans ses différences.</p><p class="foundation-note">Cette valeur est le fondement de toutes les autres. Elle prévaut sur toute autre considération lorsqu'il s'agit de prendre une décision ou de résoudre une situation.</p></div></div>
-<div class="card charter-value"><div class="value-top"><div class="value-icon">◇</div><div class="value-number">01</div></div><div class="value-copy"><h3>Intégrité & responsabilité</h3><p>Honnêteté intellectuelle et émotionnelle, franchise, fiabilité dans nos engagements.</p></div></div>
-<div class="card charter-value"><div class="value-top"><div class="value-icon">◎</div><div class="value-number">02</div></div><div class="value-copy"><h3>Solidarité & entraide</h3><p>Solidarité humaine, émotionnelle et financière.</p></div></div>
-<div class="card charter-value"><div class="value-top"><div class="value-icon">☀</div><div class="value-number">03</div></div><div class="value-copy"><h3>Qualité de vie</h3><p>Confort physiologique et mental.</p></div></div>
+<div class="card charter-value foundation"><div class="value-top"><div class="value-icon" aria-hidden="true">♡</div><div class="value-number">00</div></div><div class="value-copy"><span class="foundation-badge">VALEUR SOCLE</span><h3>Respect & bienveillance</h3><p>Écouter et prendre en compte chacun et chacune dans ses différences.</p><p class="foundation-note">Cette valeur est le fondement de toutes les autres. Elle prévaut sur toute autre considération lorsqu'il s'agit de prendre une décision ou de résoudre une situation.</p></div></div>
+<div class="card charter-value"><div class="value-top"><div class="value-icon" aria-hidden="true">◇</div><div class="value-number">01</div></div><div class="value-copy"><h3>Intégrité & responsabilité</h3><p>Honnêteté intellectuelle et émotionnelle, franchise, fiabilité dans nos engagements.</p></div></div>
+<div class="card charter-value"><div class="value-top"><div class="value-icon" aria-hidden="true">◎</div><div class="value-number">02</div></div><div class="value-copy"><h3>Solidarité & entraide</h3><p>Solidarité humaine, émotionnelle et financière.</p></div></div>
+<div class="card charter-value"><div class="value-top"><div class="value-icon" aria-hidden="true">☀</div><div class="value-number">03</div></div><div class="value-copy"><h3>Qualité de vie</h3><p>Confort physiologique et mental.</p></div></div>
 </div>
 <div class="charter-closing"><strong>Cette charte est notre point de référence commun.</strong><span>Nos décisions, nos comportements et l'évolution du projet doivent rester cohérents avec ces principes.</span></div>
 </section>
@@ -2630,7 +2899,7 @@ function renderNotifications(){
   notificationBadge.hidden=!unread;notificationBadge.textContent=unread>99?'99+':String(unread);
   notificationList.innerHTML='';
   if(!sorted.length){notificationList.innerHTML='<div class="notification-empty">Aucune notification pour le moment.</div>';return}
-  sorted.forEach(n=>{const b=document.createElement('button');b.type='button';b.className='notification-item'+(notificationReadIds.has(n.id)?'':' unread');b.innerHTML='<span class="notification-dot"></span><span><b>'+esc(n.title||'Nouvelle information')+'</b><p>'+esc(n.message||'')+'</p><time>'+esc(notificationDate(n.createdAt))+'</time></span>';b.onclick=async()=>{await setDoc(doc(db,'users',currentUserId(),'notificationReads',n.id),{readAt:serverTimestamp()},{merge:true});notificationPanel.hidden=true;notificationBtn.setAttribute('aria-expanded','false');const allowedPages=['dashboard','principles','resources','calendar','polls','tasks','notes','budget','community','history'];const target=allowedPages.includes(n.page)?n.page:'dashboard';const navBtn=document.querySelector('#nav button[data-page="'+target+'"]');if(navBtn)navBtn.click()};notificationList.appendChild(b)});
+  sorted.forEach(n=>{const b=document.createElement('button');b.type='button';b.className='notification-item'+(notificationReadIds.has(n.id)?'':' unread');b.innerHTML='<span class="notification-dot" aria-hidden="true"></span><span><b>'+esc(n.title||'Nouvelle information')+'</b><p>'+esc(n.message||'')+'</p><time>'+esc(notificationDate(n.createdAt))+'</time></span>';b.onclick=async()=>{await setDoc(doc(db,'users',currentUserId(),'notificationReads',n.id),{readAt:serverTimestamp()},{merge:true});notificationPanel.hidden=true;notificationBtn.setAttribute('aria-expanded','false');const allowedPages=['dashboard','principles','resources','calendar','polls','tasks','notes','budget','community','history'];const target=allowedPages.includes(n.page)?n.page:'dashboard';const navBtn=document.querySelector('#nav button[data-page="'+target+'"]');if(navBtn)navBtn.click()};notificationList.appendChild(b)});
 }
 function stopNotificationListeners(){notificationUnsubs.forEach(unsub=>{try{unsub()}catch{}});notificationUnsubs=[];if(notificationReadsUnsub){notificationReadsUnsub();notificationReadsUnsub=null}notificationItems=[];globalNotificationItems=[];personalNotificationItems=[];notificationReadIds=new Set();notificationViewCounts=new Map();notificationReadsReady=false;renderNotifications()}
 function startNotificationListeners(){
@@ -2697,7 +2966,7 @@ function renderHistory(){
   const items=(data.history||[]).filter(x=>filter==='all'||x.entityType===filter).sort((a,b)=>dateValue(b.createdAt)-dateValue(a.createdAt)).slice(0,150);
   historyList.innerHTML='';
   if(!items.length){historyList.innerHTML='<div class="card"><p class="intro">Aucune modification enregistrée pour le moment.</p></div>';return}
-  items.forEach(x=>{const row=document.createElement('article');row.className='history-item';row.innerHTML='<span class="history-icon">'+esc(historyIcon(x.action))+'</span><div><strong>'+esc(historyVerb(x.action))+' · '+esc(historyLabel(x.entityType))+' — '+esc(x.title||'Sans titre')+'</strong><p>Par '+esc(x.actorEmail||'Membre')+(x.details?' · '+esc(x.details):'')+'</p></div><time>'+esc(notificationDate(x.createdAt))+'</time>';historyList.appendChild(row)});
+  items.forEach(x=>{const row=document.createElement('article');row.className='history-item';row.innerHTML='<span class="history-icon" aria-hidden="true">'+esc(historyIcon(x.action))+'</span><div><strong>'+esc(historyVerb(x.action))+' · '+esc(historyLabel(x.entityType))+' — '+esc(x.title||'Sans titre')+'</strong><p>Par '+esc(x.actorEmail||'Membre')+(x.details?' · '+esc(x.details):'')+'</p></div><time>'+esc(notificationDate(x.createdAt))+'</time>';historyList.appendChild(row)});
 }
 historyFilter.onchange=renderHistory;
 
@@ -3774,7 +4043,7 @@ function renderCharterValues(){
   const vals=[...baseCharterValues,...extras];
   if(!window.charterValues) return;
   charterValues.innerHTML=vals.map((v,i)=>`<div class="card charter-value ${v.foundation?'foundation':''}">
-    <div class="value-top"><div class="value-icon">${esc(v.icon||'◇')}</div><div class="value-number">${String(i).padStart(2,'0')}</div></div>
+    <div class="value-top"><div class="value-icon" aria-hidden="true">${esc(v.icon||'◇')}</div><div class="value-number">${String(i).padStart(2,'0')}</div></div>
     <div class="value-copy">${v.foundation?'<span class="foundation-badge">VALEUR SOCLE</span>':''}<h3>${esc(v.title)}</h3><p>${esc(v.description)}</p>${v.foundation?`<p class="foundation-note">Cette valeur est le fondement de toutes les autres. Elle prévaut sur toute autre considération lorsqu'il s'agit de prendre une décision ou de résoudre une situation.</p>`:''}</div>
   </div>`).join('');
 }
