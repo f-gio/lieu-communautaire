@@ -3617,6 +3617,87 @@ button.calendar-event{
 .account-settings-panel[role="tabpanel"][hidden]{display:none!important}
 .account-settings-panel[role="tabpanel"]:focus{outline:0}
 
+/* Correctif 9.2 — modale des paramètres du compte
+   Hauteur définie pour que la grille réserve toujours la place du pied de
+   page. Les anciennes limites à 520 px sont neutralisées explicitement. */
+#profileModal .profile-dialog{
+  display:grid!important;
+  grid-template-rows:auto minmax(0,1fr) auto!important;
+  width:min(900px,calc(100vw - 32px))!important;
+  max-width:none!important;
+  height:min(720px,calc(100dvh - 32px))!important;
+  min-height:0!important;
+  max-height:calc(100dvh - 32px)!important;
+  margin:auto!important;
+  overflow:hidden!important;
+}
+#profileModal .account-settings-layout{
+  min-height:0!important;
+  overflow:hidden!important;
+}
+#profileModal .account-settings-nav,
+#profileModal .account-settings-content{
+  min-height:0!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain;
+}
+#profileModal .profile-actions{
+  position:relative;
+  z-index:1;
+  flex:none!important;
+}
+/* Une seule source pour l'icône de fermeture : le SVG présent dans le HTML. */
+.modal-close-x{font-size:0!important}
+.modal-close-x::before{content:none!important;display:none!important}
+.modal-close-x svg{
+  display:block;
+  width:20px;
+  height:20px;
+  pointer-events:none;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:2;
+  stroke-linecap:round;
+}
+
+@media(max-width:820px){
+  #profileModal{padding:var(--space-4)!important}
+  #profileModal .profile-dialog{
+    width:100%!important;
+    height:calc(100dvh - (var(--space-4) * 2))!important;
+    max-height:calc(100dvh - (var(--space-4) * 2))!important;
+  }
+  #profileModal .account-settings-layout{
+    display:grid!important;
+    grid-template-columns:1fr!important;
+    grid-template-rows:auto minmax(0,1fr)!important;
+  }
+  #profileModal .account-settings-nav{
+    display:flex!important;
+    flex-direction:row!important;
+    padding:var(--space-3) var(--space-5)!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    border-right:0!important;
+    border-bottom:1px solid var(--color-border)!important;
+  }
+  #profileModal .account-settings-tab{flex:1 0 auto;text-align:center!important}
+  #profileModal .account-settings-content{padding:var(--space-6)!important}
+}
+@media(max-width:560px){
+  #profileModal{padding:var(--space-3)!important}
+  #profileModal .profile-dialog{
+    height:calc(100dvh - (var(--space-3) * 2))!important;
+    max-height:calc(100dvh - (var(--space-3) * 2))!important;
+    border-radius:var(--radius-card)!important;
+  }
+  #profileModal .account-profile-header{padding:var(--space-5)!important}
+  #profileModal .account-settings-nav{padding:var(--space-2) var(--space-3)!important}
+  #profileModal .account-settings-content{padding:var(--space-5)!important}
+  #profileModal .profile-photo-row{align-items:flex-start!important;gap:var(--space-4)!important}
+  #profileModal .profile-actions{padding:var(--space-3) var(--space-5) var(--space-5)!important}
+}
+
 @media(max-width:760px){
   .calendar-day-add{width:calc(100% + 10px);margin:-5px 0 -2px -5px;padding:5px}
 }
@@ -3767,7 +3848,7 @@ button.calendar-event{
  <div class="card task-dialog" role="dialog" aria-modal="true" aria-labelledby="taskModalTitle">
   <div class="modal-head">
    <div><div class="eyebrow">ACTION</div><h2 id="taskModalTitle">Ajouter une action</h2></div>
-   <button type="button" class="modal-close-x" data-modal-close onclick="closeTaskModal()" aria-label="Fermer">×</button>
+   <button type="button" class="modal-close-x" data-modal-close onclick="closeTaskModal()" aria-label="Fermer"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
   </div>
   <form id="taskForm" class="task-form">
    <label class="task-full"><span>Titre *</span><input id="taskName" required placeholder="Ex. Préparer le budget prévisionnel"></label>
@@ -3784,7 +3865,7 @@ button.calendar-event{
  </div>
 </div>
 <section id="community" class="section"><div class="page-header"><div><h1>Communauté</h1><p class="intro">Les membres dont le compte a été accepté apparaissent automatiquement ici.</p></div></div><div id="memberList" class="member-directory"></div></section>
-<div id="memberProfileModal" class="modal-shell" style="display:none"><div class="card member-profile-dialog" role="dialog" aria-modal="true" aria-labelledby="memberProfileTitle"><div class="modal-head"><div><div class="eyebrow">MEMBRE</div><h2 id="memberProfileTitle">Profil</h2></div><button id="closeMemberProfile" type="button" class="modal-close-x" data-modal-close aria-label="Fermer">×</button></div><div id="memberProfileDetail" class="member-profile-detail"></div></div></div>
+<div id="memberProfileModal" class="modal-shell" style="display:none"><div class="card member-profile-dialog" role="dialog" aria-modal="true" aria-labelledby="memberProfileTitle"><div class="modal-head"><div><div class="eyebrow">MEMBRE</div><h2 id="memberProfileTitle">Profil</h2></div><button id="closeMemberProfile" type="button" class="modal-close-x" data-modal-close aria-label="Fermer"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div id="memberProfileDetail" class="member-profile-detail"></div></div></div>
 <section id="budget" class="section"><div class="page-header"><div><h1>Budget</h1><p class="intro">Première estimation des postes nécessaires au projet.</p></div></div><div class="card"><div class="toolbar" role="group" aria-label="Ajouter une ligne de budget"><input id="budgetLabel" aria-label="Poste budgétaire" placeholder="Poste (étude, terrain…)"><input id="budgetAmount" type="number" inputmode="decimal" aria-label="Montant en euros" placeholder="Montant €"><select id="budgetType" aria-label="Type de dépense"><option>Investissement</option><option>Fonctionnement</option><option>Réserve solidaire</option></select><button class="btn" type="button" onclick="addBudget()">Ajouter</button></div><div id="budgetList"></div><hr style="border:0;border-top:1px solid #e7e1d7;margin:18px 0"><b>Total : <span id="budgetTotal">0 €</span></b></div></section>
 
 <section id="history" class="section">
@@ -3825,7 +3906,7 @@ button.calendar-event{
   <div class="card calendar-dialog" role="dialog" aria-modal="true" aria-labelledby="calendarModalTitle">
     <div class="calendar-dialog-head">
       <div><h2 id="calendarModalTitle">Ajouter au calendrier</h2><p id="calendarModalSubtitle">Planifiez une réunion ou une action.</p></div>
-      <button id="closeCalendarModal" class="btn secondary modal-close-x" data-modal-close aria-label="Fermer" title="Fermer">×</button>
+      <button id="closeCalendarModal" class="btn secondary modal-close-x" data-modal-close aria-label="Fermer" title="Fermer"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
     <div class="calendar-dialog-body">
       <div class="calendar-form-grid">
@@ -3859,7 +3940,7 @@ button.calendar-event{
 
 <div id="pollModal" class="modal-shell" style="display:none">
  <div class="card poll-dialog" role="dialog" aria-modal="true" aria-labelledby="pollModalTitle">
-  <div class="calendar-dialog-head"><div><h2 id="pollModalTitle">Créer un sondage</h2><p>Définissez la question et les réponses proposées.</p></div><button id="closePollModal" class="btn secondary modal-close-x" data-modal-close aria-label="Fermer" title="Fermer">×</button></div>
+  <div class="calendar-dialog-head"><div><h2 id="pollModalTitle">Créer un sondage</h2><p>Définissez la question et les réponses proposées.</p></div><button id="closePollModal" class="btn secondary modal-close-x" data-modal-close aria-label="Fermer" title="Fermer"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
   <div class="calendar-dialog-body">
    <div class="calendar-form-grid">
     <label class="full">Question *<input id="pollQuestion" aria-describedby="pollError" placeholder="Ex. Quelle date retenons-nous ?"></label>
@@ -3898,7 +3979,7 @@ button.calendar-event{
 </section>
 <div id="resourceModal" class="modal-shell" style="display:none">
  <div class="card resource-dialog" role="dialog" aria-modal="true" aria-labelledby="resourceModalTitle">
-  <div class="calendar-dialog-head"><div><div class="eyebrow">RESSOURCE</div><h2 id="resourceModalTitle">Ajouter une ressource</h2></div><button id="closeResourceModal" class="btn secondary modal-close-x" data-modal-close aria-label="Fermer" title="Fermer">×</button></div>
+  <div class="calendar-dialog-head"><div><div class="eyebrow">RESSOURCE</div><h2 id="resourceModalTitle">Ajouter une ressource</h2></div><button id="closeResourceModal" class="btn secondary modal-close-x" data-modal-close aria-label="Fermer" title="Fermer"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
   <div class="calendar-dialog-body">
    <div class="resource-form-grid">
     <label>Nom *<input id="resourceName" aria-describedby="resourceError" placeholder="Ex. Google Drive"></label>
@@ -3927,7 +4008,7 @@ button.calendar-event{
   <div class="card value-dialog" role="dialog" aria-modal="true" aria-labelledby="valueModalTitle">
     <div class="modal-head">
       <div><div class="eyebrow">VALEUR FONDATRICE</div><h2 id="valueModalTitle">Ajouter une valeur</h2><p>Ajoutez un nouveau principe à la charte commune.</p></div>
-      <button id="closeValueModal" class="btn secondary modal-close-x" data-modal-close aria-label="Fermer" title="Fermer">×</button>
+      <button id="closeValueModal" class="btn secondary modal-close-x" data-modal-close aria-label="Fermer" title="Fermer"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
     <div class="value-form">
       <label><span>Titre *</span><input id="valueTitle" maxlength="80" aria-describedby="valueError" placeholder="Ex. Liberté & autonomie"></label>
@@ -3949,7 +4030,7 @@ button.calendar-event{
 
 <div id="noteModal" class="modal-shell" style="display:none">
  <div class="card note-dialog" role="dialog" aria-modal="true" aria-labelledby="noteModalTitle">
-  <div class="calendar-dialog-head"><div><div class="eyebrow">NOTE</div><h2 id="noteModalTitle">Nouvelle note</h2></div><button id="closeNoteModal" class="btn secondary modal-close-x" data-modal-close aria-label="Fermer" title="Fermer">×</button></div>
+  <div class="calendar-dialog-head"><div><div class="eyebrow">NOTE</div><h2 id="noteModalTitle">Nouvelle note</h2></div><button id="closeNoteModal" class="btn secondary modal-close-x" data-modal-close aria-label="Fermer" title="Fermer"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
   <div class="calendar-dialog-body note-form">
    <label>Titre *<input id="noteTitle" aria-describedby="noteError" placeholder="Donnez un titre à votre note"></label>
    <label>Contenu *<textarea id="noteContent" aria-describedby="noteError" placeholder="Écrivez votre note…"></textarea></label>
@@ -3963,14 +4044,14 @@ button.calendar-event{
 
 <div id="profileModal" class="modal-shell" style="display:none">
  <div class="profile-dialog" role="dialog" aria-modal="true" aria-labelledby="profileModalTitle">
-  <div class="modal-head account-profile-header"><div><h2 id="profileModalTitle">Paramètres du compte</h2></div><button id="closeProfileModal" class="btn secondary modal-close-x" data-modal-close type="button" aria-label="Fermer" title="Fermer">×</button></div>
+  <div class="modal-head account-profile-header"><div><h2 id="profileModalTitle">Paramètres du compte</h2></div><button id="closeProfileModal" class="btn secondary modal-close-x" data-modal-close type="button" aria-label="Fermer" title="Fermer"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
   
-  <div class="account-settings-layout" style="display:grid;grid-template-columns:200px minmax(0,1fr);min-height:410px;margin:0;border:0;">
-   <nav class="account-settings-nav" style="padding:28px 16px;background:#f5f3ed;border-right:1px solid #ddd8cd;gap:8px;" aria-label="Catégories des paramètres" role="tablist">
+  <div class="account-settings-layout">
+   <nav class="account-settings-nav" aria-label="Catégories des paramètres" role="tablist">
     <button id="accountProfileTab" type="button" class="account-settings-tab active" data-account-panel="profile" role="tab" aria-selected="true" aria-controls="accountProfilePanel">Profil</button>
     <button id="accountSecurityTab" type="button" class="account-settings-tab" data-account-panel="security" role="tab" aria-selected="false" aria-controls="accountSecurityPanel">Sécurité</button>
    </nav>
-   <div class="account-settings-content" style="padding:32px 38px 38px;min-width:0;">
+   <div class="account-settings-content">
     <section id="accountProfilePanel" class="account-settings-panel active" data-account-content="profile" role="tabpanel" aria-labelledby="accountProfileTab">
 
 <div class="profile-form">
@@ -4004,7 +4085,7 @@ button.calendar-event{
   <div class="card admin-dialog" role="dialog" aria-modal="true" aria-labelledby="adminModalTitle">
     <div class="modal-head">
       <div><h2 id="adminModalTitle">Administration des utilisateurs</h2><p>Valider les membres, gérer leur accès et attribuer ou retirer les droits d’administrateur.</p></div>
-      <button id="closeAdmin" class="btn secondary modal-close-x" data-modal-close aria-label="Fermer" title="Fermer">×</button>
+      <button id="closeAdmin" class="btn secondary modal-close-x" data-modal-close aria-label="Fermer" title="Fermer"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
     <input id="adminSearch" type="search" aria-label="Rechercher un membre par e-mail" placeholder="Rechercher par e-mail..." style="width:100%;box-sizing:border-box">
     <div id="adminUsers"></div>
@@ -5681,7 +5762,7 @@ renderCharterValues();
         <h2 id="changePasswordTitle">Changer le mot de passe</h2>
         <p>Pour votre sécurité, confirmez d’abord votre mot de passe actuel.</p>
       </div>
-      <button id="closePasswordModal" type="button" class="modal-close-x" data-modal-close aria-label="Fermer" title="Fermer">×</button>
+      <button id="closePasswordModal" type="button" class="modal-close-x" data-modal-close aria-label="Fermer" title="Fermer"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
     <form id="changePasswordForm" class="password-form">
       <label>
@@ -5720,7 +5801,7 @@ renderCharterValues();
   <div class="card confirmation-dialog" role="dialog" aria-modal="true" aria-labelledby="confirmationTitle" aria-describedby="confirmationMessage">
     <div class="modal-head">
       <div><div class="eyebrow">CONFIRMATION</div><h2 id="confirmationTitle">Confirmer l’action</h2></div>
-      <button id="closeConfirmationModal" type="button" class="modal-close-x" data-modal-close aria-label="Fermer">×</button>
+      <button id="closeConfirmationModal" type="button" class="modal-close-x" data-modal-close aria-label="Fermer"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
     </div>
     <div class="confirmation-body">
       <p id="confirmationMessage"></p>
