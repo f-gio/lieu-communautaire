@@ -54,6 +54,7 @@
   --color-danger-hover:#f4ddd6;
   --color-danger-border:#e5c4ba;
   --color-danger-text:#914e40;
+  --color-accent-text:var(--color-danger-text);
   --color-disabled-surface:#e9e6de;
   --color-disabled-text:#858d88;
   --color-nav-text:#35473f;
@@ -3549,6 +3550,7 @@ body.modal-open{overflow:hidden}
    ========================================================= */
 .brand{
   appearance:none;
+  min-height:var(--control-target-min);
   border:0;
   background:transparent;
   color:inherit;
@@ -3559,6 +3561,16 @@ body.modal-open{overflow:hidden}
   outline:0!important;
   border-radius:var(--radius-control);
   box-shadow:var(--shadow-focus)!important;
+}
+:is(.eyebrow,.vision-kicker,.value-number){color:var(--color-accent-text)!important}
+#accountMenuBtn{
+  min-height:var(--control-target-min)!important;
+  border-color:var(--color-border-header)!important;
+  background:var(--color-surface-soft)!important;
+  color:var(--color-primary)!important;
+}
+@media(hover:hover){
+  #accountMenuBtn:hover,#accountMenuBtn[aria-expanded="true"]{background:var(--color-nav-hover)!important}
 }
 
 /* Calendrier : mêmes actions à la souris et au clavier */
