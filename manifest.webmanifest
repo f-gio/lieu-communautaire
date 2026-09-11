@@ -1,0 +1,31 @@
+{
+  "id": "./",
+  "name": "Tiny Houses — Lieu communautaire",
+  "short_name": "Tiny Houses",
+  "description": "L’espace communautaire Tiny Houses : projets, actions, calendrier et ressources partagées.",
+  "lang": "fr-FR",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#f5f1e8",
+  "theme_color": "#23483c",
+  "categories": ["social", "productivity", "lifestyle"],
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
