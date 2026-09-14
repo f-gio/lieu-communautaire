@@ -13,7 +13,7 @@
 <meta name="description" content="L’espace communautaire Tiny Houses : projets, actions, calendrier et ressources partagées." />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
-<!-- Design System V10.4 — libellé de connexion harmonisé -->
+<!-- Design System V10.5 — titre de connexion responsive -->
 <title>Tiny Houses — Lieu communautaire</title>
 <style>
 /* =========================================================
@@ -3848,6 +3848,8 @@ body>.nav-submenu.mobile-portal button.active{background:var(--color-sage-subtle
 #loginOverlay .auth-dialog[hidden]{display:none!important}
 #loginOverlay :is(#loginForm,#loginSwitch,#approvalMessage)[hidden]{display:none!important}
 #loginOverlay .auth-dialog h2{margin:0;color:var(--color-text-strong);font-size:var(--font-size-section-title);line-height:var(--line-height-heading)}
+#loginTitle{display:grid;gap:var(--space-1);margin-bottom:var(--space-5)!important;font-size:clamp(1.0625rem,4.8vw,var(--font-size-section-title))!important}
+#loginTitle .auth-title-line{display:block;white-space:nowrap}
 #loginOverlay .auth-intro{margin:var(--space-2) 0 var(--space-5);color:var(--color-text-muted);font-size:var(--font-size-meta);line-height:var(--line-height-body)}
 #loginOverlay .auth-form{display:grid;gap:var(--space-4)}
 #loginOverlay .auth-field{display:grid;gap:var(--field-gap);color:var(--color-text-strong);font-size:var(--font-size-label);font-weight:var(--font-weight-medium)}
@@ -3859,7 +3861,7 @@ body>.nav-submenu.mobile-portal button.active{background:var(--color-sage-subtle
 #loginOverlay .auth-dialog .error:empty{display:none}
 @media(max-width:520px){
   #loginOverlay .auth-dialog{margin:var(--space-3) auto!important;padding:var(--space-5)!important;border-radius:var(--radius-card)!important}
-  #loginOverlay .auth-dialog h2{font-size:var(--font-size-section-title)!important;line-height:var(--line-height-heading)!important}
+  #loginOverlay #signupTitle{font-size:var(--font-size-section-title)!important;line-height:var(--line-height-heading)!important}
 }
 
 @media(max-width:760px){
@@ -4316,7 +4318,7 @@ function collaborativeOrLegacy(fresh,legacy){return fresh.length||migrationCompl
 
 const overlay=document.createElement('div'); overlay.id='loginOverlay'; overlay.innerHTML=`
 <div id="loginDialog" class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
-  <h2 id="loginTitle">Communauté solidaire des Gens de confiance</h2>
+  <h2 id="loginTitle"><span class="auth-title-line">Communauté solidaire des</span><span class="auth-title-line">Gens de confiance</span></h2>
   <div id="loginForm" class="auth-form">
     <label class="auth-field"><span>Adresse e-mail *</span><input id="loginEmail" type="email" autocomplete="email" aria-describedby="loginError" required></label>
     <label class="auth-field"><span>Mot de passe *</span><input id="loginPassword" type="password" autocomplete="current-password" aria-describedby="loginError" required></label>
