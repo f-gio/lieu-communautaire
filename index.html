@@ -13,7 +13,7 @@
 <meta name="description" content="L’espace communautaire Tiny Houses : projets, actions, calendrier et ressources partagées." />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
-<!-- Design System V10 — application installable iPhone -->
+<!-- Design System V10.2 — navigation mobile et inscription -->
 <title>Tiny Houses — Lieu communautaire</title>
 <style>
 /* =========================================================
@@ -194,6 +194,7 @@
   --page-header-gap:var(--space-6);
   --page-header-margin-bottom:var(--space-6);
   --mobile-nav-offset:112px;
+  --mobile-submenu-top:112px;
 
   /* Retours, confirmations et chargements */
   --feedback-width:420px;
@@ -3791,6 +3792,57 @@ button.calendar-event{
   .app-install-dialog .modal-actions{padding:0 var(--space-5) var(--space-5)}
 }
 
+/* Navigation tactile : le sous-menu ouvert est temporairement placé au niveau
+   du document afin que le défilement horizontal du header ne le masque pas. */
+body>.nav-submenu.mobile-portal{
+  position:fixed!important;
+  inset:var(--mobile-submenu-top,112px) var(--space-3) auto!important;
+  z-index:7000!important;
+  display:grid;
+  gap:var(--space-1);
+  width:auto!important;
+  max-width:none!important;
+  max-height:calc(100dvh - var(--mobile-submenu-top,112px) - var(--space-3))!important;
+  padding:var(--space-2)!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;
+}
+body>.nav-submenu.mobile-portal button{
+  display:flex!important;
+  align-items:center!important;
+  gap:var(--space-2)!important;
+  width:100%!important;
+  min-height:var(--control-target-min)!important;
+  margin:0!important;
+  padding:var(--space-2) var(--space-3)!important;
+  border:0!important;
+  border-radius:var(--radius-control)!important;
+  background:transparent!important;
+  color:var(--color-text)!important;
+  text-align:left!important;
+  font-size:var(--font-size-label)!important;
+  font-weight:var(--font-weight-medium)!important;
+  touch-action:manipulation;
+}
+body>.nav-submenu.mobile-portal button:hover,
+body>.nav-submenu.mobile-portal button:focus-visible{background:var(--color-nav-hover)!important}
+body>.nav-submenu.mobile-portal button.active{background:var(--color-sage-subtle)!important;color:var(--color-primary)!important}
+
+/* Connexion et inscription partagent une fenêtre compacte mais deux parcours
+   distincts. L'inscription reste accessible sans préremplir la connexion. */
+#loginOverlay{
+  overflow:auto;
+  padding:max(var(--space-3),var(--safe-area-top)) max(var(--space-3),var(--safe-area-right)) max(var(--space-3),var(--safe-area-bottom)) max(var(--space-3),var(--safe-area-left));
+}
+#loginOverlay .login-dialog{box-sizing:border-box;width:min(420px,100%);margin:clamp(var(--space-5),10vh,96px) auto!important}
+#loginOverlay .login-dialog :is(input,.btn){min-height:var(--control-target-min)}
+@media(max-width:520px){
+  #loginOverlay .login-dialog{margin:var(--space-3) auto!important;padding:var(--space-5)!important;border-radius:var(--radius-card)!important}
+  #loginOverlay .login-dialog h2{font-size:var(--font-size-section-title)!important;line-height:var(--line-height-heading)!important}
+}
+
 @media(max-width:760px){
   .calendar-day-add{width:calc(100% + 10px);margin:-5px 0 -2px -5px;padding:5px}
 }
@@ -4243,10 +4295,22 @@ const COLLABORATIVE_MIGRATION_VERSION=1;
 let migrationComplete=false;
 function collaborativeOrLegacy(fresh,legacy){return fresh.length||migrationComplete?fresh:structuredClone(legacy||[])}
 
-const overlay=document.createElement('div'); overlay.id='loginOverlay'; overlay.innerHTML=`<div role="dialog" aria-modal="true" aria-labelledby="loginTitle" style="max-width:420px;margin:12vh auto;background:#fffdf8;border:1px solid #ddd8cd;border-radius:16px;padding:28px;box-shadow:0 12px 40px #0002"><h2 id="loginTitle">Communauté solidaire des Gens de confiance</h2><p></p><input id="loginEmail" type="email" autocomplete="email" aria-label="Adresse e-mail" aria-describedby="loginError" placeholder="E-mail" style="width:100%;margin:7px 0"><input id="loginPassword" type="password" autocomplete="current-password" aria-label="Mot de passe" aria-describedby="loginError" placeholder="Mot de passe" style="width:100%;margin:7px 0"><button id="loginBtn" class="btn" style="width:100%;margin-top:8px">Se connecter</button>
+const overlay=document.createElement('div'); overlay.id='loginOverlay'; overlay.innerHTML=`<div id="loginDialog" class="login-dialog" role="dialog" aria-modal="true" aria-labelledby="loginTitle" style="max-width:420px;margin:12vh auto;background:#fffdf8;border:1px solid #ddd8cd;border-radius:16px;padding:28px;box-shadow:0 12px 40px #0002"><h2 id="loginTitle">Communauté solidaire des Gens de confiance</h2><p></p><input id="loginEmail" type="email" autocomplete="email" aria-label="Adresse e-mail" aria-describedby="loginError" placeholder="E-mail" style="width:100%;margin:7px 0"><input id="loginPassword" type="password" autocomplete="current-password" aria-label="Mot de passe" aria-describedby="loginError" placeholder="Mot de passe" style="width:100%;margin:7px 0"><button id="loginBtn" class="btn" style="width:100%;margin-top:8px">Se connecter</button>
 <button id="signupBtn" class="btn secondary" type="button" style="width:100%;margin-top:10px">Créer un compte</button>
+<input id="signupConfirmPassword" type="password" autocomplete="new-password" aria-label="Confirmer le mot de passe" aria-describedby="loginError" placeholder="Confirmer le mot de passe" style="display:none;width:100%;margin:7px 0"><button id="createAccountSubmit" class="btn" type="button" style="display:none;width:100%;margin-top:8px">Envoyer la demande</button><button id="backToLogin" class="btn secondary" type="button" style="display:none;width:100%;margin-top:10px">Retour à la connexion</button>
 <p id="loginError" class="error" aria-live="polite"></p><div id="approvalMessage" class="feedback-banner info" role="status" aria-live="polite" style="display:none"></div></div>`; Object.assign(overlay.style,{position:'fixed',inset:'0',background:'#f4f1e9',zIndex:'9999'}); document.body.appendChild(overlay);
 window.__tinyBootReady=true;
+const loginDialog=document.getElementById('loginDialog');
+const loginTitle=document.getElementById('loginTitle');
+const loginEmail=document.getElementById('loginEmail');
+const loginPassword=document.getElementById('loginPassword');
+const loginBtn=document.getElementById('loginBtn');
+const signupBtn=document.getElementById('signupBtn');
+const signupConfirmPassword=document.getElementById('signupConfirmPassword');
+const createAccountSubmit=document.getElementById('createAccountSubmit');
+const backToLogin=document.getElementById('backToLogin');
+const loginError=document.getElementById('loginError');
+const approvalMessage=document.getElementById('approvalMessage');
 const accountActions=document.getElementById('accountDropdown');
 const accountMenu=document.getElementById('accountMenu');
 const accountMenuBtn=document.getElementById('accountMenuBtn');
@@ -4433,7 +4497,45 @@ else loginError.textContent='E-mail ou mot de passe incorrect.';
 finally{loginBtn.disabled=false;loginBtn.textContent=originalText}
 };
 loginPassword.addEventListener('keydown',e=>{if(e.key==='Enter'&&!loginBtn.disabled)loginBtn.click()});
-signupBtn.onclick=async()=>{loginError.textContent='';const email=loginEmail.value.trim(), password=loginPassword.value;if(!email){loginError.textContent='Saisissez votre e-mail.';return}if(password.length<6){loginError.textContent='Le mot de passe doit contenir au moins 6 caractères.';return}try{const cred=await createUserWithEmailAndPassword(auth,email,password);await setDoc(doc(db,'users',cred.user.uid),{email:cred.user.email,status:'pending',createdAt:serverTimestamp()})}catch(e){if(e.code==='auth/email-already-in-use') loginError.textContent='Un compte existe déjà avec cet e-mail.';else if(e.code==='auth/invalid-email') loginError.textContent='Adresse e-mail invalide.';else if(e.code==='auth/weak-password') loginError.textContent='Choisissez un mot de passe plus sécurisé.';else loginError.textContent='Impossible de créer le compte pour le moment.'}};
+let authFormMode='login';
+function setAuthFormMode(mode='login'){
+  authFormMode=mode==='signup'?'signup':'login';
+  const signup=authFormMode==='signup';
+  loginTitle.textContent=signup?'Créer un compte':'Communauté solidaire des Gens de confiance';
+  loginDialog.setAttribute('aria-labelledby','loginTitle');
+  loginPassword.autocomplete=signup?'new-password':'current-password';
+  loginBtn.style.display=signup?'none':'block';
+  signupBtn.style.display=signup?'none':'block';
+  signupConfirmPassword.style.display=signup?'block':'none';
+  createAccountSubmit.style.display=signup?'block':'none';
+  backToLogin.style.display=signup?'block':'none';
+  approvalMessage.style.display='none';
+  loginError.textContent='';
+  loginPassword.value='';
+  signupConfirmPassword.value='';
+  requestAnimationFrame(()=>loginEmail.focus());
+}
+signupBtn.onclick=()=>setAuthFormMode('signup');
+backToLogin.onclick=()=>setAuthFormMode('login');
+createAccountSubmit.onclick=async()=>{
+  loginError.textContent='';
+  const email=loginEmail.value.trim(),password=loginPassword.value,confirmation=signupConfirmPassword.value;
+  if(!email){loginError.textContent='Saisissez votre adresse e-mail.';loginEmail.focus();return}
+  if(password.length<6){loginError.textContent='Le mot de passe doit contenir au moins 6 caractères.';loginPassword.focus();return}
+  if(password!==confirmation){loginError.textContent='Les deux mots de passe ne correspondent pas.';signupConfirmPassword.focus();return}
+  window.setActionLoading(createAccountSubmit,true,'Création…');
+  try{
+    const cred=await createUserWithEmailAndPassword(auth,email,password);
+    await setDoc(doc(db,'users',cred.user.uid),{email:cred.user.email,status:'pending',createdAt:serverTimestamp()});
+  }catch(e){
+    if(e.code==='auth/email-already-in-use')loginError.textContent='Un compte existe déjà avec cet e-mail.';
+    else if(e.code==='auth/invalid-email')loginError.textContent='Adresse e-mail invalide.';
+    else if(e.code==='auth/weak-password')loginError.textContent='Choisissez un mot de passe plus sécurisé.';
+    else if(e.code==='auth/network-request-failed')loginError.textContent='Impossible de créer le compte sans connexion Internet.';
+    else loginError.textContent='Impossible de créer le compte pour le moment.';
+  }finally{window.setActionLoading(createAccountSubmit,false)}
+};
+signupConfirmPassword.addEventListener('keydown',e=>{if(e.key==='Enter'&&!createAccountSubmit.disabled)createAccountSubmit.click()});
 logout.onclick=()=>signOut(auth);
 
 async function mutateProjectList(field,mutate){
@@ -4624,10 +4726,43 @@ newNoteBtn.onclick=()=>openNoteModal();closeNoteModal.onclick=closeNote;cancelNo
 saveNoteBtn.onclick=async()=>{const title=noteTitle.value.trim(),content=noteContent.value.trim();if(!title||!content){noteError.textContent='Le titre et le contenu sont obligatoires.';return}const now=new Date().toISOString(),isNew=!editingNoteId,id=editingNoteId||crypto.randomUUID();window.setActionLoading(saveNoteBtn,true,isNew?'Publication…':'Enregistrement…');try{if(editingNoteId){const n=data.noteItems.find(x=>x.id===editingNoteId);if(!n||(n.authorUid!==currentUserId()&&!isAdmin()))return;await setDoc(doc(notesCol,id),{title,content,updatedAt:now},{merge:true})}else{await setDoc(doc(notesCol,id),{title,content,authorUid:currentUserId(),authorEmail:currentUserEmail(),createdAt:now,updatedAt:now})}closeNote();await refreshNotes();await logHistory(isNew?'created':'updated','note',id,title,isNew?'Note publiée':'Contenu mis à jour');if(isNew)await publishNotification('note','Nouvelle note',title,'notes',id);window.showToast(isNew?'La note a été publiée.':'La note a été mise à jour.','success')}catch(error){console.error('Enregistrement note',error);noteError.textContent="Impossible d’enregistrer cette note."}finally{window.setActionLoading(saveNoteBtn,false)}};
 deleteNoteBtn.onclick=async()=>{const id=editingNoteId,n=(data.noteItems||[]).find(x=>x.id===id);if(!n||(n.authorUid!==currentUserId()&&!isAdmin()))return;if(!await window.confirmAction({title:'Supprimer la note',message:'Supprimer définitivement « '+(n.title||'cette note')+' » ?',confirmLabel:'Supprimer'}))return;window.setActionLoading(deleteNoteBtn,true,'Suppression…');try{await Promise.all([deleteCollectionDocuments(collection(notesCol,id,'comments')),deleteCollectionDocuments(collection(notesCol,id,'reactions'))]);await deleteDoc(doc(notesCol,id));await logHistory('deleted','note',id,n.title||'Note','Note supprimée');closeNote();await refreshNotes();renderNotifications();window.showToast('La note a été supprimée.','success')}catch(error){console.error('Suppression note',error);noteError.textContent="Impossible de supprimer cette note."}finally{window.setActionLoading(deleteNoteBtn,false)}};
 
-function closeNavSubmenus(except=null){document.querySelectorAll('#nav .nav-group-toggle').forEach(toggle=>{if(toggle===except)return;toggle.setAttribute('aria-expanded','false');const menu=toggle.nextElementSibling;if(menu)menu.hidden=true})}
-document.querySelectorAll('#nav button[data-page]').forEach(b=>b.onclick=()=>{document.querySelectorAll('#nav button[data-page]').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));const section=document.getElementById(b.dataset.page);if(section)section.classList.add('active');if(b.dataset.page==='resources')renderResources();closeNavSubmenus()});
-document.querySelectorAll('#nav .nav-group-toggle').forEach(toggle=>toggle.onclick=e=>{e.stopPropagation();const willOpen=toggle.nextElementSibling.hidden;closeNavSubmenus(toggle);toggle.nextElementSibling.hidden=!willOpen;toggle.setAttribute('aria-expanded',String(willOpen))});
-document.addEventListener('click',e=>{if(!e.target.closest('#nav'))closeNavSubmenus()});
+const mobileNavQuery=window.matchMedia('(max-width:1080px)');
+function navMenuFor(toggle){return document.getElementById(toggle.getAttribute('aria-controls')||'')}
+function restoreNavMenu(toggle,menu){
+  const group=toggle.closest('.nav-group');
+  if(group&&menu.parentElement!==group)group.appendChild(menu);
+  menu.classList.remove('mobile-portal');
+  menu.style.removeProperty('--mobile-submenu-top');
+}
+function positionMobileNavMenu(menu){
+  const header=document.querySelector('.side');
+  const top=Math.ceil((header?.getBoundingClientRect().bottom||104)+8);
+  menu.style.setProperty('--mobile-submenu-top',top+'px');
+}
+function closeNavSubmenus(except=null){
+  document.querySelectorAll('#nav .nav-group-toggle').forEach(toggle=>{
+    if(toggle===except)return;
+    const menu=navMenuFor(toggle);
+    toggle.setAttribute('aria-expanded','false');
+    if(menu){menu.hidden=true;restoreNavMenu(toggle,menu)}
+  });
+}
+window.closeNavSubmenus=closeNavSubmenus;
+const navPageButtons=[...document.querySelectorAll('#nav button[data-page]')];
+navPageButtons.forEach(b=>b.onclick=()=>{navPageButtons.forEach(x=>x.classList.remove('active'));b.classList.add('active');document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));const section=document.getElementById(b.dataset.page);if(section)section.classList.add('active');if(b.dataset.page==='resources')renderResources();closeNavSubmenus()});
+document.querySelectorAll('#nav .nav-group-toggle').forEach(toggle=>toggle.onclick=e=>{
+  e.preventDefault();e.stopPropagation();
+  const menu=navMenuFor(toggle);if(!menu)return;
+  const willOpen=menu.hidden;
+  closeNavSubmenus(toggle);
+  if(willOpen&&mobileNavQuery.matches){document.body.appendChild(menu);menu.classList.add('mobile-portal');positionMobileNavMenu(menu)}
+  else if(!willOpen)restoreNavMenu(toggle,menu);
+  menu.hidden=!willOpen;
+  toggle.setAttribute('aria-expanded',String(willOpen));
+});
+document.addEventListener('click',e=>{if(!e.target.closest('#nav')&&!e.target.closest('.nav-submenu.mobile-portal'))closeNavSubmenus()});
+window.addEventListener('resize',()=>document.querySelectorAll('.nav-submenu.mobile-portal:not([hidden])').forEach(positionMobileNavMenu),{passive:true});
+mobileNavQuery.addEventListener?.('change',()=>closeNavSubmenus());
 
 const ADMIN_UID='CPEGyrjksdMarhLXope92fgLbiq2';
 let currentUserRole='member';
@@ -5340,7 +5475,7 @@ function blockLiveAccess(status){
   if(adminModal)adminModal.style.display='none';
   notificationCenter.style.display='none';currentUserRole='member';
   overlay.style.display='block';logout.hidden=false;if(accountMenu)accountMenu.style.display='block';
-  loginBtn.style.display='none';signupBtn.style.display='none';loginEmail.style.display='none';loginPassword.style.display='none';approvalMessage.style.display='block';
+  loginBtn.style.display='none';signupBtn.style.display='none';loginEmail.style.display='none';loginPassword.style.display='none';signupConfirmPassword.style.display='none';createAccountSubmit.style.display='none';backToLogin.style.display='none';approvalMessage.style.display='block';
   approvalMessage.innerHTML=status==='rejected'?'<strong>Demande refusée.</strong><br>Votre compte n’a pas été autorisé à accéder à cet espace.':status==='suspended'?'<strong>Compte suspendu.</strong><br>Votre accès à l’espace communautaire a été temporairement suspendu.':'<strong>Accès en attente.</strong><br>Votre compte doit être validé par un administrateur.';
 }
 
@@ -5353,7 +5488,7 @@ if(publicMembersUnsub){publicMembersUnsub();publicMembersUnsub=null}
 stopNotificationListeners();
 stopCollaborativeListeners();
 approvalMessage.style.display='none';
-if(!user){liveAccessWasBlocked=false;currentUserRole='member';adminBtn.hidden=true;notificationCenter.style.display='none';overlay.style.display='block';logout.hidden=true; if(accountMenu) accountMenu.style.display='none';loginBtn.style.display='';signupBtn.style.display='';loginEmail.style.display='';loginPassword.style.display='';return}
+if(!user){liveAccessWasBlocked=false;currentUserRole='member';adminBtn.hidden=true;notificationCenter.style.display='none';overlay.style.display='block';logout.hidden=true;if(accountMenu)accountMenu.style.display='none';loginEmail.style.display='';loginPassword.style.display='';setAuthFormMode('login');return}
 adminBtn.remove();
 const userRef=doc(db,'users',user.uid);
 let profile=await getDoc(userRef);
@@ -5387,7 +5522,7 @@ updateAccountUI(profile.data()||{},user);
 
 // L'administrateur principal passe toujours directement.
 if(user.uid!==ADMIN_UID && status!=='approved'){
-overlay.style.display='block';logout.hidden=false; if(accountMenu) accountMenu.style.display='block';loginBtn.style.display='none';signupBtn.style.display='none';loginEmail.style.display='none';loginPassword.style.display='none';approvalMessage.style.display='block';
+overlay.style.display='block';logout.hidden=false;if(accountMenu)accountMenu.style.display='block';loginBtn.style.display='none';signupBtn.style.display='none';loginEmail.style.display='none';loginPassword.style.display='none';signupConfirmPassword.style.display='none';createAccountSubmit.style.display='none';backToLogin.style.display='none';approvalMessage.style.display='block';
 approvalMessage.innerHTML=status==='rejected'
 ?'<strong>Demande refusée.</strong><br>Votre compte n’a pas été autorisé à accéder à cet espace.'
 :status==='suspended'
@@ -6026,11 +6161,8 @@ document.addEventListener('DOMContentLoaded',()=>{
     let restored=null;
     if(notification&&!notification.hidden){notification.hidden=true;notificationButton?.setAttribute('aria-expanded','false');restored=notificationButton}
     if(account&&!account.hidden){account.hidden=true;accountButton?.setAttribute('aria-expanded','false');restored=accountButton}
-    document.querySelectorAll('#nav .nav-group-toggle[aria-expanded="true"]').forEach(toggle=>{
-      toggle.setAttribute('aria-expanded','false');
-      if(toggle.nextElementSibling)toggle.nextElementSibling.hidden=true;
-      restored=restored||toggle;
-    });
+    const openNavToggle=document.querySelector('#nav .nav-group-toggle[aria-expanded="true"]');
+    if(openNavToggle){window.closeNavSubmenus?.();restored=restored||openNavToggle}
     if(restored){event.preventDefault();restored.focus()}
   });
 });
