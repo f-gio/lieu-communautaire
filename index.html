@@ -13,7 +13,7 @@
 <meta name="description" content="L’espace communautaire Tiny Houses : projets, actions, calendrier et ressources partagées." />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
-<!-- Design System V10.2 — navigation mobile et inscription -->
+<!-- Design System V10.3 — dialogues distincts de connexion et d'inscription -->
 <title>Tiny Houses — Lieu communautaire</title>
 <style>
 /* =========================================================
@@ -3830,17 +3830,36 @@ body>.nav-submenu.mobile-portal button:hover,
 body>.nav-submenu.mobile-portal button:focus-visible{background:var(--color-nav-hover)!important}
 body>.nav-submenu.mobile-portal button.active{background:var(--color-sage-subtle)!important;color:var(--color-primary)!important}
 
-/* Connexion et inscription partagent une fenêtre compacte mais deux parcours
-   distincts. L'inscription reste accessible sans préremplir la connexion. */
+/* Connexion et inscription utilisent deux dialogues distincts. */
 #loginOverlay{
   overflow:auto;
   padding:max(var(--space-3),var(--safe-area-top)) max(var(--space-3),var(--safe-area-right)) max(var(--space-3),var(--safe-area-bottom)) max(var(--space-3),var(--safe-area-left));
 }
-#loginOverlay .login-dialog{box-sizing:border-box;width:min(420px,100%);margin:clamp(var(--space-5),10vh,96px) auto!important}
-#loginOverlay .login-dialog :is(input,.btn){min-height:var(--control-target-min)}
+#loginOverlay .auth-dialog{
+  box-sizing:border-box;
+  width:min(440px,100%);
+  margin:clamp(var(--space-5),10vh,96px) auto!important;
+  padding:var(--space-7);
+  border:1px solid var(--color-border-card);
+  border-radius:var(--radius-card);
+  background:var(--color-surface-elevated);
+  box-shadow:var(--shadow-dialog);
+}
+#loginOverlay .auth-dialog[hidden]{display:none!important}
+#loginOverlay :is(#loginForm,#loginSwitch,#approvalMessage)[hidden]{display:none!important}
+#loginOverlay .auth-dialog h2{margin:0;color:var(--color-text-strong);font-size:var(--font-size-section-title);line-height:var(--line-height-heading)}
+#loginOverlay .auth-intro{margin:var(--space-2) 0 var(--space-5);color:var(--color-text-muted);font-size:var(--font-size-meta);line-height:var(--line-height-body)}
+#loginOverlay .auth-form{display:grid;gap:var(--space-4)}
+#loginOverlay .auth-field{display:grid;gap:var(--field-gap);color:var(--color-text-strong);font-size:var(--font-size-label);font-weight:var(--font-weight-medium)}
+#loginOverlay .auth-field input{width:100%;min-height:var(--control-target-min);margin:0}
+#loginOverlay .auth-form>.btn,#loginOverlay .auth-switch>.btn{width:100%;min-height:var(--control-target-min)}
+#loginOverlay .auth-separator{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:var(--space-3);margin:var(--space-5) 0;color:var(--color-text-muted);font-size:var(--font-size-meta)}
+#loginOverlay .auth-separator::before,#loginOverlay .auth-separator::after{content:"";height:1px;background:var(--color-border)}
+#loginOverlay .auth-dialog .error{margin:var(--space-3) 0 0}
+#loginOverlay .auth-dialog .error:empty{display:none}
 @media(max-width:520px){
-  #loginOverlay .login-dialog{margin:var(--space-3) auto!important;padding:var(--space-5)!important;border-radius:var(--radius-card)!important}
-  #loginOverlay .login-dialog h2{font-size:var(--font-size-section-title)!important;line-height:var(--line-height-heading)!important}
+  #loginOverlay .auth-dialog{margin:var(--space-3) auto!important;padding:var(--space-5)!important;border-radius:var(--radius-card)!important}
+  #loginOverlay .auth-dialog h2{font-size:var(--font-size-section-title)!important;line-height:var(--line-height-heading)!important}
 }
 
 @media(max-width:760px){
@@ -4295,21 +4314,51 @@ const COLLABORATIVE_MIGRATION_VERSION=1;
 let migrationComplete=false;
 function collaborativeOrLegacy(fresh,legacy){return fresh.length||migrationComplete?fresh:structuredClone(legacy||[])}
 
-const overlay=document.createElement('div'); overlay.id='loginOverlay'; overlay.innerHTML=`<div id="loginDialog" class="login-dialog" role="dialog" aria-modal="true" aria-labelledby="loginTitle" style="max-width:420px;margin:12vh auto;background:#fffdf8;border:1px solid #ddd8cd;border-radius:16px;padding:28px;box-shadow:0 12px 40px #0002"><h2 id="loginTitle">Communauté solidaire des Gens de confiance</h2><p></p><input id="loginEmail" type="email" autocomplete="email" aria-label="Adresse e-mail" aria-describedby="loginError" placeholder="E-mail" style="width:100%;margin:7px 0"><input id="loginPassword" type="password" autocomplete="current-password" aria-label="Mot de passe" aria-describedby="loginError" placeholder="Mot de passe" style="width:100%;margin:7px 0"><button id="loginBtn" class="btn" style="width:100%;margin-top:8px">Se connecter</button>
-<button id="signupBtn" class="btn secondary" type="button" style="width:100%;margin-top:10px">Créer un compte</button>
-<input id="signupConfirmPassword" type="password" autocomplete="new-password" aria-label="Confirmer le mot de passe" aria-describedby="loginError" placeholder="Confirmer le mot de passe" style="display:none;width:100%;margin:7px 0"><button id="createAccountSubmit" class="btn" type="button" style="display:none;width:100%;margin-top:8px">Envoyer la demande</button><button id="backToLogin" class="btn secondary" type="button" style="display:none;width:100%;margin-top:10px">Retour à la connexion</button>
-<p id="loginError" class="error" aria-live="polite"></p><div id="approvalMessage" class="feedback-banner info" role="status" aria-live="polite" style="display:none"></div></div>`; Object.assign(overlay.style,{position:'fixed',inset:'0',background:'#f4f1e9',zIndex:'9999'}); document.body.appendChild(overlay);
+const overlay=document.createElement('div'); overlay.id='loginOverlay'; overlay.innerHTML=`
+<div id="loginDialog" class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+  <h2 id="loginTitle">Se connecter à Tiny Houses</h2>
+  <p class="auth-intro">Accédez à l'espace communautaire.</p>
+  <div id="loginForm" class="auth-form">
+    <label class="auth-field"><span>Adresse e-mail *</span><input id="loginEmail" type="email" autocomplete="email" aria-describedby="loginError" required></label>
+    <label class="auth-field"><span>Mot de passe *</span><input id="loginPassword" type="password" autocomplete="current-password" aria-describedby="loginError" required></label>
+    <button id="loginBtn" class="btn" type="button">Se connecter</button>
+  </div>
+  <p id="loginError" class="error" aria-live="polite"></p>
+  <div id="loginSwitch" class="auth-switch">
+    <div class="auth-separator" aria-hidden="true">ou</div>
+    <button id="signupBtn" class="btn secondary" type="button">Inscrivez-vous</button>
+  </div>
+  <div id="approvalMessage" class="feedback-banner info" role="status" aria-live="polite" hidden></div>
+</div>
+<div id="signupDialog" class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="signupTitle" hidden>
+  <h2 id="signupTitle">Créer un compte</h2>
+  <p class="auth-intro">Votre demande devra être validée par un administrateur avant l'accès à l'espace communautaire.</p>
+  <div class="auth-form">
+    <label class="auth-field"><span>Adresse e-mail *</span><input id="signupEmail" type="email" autocomplete="email" aria-describedby="signupError" required></label>
+    <label class="auth-field"><span>Mot de passe *</span><input id="signupPassword" type="password" autocomplete="new-password" minlength="6" aria-describedby="signupPasswordHelp signupError" required></label>
+    <small id="signupPasswordHelp">6 caractères minimum.</small>
+    <label class="auth-field"><span>Confirmer le mot de passe *</span><input id="signupConfirmPassword" type="password" autocomplete="new-password" minlength="6" aria-describedby="signupError" required></label>
+    <button id="createAccountSubmit" class="btn" type="button">Envoyer la demande</button>
+    <button id="backToLogin" class="btn secondary" type="button">Retour à la connexion</button>
+  </div>
+  <p id="signupError" class="error" aria-live="polite"></p>
+</div>`; Object.assign(overlay.style,{position:'fixed',inset:'0',background:'#f4f1e9',zIndex:'9999'}); document.body.appendChild(overlay);
 window.__tinyBootReady=true;
 const loginDialog=document.getElementById('loginDialog');
-const loginTitle=document.getElementById('loginTitle');
+const signupDialog=document.getElementById('signupDialog');
+const loginForm=document.getElementById('loginForm');
+const loginSwitch=document.getElementById('loginSwitch');
 const loginEmail=document.getElementById('loginEmail');
 const loginPassword=document.getElementById('loginPassword');
 const loginBtn=document.getElementById('loginBtn');
 const signupBtn=document.getElementById('signupBtn');
+const signupEmail=document.getElementById('signupEmail');
+const signupPassword=document.getElementById('signupPassword');
 const signupConfirmPassword=document.getElementById('signupConfirmPassword');
 const createAccountSubmit=document.getElementById('createAccountSubmit');
 const backToLogin=document.getElementById('backToLogin');
 const loginError=document.getElementById('loginError');
+const signupError=document.getElementById('signupError');
 const approvalMessage=document.getElementById('approvalMessage');
 const accountActions=document.getElementById('accountDropdown');
 const accountMenu=document.getElementById('accountMenu');
@@ -4483,7 +4532,7 @@ function renderHistory(){
 historyFilter.onchange=renderHistory;
 
 loginBtn.onclick=async()=>{
-loginError.textContent='';approvalMessage.style.display='none';
+loginError.textContent='';approvalMessage.hidden=true;
 const email=loginEmail.value.trim(),password=loginPassword.value;
 if(!email||!password){loginError.textContent='Veuillez saisir votre e-mail et votre mot de passe.';return}
 const originalText=loginBtn.textContent;loginBtn.disabled=true;loginBtn.innerHTML='<span class="login-spinner"></span>Connexion en cours…';
@@ -4497,42 +4546,52 @@ else loginError.textContent='E-mail ou mot de passe incorrect.';
 finally{loginBtn.disabled=false;loginBtn.textContent=originalText}
 };
 loginPassword.addEventListener('keydown',e=>{if(e.key==='Enter'&&!loginBtn.disabled)loginBtn.click()});
-let authFormMode='login';
-function setAuthFormMode(mode='login'){
-  authFormMode=mode==='signup'?'signup':'login';
-  const signup=authFormMode==='signup';
-  loginTitle.textContent=signup?'Créer un compte':'Communauté solidaire des Gens de confiance';
-  loginDialog.setAttribute('aria-labelledby','loginTitle');
-  loginPassword.autocomplete=signup?'new-password':'current-password';
-  loginBtn.style.display=signup?'none':'block';
-  signupBtn.style.display=signup?'none':'block';
-  signupConfirmPassword.style.display=signup?'block':'none';
-  createAccountSubmit.style.display=signup?'block':'none';
-  backToLogin.style.display=signup?'block':'none';
-  approvalMessage.style.display='none';
+function setAuthDialog(mode='login'){
+  const signup=mode==='signup';
+  loginDialog.hidden=signup;
+  signupDialog.hidden=!signup;
+  loginForm.hidden=false;
+  loginSwitch.hidden=false;
+  approvalMessage.hidden=true;
   loginError.textContent='';
-  loginPassword.value='';
-  signupConfirmPassword.value='';
-  requestAnimationFrame(()=>loginEmail.focus());
+  signupError.textContent='';
+  if(signup){
+    signupEmail.value='';
+    signupPassword.value='';
+    signupConfirmPassword.value='';
+    requestAnimationFrame(()=>signupEmail.focus());
+  }else{
+    loginPassword.value='';
+    requestAnimationFrame(()=>loginEmail.focus());
+  }
 }
-signupBtn.onclick=()=>setAuthFormMode('signup');
-backToLogin.onclick=()=>setAuthFormMode('login');
-createAccountSubmit.onclick=async()=>{
+function showApprovalState(message){
+  signupDialog.hidden=true;
+  loginDialog.hidden=false;
+  loginForm.hidden=true;
+  loginSwitch.hidden=true;
   loginError.textContent='';
-  const email=loginEmail.value.trim(),password=loginPassword.value,confirmation=signupConfirmPassword.value;
-  if(!email){loginError.textContent='Saisissez votre adresse e-mail.';loginEmail.focus();return}
-  if(password.length<6){loginError.textContent='Le mot de passe doit contenir au moins 6 caractères.';loginPassword.focus();return}
-  if(password!==confirmation){loginError.textContent='Les deux mots de passe ne correspondent pas.';signupConfirmPassword.focus();return}
+  approvalMessage.innerHTML=message;
+  approvalMessage.hidden=false;
+}
+signupBtn.onclick=()=>setAuthDialog('signup');
+backToLogin.onclick=()=>setAuthDialog('login');
+createAccountSubmit.onclick=async()=>{
+  signupError.textContent='';
+  const email=signupEmail.value.trim(),password=signupPassword.value,confirmation=signupConfirmPassword.value;
+  if(!email){signupError.textContent='Saisissez votre adresse e-mail.';signupEmail.focus();return}
+  if(password.length<6){signupError.textContent='Le mot de passe doit contenir au moins 6 caractères.';signupPassword.focus();return}
+  if(password!==confirmation){signupError.textContent='Les deux mots de passe ne correspondent pas.';signupConfirmPassword.focus();return}
   window.setActionLoading(createAccountSubmit,true,'Création…');
   try{
     const cred=await createUserWithEmailAndPassword(auth,email,password);
     await setDoc(doc(db,'users',cred.user.uid),{email:cred.user.email,status:'pending',createdAt:serverTimestamp()});
   }catch(e){
-    if(e.code==='auth/email-already-in-use')loginError.textContent='Un compte existe déjà avec cet e-mail.';
-    else if(e.code==='auth/invalid-email')loginError.textContent='Adresse e-mail invalide.';
-    else if(e.code==='auth/weak-password')loginError.textContent='Choisissez un mot de passe plus sécurisé.';
-    else if(e.code==='auth/network-request-failed')loginError.textContent='Impossible de créer le compte sans connexion Internet.';
-    else loginError.textContent='Impossible de créer le compte pour le moment.';
+    if(e.code==='auth/email-already-in-use')signupError.textContent='Un compte existe déjà avec cet e-mail.';
+    else if(e.code==='auth/invalid-email')signupError.textContent='Adresse e-mail invalide.';
+    else if(e.code==='auth/weak-password')signupError.textContent='Choisissez un mot de passe plus sécurisé.';
+    else if(e.code==='auth/network-request-failed')signupError.textContent='Impossible de créer le compte sans connexion Internet.';
+    else signupError.textContent='Impossible de créer le compte pour le moment.';
   }finally{window.setActionLoading(createAccountSubmit,false)}
 };
 signupConfirmPassword.addEventListener('keydown',e=>{if(e.key==='Enter'&&!createAccountSubmit.disabled)createAccountSubmit.click()});
@@ -5475,8 +5534,7 @@ function blockLiveAccess(status){
   if(adminModal)adminModal.style.display='none';
   notificationCenter.style.display='none';currentUserRole='member';
   overlay.style.display='block';logout.hidden=false;if(accountMenu)accountMenu.style.display='block';
-  loginBtn.style.display='none';signupBtn.style.display='none';loginEmail.style.display='none';loginPassword.style.display='none';signupConfirmPassword.style.display='none';createAccountSubmit.style.display='none';backToLogin.style.display='none';approvalMessage.style.display='block';
-  approvalMessage.innerHTML=status==='rejected'?'<strong>Demande refusée.</strong><br>Votre compte n’a pas été autorisé à accéder à cet espace.':status==='suspended'?'<strong>Compte suspendu.</strong><br>Votre accès à l’espace communautaire a été temporairement suspendu.':'<strong>Accès en attente.</strong><br>Votre compte doit être validé par un administrateur.';
+  showApprovalState(status==='rejected'?'<strong>Demande refusée.</strong><br>Votre compte n’a pas été autorisé à accéder à cet espace.':status==='suspended'?'<strong>Compte suspendu.</strong><br>Votre accès à l’espace communautaire a été temporairement suspendu.':'<strong>Accès en attente.</strong><br>Votre compte doit être validé par un administrateur.');
 }
 
 onAuthStateChanged(auth,async user=>{
@@ -5487,8 +5545,8 @@ if(memberCountUnsub){memberCountUnsub();memberCountUnsub=null}
 if(publicMembersUnsub){publicMembersUnsub();publicMembersUnsub=null}
 stopNotificationListeners();
 stopCollaborativeListeners();
-approvalMessage.style.display='none';
-if(!user){liveAccessWasBlocked=false;currentUserRole='member';adminBtn.hidden=true;notificationCenter.style.display='none';overlay.style.display='block';logout.hidden=true;if(accountMenu)accountMenu.style.display='none';loginEmail.style.display='';loginPassword.style.display='';setAuthFormMode('login');return}
+approvalMessage.hidden=true;
+if(!user){liveAccessWasBlocked=false;currentUserRole='member';adminBtn.hidden=true;notificationCenter.style.display='none';overlay.style.display='block';logout.hidden=true;if(accountMenu)accountMenu.style.display='none';setAuthDialog('login');return}
 adminBtn.remove();
 const userRef=doc(db,'users',user.uid);
 let profile=await getDoc(userRef);
@@ -5522,12 +5580,12 @@ updateAccountUI(profile.data()||{},user);
 
 // L'administrateur principal passe toujours directement.
 if(user.uid!==ADMIN_UID && status!=='approved'){
-overlay.style.display='block';logout.hidden=false;if(accountMenu)accountMenu.style.display='block';loginBtn.style.display='none';signupBtn.style.display='none';loginEmail.style.display='none';loginPassword.style.display='none';signupConfirmPassword.style.display='none';createAccountSubmit.style.display='none';backToLogin.style.display='none';approvalMessage.style.display='block';
-approvalMessage.innerHTML=status==='rejected'
+overlay.style.display='block';logout.hidden=false;if(accountMenu)accountMenu.style.display='block';
+showApprovalState(status==='rejected'
 ?'<strong>Demande refusée.</strong><br>Votre compte n’a pas été autorisé à accéder à cet espace.'
 :status==='suspended'
 ?'<strong>Compte suspendu.</strong><br>Votre accès à l’espace communautaire a été temporairement suspendu.'
-:'<strong>Inscription enregistrée.</strong><br>Votre demande est en attente de validation par un administrateur.';
+:'<strong>Inscription enregistrée.</strong><br>Votre demande est en attente de validation par un administrateur.');
 return}
 overlay.style.display='none';logout.hidden=false; if(accountMenu) accountMenu.style.display='block';
 startMemberCountListener();

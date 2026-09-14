@@ -1,4 +1,4 @@
-const CACHE_NAME='tiny-houses-app-v10-2-20260914';
+const CACHE_NAME='tiny-houses-app-v10-3-20260914';
 const APP_SHELL=[
   './',
   './index.html',
