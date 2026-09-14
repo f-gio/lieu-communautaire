@@ -13,7 +13,7 @@
 <meta name="description" content="L’espace communautaire Tiny Houses : projets, actions, calendrier et ressources partagées." />
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
-<!-- Design System V10.3 — dialogues distincts de connexion et d'inscription -->
+<!-- Design System V10.4 — libellé de connexion harmonisé -->
 <title>Tiny Houses — Lieu communautaire</title>
 <style>
 /* =========================================================
@@ -4316,8 +4316,7 @@ function collaborativeOrLegacy(fresh,legacy){return fresh.length||migrationCompl
 
 const overlay=document.createElement('div'); overlay.id='loginOverlay'; overlay.innerHTML=`
 <div id="loginDialog" class="auth-dialog" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
-  <h2 id="loginTitle">Se connecter à Tiny Houses</h2>
-  <p class="auth-intro">Accédez à l'espace communautaire.</p>
+  <h2 id="loginTitle">Communauté solidaire des Gens de confiance</h2>
   <div id="loginForm" class="auth-form">
     <label class="auth-field"><span>Adresse e-mail *</span><input id="loginEmail" type="email" autocomplete="email" aria-describedby="loginError" required></label>
     <label class="auth-field"><span>Mot de passe *</span><input id="loginPassword" type="password" autocomplete="current-password" aria-describedby="loginError" required></label>
